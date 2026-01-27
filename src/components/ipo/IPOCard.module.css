@@ -1,0 +1,134 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: var(--spacing-md);
+    gap: var(--spacing-md);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.companyInfo {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.logoPlaceholder {
+    width: 40px;
+    height: 40px;
+    background: var(--bg-surface);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+}
+
+.name {
+    font-size: 1.1em;
+    line-height: 1.2;
+}
+
+.dates {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.liveDot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-brand);
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.03);
+    padding: var(--spacing-sm);
+    border-radius: 8px;
+}
+
+.label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+}
+
+.value {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.gmpValue {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.success {
+    color: var(--status-success);
+}
+
+.neutral {
+    color: var(--text-secondary);
+}
+
+.subscription {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.subHeader {
+    display: flex;
+    justify-content: space-between;
+}
+
+.subValue {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.footer {
+    margin-top: auto;
+}

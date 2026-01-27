@@ -1,0 +1,49 @@
+.container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.track {
+    flex: 1;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.bar {
+    height: 100%;
+    border-radius: 9999px;
+}
+
+.label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    width: 32px;
+    text-align: right;
+}
+
+/* Variants */
+.brand {
+    background-color: var(--primary-brand);
+    box-shadow: 0 0 8px rgba(var(--primary-brand-h), 100%, 50%, 0.5);
+}
+
+.success {
+    background-color: var(--status-success);
+}
+
+.warning {
+    background-color: var(--status-warning);
+}
+
+.danger {
+    background-color: var(--status-danger);
+}
+
+.neutral {
+    background-color: var(--text-secondary);
+}

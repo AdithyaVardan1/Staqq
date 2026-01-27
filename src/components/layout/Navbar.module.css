@@ -1,0 +1,148 @@
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    z-index: 50;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.scrolled {
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.logo {
+    font-family: var(--font-outfit), sans-serif;
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    z-index: 51;
+}
+
+/* Desktop Nav */
+.desktopNav {
+    display: none;
+    gap: var(--spacing-xl);
+}
+
+.navLink {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+.navLink:hover {
+    color: var(--text-primary);
+}
+
+.navLink.active {
+    color: var(--primary-brand);
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    z-index: 51;
+}
+
+.iconBtn {
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.iconBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.desktopAuth {
+    display: none;
+}
+
+.mobileToggle {
+    color: var(--text-primary);
+    display: block;
+}
+
+/* Mobile Menu */
+.mobileMenu {
+    position: fixed;
+    inset: 0;
+    background: var(--bg-dark);
+    z-index: 49;
+    padding-top: 80px;
+    transform: translateY(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobileMenu.open {
+    transform: translateY(0);
+}
+
+.mobileMenuInner {
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.mobileNavLink {
+    font-family: var(--font-outfit), sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-decoration: none;
+}
+
+.mobileNavLink.active {
+    color: var(--text-primary);
+}
+
+.mobileAuth {
+    margin-top: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .desktopNav {
+        display: flex;
+    }
+
+    .desktopAuth {
+        display: block;
+    }
+
+    .mobileToggle {
+        display: none;
+    }
+
+    .mobileMenu {
+        display: none;
+    }
+}
