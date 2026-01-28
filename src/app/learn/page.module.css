@@ -1,0 +1,26 @@
+.container {
+  text-align: left;
+  max-width: 1200px;   /* slightly wider */
+  margin: 0 auto;
+  padding: 2.5rem 1rem; /* less padding */
+}
+
+.title {
+  font-size: 2.4rem;   /* ↓ from 3rem */
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  color: white;
+}
+
+.subtitle {
+  font-size: 1.05rem; /* ↓ slightly */
+  color: #cfcfcf;
+  margin-bottom: 2rem;
+}
+
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
