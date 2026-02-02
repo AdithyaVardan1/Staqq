@@ -1,0 +1,77 @@
+# Market Intermediaries
+
+Between you and the stock exchange, there's a whole ecosystem of intermediaries making your trades possible.
+
+<InfoBox type="note">
+  You never directly interact with the stock exchange. Multiple entities work behind the scenes to ensure your orders are executed safely and settlement happens smoothly.
+</InfoBox>
+
+## The Key Players
+
+### 1. Stockbrokers
+
+Your gateway to the markets. Brokers execute trades on your behalf and are registered with SEBI.
+
+**Types of brokers:**
+- **Full-service brokers** – Research, advisory, portfolio management
+- **Discount brokers** – Low-cost, execution-only (like Zerodha, Upstox)
+
+<InfoBox type="tip">
+  When choosing a broker, consider: brokerage charges, platform usability, research quality, and customer support. For beginners, a clean interface matters more than advanced features.
+</InfoBox>
+
+### 2. Depositories
+
+They hold your shares in electronic form. Think of them as "banks for your shares."
+
+- **NSDL** – National Securities Depository Limited
+- **CDSL** – Central Depository Services Limited
+
+Your **Demat account** is held with one of these. Without a demat account, you cannot hold shares.
+
+### 3. Depository Participants (DPs)
+
+The intermediaries between you and the depository. Your broker usually acts as your DP.
+
+## The Trade Flow
+
+<CodePlayground 
+  title="How Your Order Travels"
+  language="text"
+  code={`You place a BUY order
+    ↓
+Your Broker receives it
+    ↓
+Order sent to Exchange (NSE/BSE)
+    ↓
+Exchange matches with a SELL order
+    ↓
+Trade executed!
+    ↓
+Clearing Corporation (NSCCL/ICCL) ensures settlement
+    ↓
+Depository (NSDL/CDSL) credits shares to your demat
+    ↓
+You now own the shares! 🎉`}
+/>
+
+## Quick Check
+
+<Quiz
+  question="Where are your shares held electronically?"
+  options={[
+    "With your stockbroker",
+    "With the stock exchange (NSE/BSE)",
+    "With a depository (NSDL/CDSL) via your Demat account"
+  ]}
+  correctIndex={2}
+  explanation="Shares are held in dematerialized form with depositories (NSDL or CDSL). Your stockbroker acts as the Depository Participant (DP) to facilitate access."
+/>
+
+<InfoBox type="important">
+  Always ensure you have login access to your Demat account independently of your broker. Your shares belong to YOU, not your broker.
+</InfoBox>
+
+---
+
+*Next chapter: We'll explore how companies raise money through IPOs.*

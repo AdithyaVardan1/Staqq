@@ -1,6 +1,6 @@
 .card {
-  background: #111;
-  border: 1px solid #222;
+  background: #000000;
+  border: 1px solid #1a1a1a;
   border-radius: 14px;
   padding: 1.8rem;
 }
@@ -8,6 +8,7 @@
 .card h3 {
   font-size: 1.4rem;
   margin-bottom: 0.4rem;
+  color: #fff;
 }
 
 .desc {
@@ -33,7 +34,8 @@
 
 .progress {
   height: 100%;
-  background: #b6ff00; /* STAQQ green */
+  background: #b6ff00;
+  /* STAQQ green */
 }
 
 .card {

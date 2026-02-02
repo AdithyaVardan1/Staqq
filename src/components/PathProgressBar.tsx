@@ -1,30 +1,24 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getPathProgress } from '@/utils/pathProgress';
+import { useProgress } from '@/hooks/useProgress';
 
 interface PathProgressBarProps {
   pathKey: string;
   totalLessons: number;
 }
 
-interface ProgressState {
-  completed: number;
-  percentage: number;
-}
-
 export default function PathProgressBar({
   pathKey,
   totalLessons,
 }: PathProgressBarProps) {
-  const [progress, setProgress] = useState<ProgressState>({
-    completed: 0,
-    percentage: 0,
-  });
+  const { getCompletedCountForPath, isLoaded } = useProgress();
+  const completed = getCompletedCountForPath(pathKey);
 
-  useEffect(() => {
-    setProgress(getPathProgress(pathKey, totalLessons));
-  }, [pathKey, totalLessons]);
+  const percentage = totalLessons > 0
+    ? Math.round((completed / totalLessons) * 100)
+    : 0;
+
+  if (!isLoaded) return null;
 
   return (
     <div style={{ marginBottom: '2rem' }}>
@@ -40,7 +34,7 @@ export default function PathProgressBar({
         <div
           style={{
             height: '100%',
-            width: `${progress.percentage}%`,
+            width: `${percentage}%`,
             background: '#b6ff00',
             transition: 'width 0.3s ease',
           }}
@@ -48,7 +42,7 @@ export default function PathProgressBar({
       </div>
 
       <p style={{ fontSize: '0.9rem', color: '#9a9a9a' }}>
-        {progress.completed} of {totalLessons} lessons completed
+        {completed} of {totalLessons} lessons completed
       </p>
     </div>
   );

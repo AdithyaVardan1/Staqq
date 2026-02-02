@@ -1,133 +1,43 @@
-export interface Lesson {
-  title: string;
+import { getModulesByPath } from "./modules";
+
+function buildModulesForPath(pathKey: string) {
+  return getModulesByPath(pathKey).map((m) => ({
+    slug: m.slug,
+    title: m.title,
+    description: m.description,
+    chapterCount: m.chapters.length,
+  }));
 }
 
-export interface Module {
-  title: string;
-  description: string; // ✅ NEW
-  lessons: Lesson[];
-}
-
-export interface LearningPath {
-  title: string;
-  description: string;
-  modules: Module[];
-}
-
-export const learnPaths: Record<string, LearningPath> = {
+export const learnPaths = {
   beginner: {
-    title: 'Absolute Beginner',
-    description: 'Start from zero and understand how the stock market works.',
-    modules: [
-  {
-    title: 'What is a Stock?',
-    description: 'Understand companies, shares, and stock exchanges.',
-    lessons: [
-      { title: 'Companies and Shares' },
-      { title: 'Stock Exchanges' },
-    ],
-  },
-  {
-    title: 'How to Start Investing',
-    description: 'Learn how to open accounts and choose a broker.',
-    lessons: [
-      { title: 'Demat Account Basics' },
-      { title: 'Choosing a Broker' },
-    ],
-  },
-],
-
+    title: "Absolute Beginner",
+    description: "Start from zero. Learn what stocks are and how markets work.",
+    modules: buildModulesForPath("beginner"),
   },
 
   financials: {
-    title: 'Understanding Financials',
-    description: 'Learn how to read balance sheets and financial statements.',
-    modules: [
-      {
-        title: 'Balance Sheet Basics',
-        description: 'Understanding Numbers made easy',
-        lessons: [
-          { title: 'Assets & Liabilities' },
-          { title: 'Equity Explained' },
-        ],
-      },
-      {
-        title: 'Profit & Loss Statement',
-        description: 'How do you determine whether to invest in a company or not? Check this out',
-        lessons: [
-          { title: 'Revenue vs Profit' },
-          { title: 'Margins & Expenses' },
-        ],
-      },
-    ],
+    title: "Understanding Financials",
+    description: "Read balance sheets, P&L statements, and key ratios.",
+    modules: buildModulesForPath("financials"),
   },
 
   technical: {
-    title: 'Technical Analysis',
-    description: 'Learn charts, indicators, and price action.',
-    modules: [
-      {
-        title: 'Charts & Timeframes',
-        description: 'Understanding the timespans to invest',
-        lessons: [
-          { title: 'Types of Charts' },
-          { title: 'Timeframes Explained' },
-        ],
-      },
-      {
-        title: 'Indicators',
-        description: 'Quite like the name, it indicates to click on the indicated chapter, so do it',
-        lessons: [
-          { title: 'Moving Averages' },
-          { title: 'RSI & MACD' },
-        ],
-      },
-    ],
+    title: "Technical Analysis",
+    description: "Charts, patterns, indicators, and price action.",
+    modules: buildModulesForPath("technical"),
   },
 
   ipo: {
-    title: 'Technical Analysis',
-    description: 'Learn charts, indicators, and price action.',
-    modules: [
-      {
-        title: 'Charts & Timeframes',
-        description: 'Understanding the timespans to invest',
-        lessons: [
-          { title: 'Types of Charts' },
-          { title: 'Timeframes Explained' },
-        ],
-      },
-      {
-        title: 'Indicators',
-        description: 'Quite like the name, it indicates to click on the indicated chapter, so do it',
-        lessons: [
-          { title: 'Moving Averages' },
-          { title: 'RSI & MACD' },
-        ],
-      },
-    ],
+    title: "IPO Investing",
+    description: "From RHP to listing day and long-term evaluation.",
+    modules: buildModulesForPath("ipo"),
   },
-  
-  fundamentals: {
-    title: 'Technical Analysis',
-    description: 'Learn charts, indicators, and price action.',
-    modules: [
-      {
-        title: 'Charts & Timeframes',
-        description: 'Understanding the timespans to invest',
-        lessons: [
-          { title: 'Types of Charts' },
-          { title: 'Timeframes Explained' },
-        ],
-      },
-      {
-        title: 'Indicators',
-        description: 'Quite like the name, it indicates to click on the indicated chapter, so do it',
-        lessons: [
-          { title: 'Moving Averages' },
-          { title: 'RSI & MACD' },
-        ],
-      },
-    ],
+
+  fundamental: {
+    title: "Fundamental Analysis",
+    description: "Deep-dive into business and long-term investing.",
+    modules: buildModulesForPath("fundamental"),
   },
 };
+

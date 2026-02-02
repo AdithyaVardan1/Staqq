@@ -1,19 +1,21 @@
 .container {
   text-align: left;
-  max-width: 1200px;   /* slightly wider */
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2.5rem 1rem; /* less padding */
+  padding: 6rem 1rem 3rem;
 }
 
 .title {
-  font-size: 2.4rem;   /* ↓ from 3rem */
+  font-size: 2.4rem;
+  /* ↓ from 3rem */
   font-weight: 700;
   margin-bottom: 0.3rem;
   color: white;
 }
 
 .subtitle {
-  font-size: 1.05rem; /* ↓ slightly */
+  font-size: 1.05rem;
+  /* ↓ slightly */
   color: #cfcfcf;
   margin-bottom: 2rem;
 }

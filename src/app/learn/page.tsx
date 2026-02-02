@@ -1,28 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import styles from './page.module.css';
-import LearningPathCard from '@/components/LearnPathCard/LearnPathCard';
-import { getPathSummary } from '@/utils/getPathSummary';
-import { learnPaths } from '@/data/learnPaths';
+import styles from "./page.module.css";
+import LearningPathCard from "@/components/LearnPathCard/LearnPathCard";
+import { learnPaths } from "@/data/learnPaths";
+import { useProgress } from "@/hooks/useProgress";
 
 export default function LearnPage() {
-  const [progress, setProgress] = useState<Record<string, number>>({});
+  const { getCompletedCountForPath, isLoaded } = useProgress();
 
-  useEffect(() => {
-    const newProgress: Record<string, number> = {};
-
-    Object.entries(learnPaths).forEach(([key, path]) => {
-      const totalLessons = path.modules.reduce(
-        (sum, module) => sum + module.lessons.length,
-        0
-      );
-
-      newProgress[key] = getPathSummary(key, totalLessons);
-    });
-
-    setProgress(newProgress);
-  }, []);
+  if (!isLoaded) return null;
 
   return (
     <main className={styles.container}>
@@ -32,45 +18,28 @@ export default function LearnPage() {
       </p>
 
       <section className={styles.grid}>
-        <LearningPathCard
-          title="Absolute Beginner"
-          description="Start from zero. Learn what stocks are and how to invest safely."
-          modules={5}
-          progress={progress['beginner'] ?? 0}
-          slug="beginner"
-        />
+        {Object.entries(learnPaths).map(([key, path]) => {
+          const totalLessons = path.modules.reduce(
+            (sum, m) => sum + m.chapterCount,
+            0
+          );
+          const completed = getCompletedCountForPath(key);
+          const progress =
+            totalLessons > 0
+              ? Math.round((completed / totalLessons) * 100)
+              : 0;
 
-        <LearningPathCard
-          title="Understanding Financials"
-          description="Read balance sheets, P&L statements, and key ratios."
-          modules={5}
-          progress={progress['financials'] ?? 0}
-          slug="financials"
-        />
-
-        <LearningPathCard
-          title="Technical Analysis"
-          description="Charts, patterns, indicators, and price action."
-          modules={5}
-          progress={progress['technical'] ?? 0}
-          slug="technical"
-        />
-
-        <LearningPathCard
-          title="IPO Investing"
-          description="From RHP to listing day and long-term evaluation."
-          modules={5}
-          progress={progress['ipo'] ?? 0}
-          slug="ipo"
-        />
-
-        <LearningPathCard
-          title="Fundamental Analysis"
-          description="Deep-dive path for serious long-term investors."
-          modules={7}
-          progress={progress['fundamentals'] ?? 0}
-          slug="fundamentals"
-        />
+          return (
+            <LearningPathCard
+              key={key}
+              title={path.title}
+              description={path.description}
+              modules={path.modules.length}
+              progress={progress}
+              slug={key}
+            />
+          );
+        })}
       </section>
     </main>
   );

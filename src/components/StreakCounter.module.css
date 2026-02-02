@@ -1,0 +1,66 @@
+.container {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.lessonsInfo {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+    color: #8b9dc3;
+}
+
+.count {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #a5b4fc;
+}
+
+.separator {
+    color: #6b7280;
+}
+
+.total {
+    font-weight: 600;
+    color: #9ca3af;
+}
+
+.label {
+    color: #6b7280;
+}
+
+.streak {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    padding: 0.4rem 0.75rem;
+    border-radius: 100px;
+}
+
+.fire {
+    font-size: 1rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.streakText {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #fb923c;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+}

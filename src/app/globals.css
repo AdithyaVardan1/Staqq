@@ -1,17 +1,19 @@
+@import '../styles/markdown.css';
+
 :root {
   /* Premium Dark Theme Palette */
-  
+
   /* Primary Brand: Neon Lime/Yellow (High Energy) */
   --primary-brand-h: 74;
   --primary-brand-s: 100%;
   --primary-brand-l: 50%;
   --primary-brand: hsl(var(--primary-brand-h), var(--primary-brand-s), var(--primary-brand-l));
-  
+
   /* Backgrounds */
   --bg-dark: #0A0A0A;
   --bg-card: #121212;
   --bg-surface: #1E1E1E;
-  
+
   /* Text */
   --text-primary: #FFFFFF;
   --text-secondary: #A1A1AA;
@@ -55,7 +57,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-outfit), sans-serif;
   color: var(--text-primary);
   font-weight: 700;
@@ -87,14 +94,30 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
-.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 
 @media (min-width: 768px) {
-  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 /* Reset buttons */
@@ -103,4 +126,75 @@ button {
   background: none;
   cursor: pointer;
   font-family: inherit;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  margin-top: 2rem;
+}
+
+.markdown p {
+  line-height: 1.7;
+  margin: 1rem 0;
+  color: #ddd;
+}
+
+.markdown ul {
+  padding-left: 1.2rem;
+}
+
+.markdown li {
+  margin-bottom: 0.4rem;
+}
+
+.markdown strong {
+  color: #fff;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  margin-top: 2rem;
+}
+
+.markdown h1 {
+  font-size: 2.1rem;
+}
+
+.markdown h2 {
+  font-size: 1.6rem;
+}
+
+.markdown h3 {
+  font-size: 1.3rem;
+}
+
+.markdown p {
+  line-height: 1.7;
+  margin: 1rem 0;
+  color: #ddd;
+}
+
+.markdown ul {
+  padding-left: 1.2rem;
+}
+
+.markdown li {
+  margin-bottom: 0.4rem;
+}
+
+.markdown strong {
+  color: #fff;
+}
+
+.markdown a {
+  color: #9fff00;
+  text-decoration: underline;
+}
+
+.markdown img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 1.5rem 0;
 }
