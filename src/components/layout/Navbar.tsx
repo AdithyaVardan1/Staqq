@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button';
 import styles from './Navbar.module.css';
 
 const navLinks = [
-    { name: 'IPO Hub', href: '/' },
+    { name: 'IPO Hub', href: '/ipo' },
     { name: 'Stocks', href: '/stocks/screener' },
     { name: 'Learn', href: '/learn' },
     { name: 'Tools', href: '/tools' },
