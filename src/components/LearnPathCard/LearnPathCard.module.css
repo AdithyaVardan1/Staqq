@@ -3,6 +3,11 @@
   border: 1px solid #1a1a1a;
   border-radius: 14px;
   padding: 1.8rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card h3 {
@@ -23,6 +28,7 @@
   font-size: 0.85rem;
   color: #9a9a9a;
   margin-bottom: 0.6rem;
+  margin-top: auto;
 }
 
 .progressBar {
@@ -36,10 +42,4 @@
   height: 100%;
   background: #b6ff00;
   /* STAQQ green */
-}
-
-.card {
-  text-decoration: none;
-  color: inherit;
-  display: block;
 }

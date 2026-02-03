@@ -58,8 +58,9 @@ export function ChartExample({
     years = 20,
     rate = 12,
     title,
+    data,
 }: ChartExampleProps) {
-    const data = generateCompoundData(initialAmount, years, rate);
+    const chartData = data || generateCompoundData(initialAmount, years, rate);
 
     const formatCurrency = (value: number) => {
         if (value >= 10000000) return `₹${(value / 10000000).toFixed(1)}Cr`;
@@ -79,7 +80,7 @@ export function ChartExample({
 
             <div className={styles.chartWrapper}>
                 <ResponsiveContainer width="100%" height={300}>
-                    <AreaChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                    <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                         <defs>
                             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
@@ -110,7 +111,7 @@ export function ChartExample({
                                 borderRadius: "8px",
                                 color: "#e5e7eb",
                             }}
-                            formatter={(value: number, name: string) => [
+                            formatter={(value: any, name: any) => [
                                 formatCurrency(value),
                                 name === "value" ? "Total Value" : "Invested",
                             ]}
@@ -154,13 +155,13 @@ export function ChartExample({
                 <div className={styles.stat}>
                     <span className={styles.statLabel}>Final Value</span>
                     <span className={styles.statValue} style={{ color: "#22c55e" }}>
-                        {formatCurrency(data[data.length - 1]?.value || 0)}
+                        {formatCurrency(chartData[chartData.length - 1]?.value || 0)}
                     </span>
                 </div>
                 <div className={styles.stat}>
                     <span className={styles.statLabel}>Wealth Gain</span>
                     <span className={styles.statValue} style={{ color: "#fbbf24" }}>
-                        {formatCurrency((data[data.length - 1]?.value || 0) - initialAmount * 12 * years)}
+                        {formatCurrency((chartData[chartData.length - 1]?.value || 0) - initialAmount * 12 * years)}
                     </span>
                 </div>
             </div>

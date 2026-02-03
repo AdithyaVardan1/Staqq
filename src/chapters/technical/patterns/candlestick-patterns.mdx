@@ -1,49 +1,67 @@
 # Candlestick Patterns
 
-Candlestick patterns are the "short-term" signals of technical analysis. They often signal reversals or continuations over 1-5 days.
+Candlesticks are the fastest signals in the market. While chart patterns take weeks, candlesticks take days. They give you the earliest warning of a reversal.
 
-## Bullish Patterns (Buy Signals)
+## The Power of Location
+**CRITICAL:** A candlestick pattern is USELESS in isolation.
+- A **Hammer** in the middle of a sideways range = Noise.
+- A **Hammer** at a major Support Level = **Gold.**
 
-### Hammer
-- Small body at top, long lower wick (2x body).
-- **Context:** At support after a downtrend.
-- **Meaning:** Sellers pushed low, buyers rejected it.
+*Always combine candles with Support/Resistance.*
 
-### Bullish Engulfing
-- Red candle followed by a bigger Green candle that technically "engulfs" the previous body.
-- **Context:** Bottom of a downtrend.
-- **Meaning:** Buyers have overwhelmed sellers.
+## Top Bullish Patterns (Buy Signals)
 
-### Morning Star
-- 3 Candles: Big Red -> Small Body (Star) -> Big Green.
-- **Meaning:** Momentum shift from down to up.
+### 1. The Hammer (Pinbar)
+- **Look:** Small body at the top, very long lower wick.
+- **Story:** Bears pushed price down hard. Bulls stepped in and pushed it all the way back up. Bears failed.
+- **Entry:** Buy above the high of the hammer.
 
-## Bearish Patterns (Sell Signals)
+### 2. Bullish Engulfing
+- **Look:** Day 1 is Red. Day 2 is Green and the body completely covers (engulfs) Day 1.
+- **Story:** Total shift in sentiment. Buyers have overpowered sellers completely.
 
-### Shooting Star
-- Inverted Hammer shape at the *top* of a trend.
-- Long upper wick.
-- **Meaning:** Buyers tried to push up, sellers slammed it down.
+### 3. Morning Star
+- **Look:** Day 1 Big Red. Day 2 Small body (indecision). Day 3 Big Green.
+- **Story:** Downward momentum stopped (Day 2), and reversed (Day 3).
 
-### Bearish Engulfing
-- Green candle followed by a bigger Red candle.
-- **Context:** Top of an uptrend.
+## Top Bearish Patterns (Sell Signals)
 
-### Evening Star
-- 3 Candles: Big Green -> Small Body (Star) -> Big Red.
+### 1. Shooting Star
+- **Look:** Inverted Hammer. Small body at bottom, long upper wick.
+- **Story:** Bulls tried to rally. Bears slapped price down. Bulls failed.
 
-## Reliability Checklist
+### 2. Bearish Engulfing
+- **Look:** Day 1 Green. Day 2 Red and engulfs Day 1.
+- **Story:** Sellers have taken control.
+
+### 3. Evening Star
+- **Look:** Day 1 Green. Day 2 Small. Day 3 Red.
+- **Story:** Uptrend stalled and reversed.
+
+## Indecision Patterns (Wait)
+
+### The Doji
+- **Look:** Opens and Closes at virtually the same price. Looks like a cross.
+- **Story:** Tug of war. Buyers and Sellers are equal.
+- **Action:** A Doji indicates a *potential* reversal, but needs a confirmation candle the next day to prove it.
 
 <Table 
-  headers={["Pattern","Reliability","Confirmation Needed?"]}
+  headers={["Pattern","Type","Signal Strength","Confirmation Required"]}
   rows={[
-    ["Engulfing", "High", "No (if at support)"],
-    ["Morning/Evening Star", "High", "No"],
-    ["Hammer/Shooting Star", "Medium", "Yes (next candle close)"],
-    ["Doji (Indecision)", "Low", "YES (wait for break)"]
+    ["Engulfing", "Reversal", "High", "No"],
+    ["Hammer/Shooting Star", "Reversal", "Medium", "Yes (Next candle close)"],
+    ["Doji", "Neutral", "Low", "YES (Mandatory)"]
   ]}
 />
 
-<InfoBox type="warning">
-  Never trade a candlestick pattern in isolation. A Hammer in the middle of nowhere means nothing. A Hammer at a major Support Level is a trade.
-</InfoBox>
+<Quiz 
+  question="You see a perfect 'Hammer' candle. Based on 'Location', when should you act on it?"
+  options={[
+    "Anytime I see it",
+    "When it appears at a Resistance level",
+    "When it appears after a downtrend AT Support",
+    "When it appears after an uptrend"
+  ]}
+  correctIndex={2}
+  explanation="A Hammer is a Bullish Reversal signal. It is only valid if there is a prior downtrend to reverse AND it forms at a Key Support level where buyers are expected to step in."
+/>
