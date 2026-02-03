@@ -54,6 +54,7 @@ interface LearnPathPageProps {
 }
 
 import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import styles from './page.module.css';
 
 export default async function LearnPathPage({ params }: LearnPathPageProps) {
@@ -70,6 +71,7 @@ export default async function LearnPathPage({ params }: LearnPathPageProps) {
   return (
     <main className={styles.container}>
       <Link href="/learn" className={styles.backLink}>
+        <ArrowLeft strokeWidth={2.5} size={18} />
         Back to Paths
       </Link>
       <h1 style={{ fontSize: '2.4rem' }}>{pathData.title}</h1>

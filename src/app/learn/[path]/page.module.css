@@ -1,5 +1,7 @@
 .backLink {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     color: #b6ff00;
     text-decoration: none;
     font-weight: 500;

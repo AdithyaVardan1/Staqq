@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getModuleBySlug, modules } from "@/data/modules";
 import styles from "./lesson.module.css";
@@ -81,6 +82,7 @@ export default async function LessonPage({ params }: PageProps) {
         <main className={styles.lessonContainer}>
             <div className={styles.topNavigation}>
                 <Link href={`/learn/${pathKey}/${moduleSlug}`} className={styles.backLink}>
+                    <ArrowLeft strokeWidth={2.5} size={18} />
                     Back to Chapters
                 </Link>
             </div>
