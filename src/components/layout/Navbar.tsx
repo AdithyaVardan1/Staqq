@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 import { Menu, X, Search, User } from 'lucide-react';
@@ -39,8 +40,18 @@ export const Navbar = () => {
                 <div className="container">
                     <div className={styles.inner}>
                         {/* Logo */}
+                        {/* Logo */}
                         <Link href="/" className={styles.logo}>
-                            STAQQ
+                            <div className={styles.logoImageWrapper}>
+                                <Image
+                                    src="/staqq.png"
+                                    alt="STAQQ"
+                                    width={100}
+                                    height={32}
+                                    className={styles.logoImage}
+                                    priority
+                                />
+                            </div>
                         </Link>
 
                         {/* Desktop Nav */}
