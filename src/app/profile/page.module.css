@@ -1,0 +1,149 @@
+.main {
+    padding-top: 140px;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.profileHeader {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 48px;
+    background: rgba(255, 255, 255, 0.03);
+    padding: 32px;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(var(--primary-brand-h), var(--primary-brand-s), var(--primary-brand-l), 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--primary-brand);
+}
+
+.userInfo {
+    flex: 1;
+}
+
+.userName {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.userHandle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.statsCard {
+    padding: 24px;
+}
+
+.statsCard h3 {
+    margin-bottom: 24px;
+    color: var(--text-secondary);
+}
+
+.statsGrid {
+    display: flex;
+    justify-content: space-around;
+}
+
+.statItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.statValue {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-outfit);
+}
+
+.statLabel {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.achievementsCard {
+    padding: 24px;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.badgesList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+}
+
+.settingsMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 500;
+    transition: all 0.2s;
+    text-align: left;
+}
+
+.menuItem:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.danger {
+    color: #ef4444;
+}
+
+.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.2);
+}
