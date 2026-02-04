@@ -5,12 +5,16 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 export default function SignupPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -68,7 +72,9 @@ export default function SignupPage() {
                             />
                         </div>
 
-                        <Button variant="primary" fullWidth size="lg">Sign Up</Button>
+                        <Button variant="primary" fullWidth size="lg" disabled={loading}>
+                            {loading ? 'Creating Account...' : 'Sign Up'}
+                        </Button>
                     </form>
 
                     <div className={styles.footer}>
