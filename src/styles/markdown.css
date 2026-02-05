@@ -1,0 +1,111 @@
+/* .markdown h1,
+.markdown h2,
+.markdown h3 {
+    margin-top: 2rem;
+}
+
+.markdown p {
+    line-height: 1.7;
+    margin: 1rem 0;
+    color: #ddd;
+}
+
+.markdown ul {
+    padding-left: 1.2rem;
+}
+
+.markdown li {
+    margin-bottom: 0.4rem;
+}
+
+.markdown strong {
+    color: #fff;
+} */
+
+.markdown {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: #ddd;
+}
+
+/* Headings */
+.markdown h1 {
+    font-size: 2rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.markdown h2 {
+    font-size: 1.6rem;
+    margin-top: 2.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.markdown h3 {
+    font-size: 1.3rem;
+    margin-top: 2rem;
+    margin-bottom: 0.6rem;
+}
+
+/* Paragraphs */
+.markdown p {
+    margin: 0.8rem 0;
+}
+
+/* Lists */
+.markdown ul,
+.markdown ol {
+    margin: 1rem 0 1rem 1.2rem;
+    padding-left: 1rem;
+}
+
+.markdown li {
+    margin-bottom: 0.5rem;
+}
+
+/* Strong / emphasis */
+.markdown strong {
+    color: #fff;
+}
+
+/* Horizontal rule */
+.markdown hr {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 2rem 0;
+}
+
+/* Links */
+.markdown a {
+    color: #9fff00;
+    text-decoration: underline;
+}
+
+/* Tables */
+.markdown table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+.markdown th,
+.markdown td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: 1px solid #333;
+}
+
+.markdown th {
+    background-color: rgba(159, 255, 0, 0.1);
+    color: #fff;
+    font-weight: 600;
+}
+
+.markdown tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
+.markdown tr:hover {
+    background-color: rgba(159, 255, 0, 0.05);
+}
