@@ -1,0 +1,36 @@
+.main {
+    padding-top: 140px;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.title {
+    font-size: 3rem;
+    margin-bottom: 16px;
+}
+
+.lastUpdated {
+    color: var(--text-secondary);
+    margin-bottom: 48px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.sectionTitle {
+    font-size: 1.5rem;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.text {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 16px;
+}

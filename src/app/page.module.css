@@ -1,47 +1,98 @@
 .main {
-  padding-top: 80px;
-  /* Navbar Ht */
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .hero {
-  padding: var(--spacing-2xl) 0;
-  position: relative;
-}
-
-.heroHeader {
+  padding: 120px 0 80px;
   text-align: center;
-  margin-bottom: var(--spacing-2xl);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
-.title {
-  font-size: 3rem;
-  line-height: 1;
-  margin-bottom: var(--spacing-md);
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: var(--spacing-lg);
+  background: linear-gradient(180deg, #fff 0%, #ccc 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.subtitle {
-  font-size: 1.25rem;
+.heroTitle span {
+  background: none;
+  -webkit-text-fill-color: var(--primary-brand);
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
   color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto var(--spacing-2xl);
 }
 
-.section {
-  padding: var(--spacing-xl) 0;
-}
-
-.sectionHeader {
+.heroActions {
   display: flex;
-  justify-content: space-between;
+  gap: var(--spacing-md);
+  justify-content: center;
+}
+
+.features {
+  padding: 80px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.cardLink {
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.cardLink:hover {
+  transform: translateY(-5px);
+}
+
+.featureCard {
+  height: 100%;
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.featureCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--primary-brand);
+}
+
+.iconWrapper {
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: rgba(var(--primary-brand-h), var(--primary-brand-s), var(--primary-brand-l), 0.1);
+  border-radius: 50%;
+}
+
+.featureCard h3 {
+  font-size: 1.5rem;
   margin-bottom: var(--spacing-md);
 }
 
-/* Responsive */
+.featureCard p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
 @media (max-width: 768px) {
-  .title {
-    font-size: 2.25rem;
+  .heroTitle {
+    font-size: 3rem;
   }
 }
