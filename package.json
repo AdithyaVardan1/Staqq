@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "clsx": "^2.1.1",
+    "dotenv": "^17.2.3",
     "framer-motion": "^12.29.0",
     "lucide-react": "^0.563.0",
     "next": "16.1.4",
+    "otplib": "^13.2.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "recharts": "^3.7.0"
+    "recharts": "^3.7.0",
+    "smartapi-javascript": "^1.0.27",
+    "yahoo-finance2": "^3.13.0"
   },
   "devDependencies": {
     "@types/node": "^20",
