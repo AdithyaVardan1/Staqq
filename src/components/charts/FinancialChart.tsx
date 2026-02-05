@@ -33,24 +33,27 @@ export const FinancialChart: React.FC<FinancialChartProps> = ({
                             <stop offset="95%" stopColor={color} stopOpacity={0} />
                         </linearGradient>
                     </defs>
-                    {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />}
+                    {/* Minimalist Design: No Grid */}
+                    {/* {showGrid && <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />} */}
+
                     <XAxis
                         dataKey="date"
-                        stroke="rgba(255,255,255,0.4)"
-                        tick={{ fontSize: 12 }}
+                        stroke="rgba(255,255,255,0.2)"
+                        tick={{ fontSize: 10, fill: '#666' }}
                         tickLine={false}
                         axisLine={false}
+                        minTickGap={30}
                     />
+
                     <YAxis
-                        stroke="rgba(255,255,255,0.4)"
-                        tick={{ fontSize: 12 }}
-                        tickLine={false}
-                        axisLine={false}
-                        tickFormatter={(value) => `₹${value}`}
+                        domain={['dataMin', 'dataMax']} /* Force dynamic scaling */
+                        hide={true} /* Hide axis labels completely like Groww */
                     />
+
                     <Tooltip
                         contentStyle={{ backgroundColor: '#121212', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
                         itemStyle={{ color: '#fff' }}
+                        cursor={{ stroke: 'rgba(255,255,255,0.2)', strokeWidth: 1, strokeDasharray: '4 4' }}
                         formatter={(value: any) => [`₹${value}`, 'Price']}
                     />
                     <Area
@@ -60,6 +63,7 @@ export const FinancialChart: React.FC<FinancialChartProps> = ({
                         strokeWidth={2}
                         fillOpacity={1}
                         fill="url(#colorValue)"
+                        isAnimationActive={true}
                     />
                 </AreaChart>
             </ResponsiveContainer>

@@ -47,6 +47,7 @@
     padding: var(--spacing-md);
     position: sticky;
     top: 100px;
+    overflow: visible !important;
 }
 
 .filterGroup {
@@ -80,6 +81,48 @@
 
 .range {
     width: 100%;
+    accent-color: var(--primary-brand);
+    cursor: pointer;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Custom Range Styling for consistent look */
+.range::-webkit-slider-runnable-track {
+    background: rgba(255, 255, 255, 0.1);
+    height: 4px;
+    border-radius: 2px;
+}
+
+.range::-moz-range-track {
+    background: rgba(255, 255, 255, 0.1);
+    height: 4px;
+    border-radius: 2px;
+}
+
+.range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: var(--primary-brand);
+    cursor: pointer;
+    margin-top: -5px;
+    /* (track_height/2) - (thumb_height/2) */
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.3);
+    border: none;
+}
+
+.range::-moz-range-thumb {
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    background: var(--primary-brand);
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.3);
+    border: none;
 }
 
 .rangeLabels {
@@ -88,6 +131,213 @@
     font-size: 0.75rem;
     color: var(--text-secondary);
     margin-top: 4px;
+}
+
+.filterTitleRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.filterValue {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--primary-brand);
+}
+
+.infoIconWrapper {
+    display: inline-flex;
+    position: relative;
+    margin-left: auto;
+    /* Push to right */
+    align-items: center;
+}
+
+.infoIcon {
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.infoIconWrapper:hover .infoIcon {
+    color: var(--primary-brand);
+}
+
+
+/* Custom Tooltip */
+.tooltip {
+    position: absolute;
+    top: 50%;
+    right: 130%;
+    /* Position to the left of the icon */
+    transform: translateY(-50%) translateX(10px);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s var(--ease-spring);
+    z-index: 100;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+.infoIconWrapper:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Dropdown visibility fixes */
+.select {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: var(--text-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+}
+
+.select option {
+    background-color: var(--bg-card);
+    /* Ensure dark bg for options */
+    color: var(--text-primary);
+    padding: 8px;
+}
+
+/* For system-level dropdowns that don't respect background-color well */
+.select:focus {
+    border-color: var(--primary-brand);
+}
+
+.peGradient {
+    height: 4px;
+    width: 100%;
+    margin-top: 8px;
+    border-radius: 2px;
+    background: linear-gradient(to right, #22C55E, #EAB308, #EF4444);
+}
+
+.undervalued {
+    color: #22C55E;
+}
+
+.overvalued {
+    color: #EF4444;
+}
+
+.radioGroup {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+}
+
+.radioLabel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.radioLabel:has(input:checked) {
+    background: var(--primary-brand);
+    color: var(--text-on-brand);
+    font-weight: 600;
+}
+
+.radioLabel input {
+    display: none;
+}
+
+.resultsToolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-md);
+}
+
+.toolbarRight {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.sortDropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 6px 12px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+}
+
+.sortIcon {
+    opacity: 0.6;
+}
+
+.compactSelect {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    padding-right: 4px;
+}
+
+.compactSelect option {
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.viewToggle {
+    display: flex;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+}
+
+.toggleBtn {
+    width: 36px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.toggleBtn:hover {
+    color: var(--text-primary);
+}
+
+.toggleBtn.active {
+    background: var(--primary-brand);
+    color: var(--text-on-brand);
 }
 
 /* Results */
@@ -100,11 +350,53 @@
     gap: 8px;
     margin-bottom: var(--spacing-md);
     align-items: center;
+    flex-wrap: wrap;
+}
+
+.filterBadge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(204, 255, 0, 0.1);
+    border: 1px solid rgba(204, 255, 0, 0.2);
+    color: var(--primary-brand);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.filterBadge:hover {
+    background: rgba(204, 255, 0, 0.15);
+    border-color: rgba(204, 255, 0, 0.3);
+}
+
+.removeFilter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.removeFilter:hover {
+    opacity: 1;
 }
 
 .clearAll {
     font-size: 0.8rem;
     color: var(--text-secondary);
     cursor: pointer;
-    text-decoration: underline;
+    text-decoration: none;
+    margin-left: 8px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.clearAll:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
 }

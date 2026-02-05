@@ -1,13 +1,13 @@
 .container {
     height: 100%;
-}
-
-.link {
-    text-decoration: none;
-    color: inherit;
     display: flex;
     flex-direction: column;
+}
+
+.cardContent {
     padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
     gap: var(--spacing-md);
     height: 100%;
 }
@@ -19,22 +19,61 @@
 }
 
 .logo {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     background: var(--bg-surface);
     border: 1px solid var(--glass-border);
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    color: var(--text-secondary);
+    color: var(--primary-brand);
+    font-size: 1.1rem;
+}
+
+.tickerInfo {
+    flex: 1;
+}
+
+.tickerHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .ticker {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 700;
     line-height: 1.2;
+}
+
+.liveIndicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--primary-brand);
+    background: rgba(var(--primary-brand-rgb), 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
 }
 
 .name {
@@ -43,11 +82,18 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 120px;
+    display: block;
+}
+
+.priceRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--spacing-sm);
 }
 
 .priceSection {
-    margin-top: auto;
+    flex: 1;
 }
 
 .price {
@@ -57,31 +103,54 @@
 }
 
 .change {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 4px;
+    margin-top: 2px;
 }
 
-.meta {
-    display: flex;
-    justify-content: space-between;
-    padding-top: 8px;
+.chartSection {
+    width: 80px;
+    height: 40px;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xs);
+    padding-top: var(--spacing-sm);
     border-top: 1px solid var(--glass-border);
 }
 
-.metaItem {
+.metric {
     display: flex;
     flex-direction: column;
-    font-size: 0.75rem;
 }
 
-.metaItem span:first-child {
+.metricLabel {
+    font-size: 0.65rem;
     color: var(--text-secondary);
-    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.metaItem span:last-child {
+.metricValue {
+    font-size: 0.8rem;
     font-weight: 600;
+    margin-top: 2px;
+}
+
+.detailsLink {
+    text-decoration: none;
+    margin-top: auto;
+}
+
+.detailsButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 0.8rem;
 }

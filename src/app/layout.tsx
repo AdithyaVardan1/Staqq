@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { StreamProvider } from "@/context/StreamContext";
 
 export default function RootLayout({
   children,
@@ -19,11 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable}`}>
-        <Navbar />
-        {children}
-        <Footer />
+        <StreamProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </StreamProvider>
       </body>
     </html>
   );

@@ -27,6 +27,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     className
                 )}
                 disabled={disabled || isLoading}
+                suppressHydrationWarning
                 {...props}
             >
                 {isLoading && <Loader2 className={styles.spinner} size={16} />}

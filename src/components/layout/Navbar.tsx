@@ -94,7 +94,7 @@ export const Navbar = () => {
 
                         {/* Actions */}
                         <div className={styles.actions}>
-                            <button className={styles.iconBtn} aria-label="Search">
+                            <button className={styles.iconBtn} aria-label="Search" suppressHydrationWarning>
                                 <Search size={20} />
                             </button>
 
@@ -126,6 +126,7 @@ export const Navbar = () => {
                                 className={styles.mobileToggle}
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 aria-label="Toggle Menu"
+                                suppressHydrationWarning
                             >
                                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                             </button>
