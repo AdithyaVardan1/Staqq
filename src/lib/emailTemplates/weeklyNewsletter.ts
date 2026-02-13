@@ -325,7 +325,10 @@ export function buildWeeklyNewsletter(content: NewsletterContent, recipientEmail
               </p>
               <p style="margin: 16px 0 0; font-size: 11px; color: #3F3F46;">
                 Staqq · Making investing less intimidating<br>
-                staqq.in · hello@staqq.in
+                staqq.in
+              </p>
+              <p style="margin: 16px 0 0; font-size: 11px; color: #EDEDED; line-height: 1.5;">
+                Disclaimer: Content in The Stack is for educational purposes only. Not investment advice. We're not SEBI registered. Always DYOR before making any investment decision. Full disclaimer at <a href="https://staqq.in/disclaimer" style="color: #FFFFFF; text-decoration: underline;">staqq.in/disclaimer</a>
               </p>
             </td>
           </tr>
