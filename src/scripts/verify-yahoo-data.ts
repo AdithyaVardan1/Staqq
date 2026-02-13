@@ -5,7 +5,7 @@ async function verifyYahoo() {
     const ticker = 'RELIANCE.NS';
     try {
         console.log(`[Diagnostic] Fetching data for ${ticker}...`);
-        const quote = await yahooFinance.quoteSummary(ticker, {
+        const quote: any = await yahooFinance.quoteSummary(ticker, {
             modules: [
                 'summaryDetail',
                 'defaultKeyStatistics',
