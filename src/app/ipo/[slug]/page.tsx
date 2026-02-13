@@ -1,137 +1,188 @@
-
 import React from 'react';
+import { notFound } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { Button } from '@/components/ui/Button';
-import { ProgressBar } from '@/components/ui/ProgressBar';
-import { FinancialChart } from '@/components/charts/FinancialChart';
-import { ArrowLeft, Share2, Info } from 'lucide-react';
+import { ArrowLeft, Share2, TrendingUp, TrendingDown, Flame, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
+import { getIPOBySlug, getAllIPOs } from '@/lib/ipo';
 import styles from './page.module.css';
 
-// Mock Data for individual page
-const IPO_DATA = {
-    name: 'Zomato Ltd',
-    priceBand: '₹72 - ₹76',
-    lotSize: 195,
-    issueSize: '₹9,375 Cr',
-    status: 'Live',
-    openDate: 'Jul 14',
-    closeDate: 'Jul 16',
-    subscription: {
-        retail: 7.4,
-        hni: 3.2,
-        qib: 15.6,
-        total: 38.2,
-    },
-    gmpTrend: [
-        { date: 'Jul 10', value: 10 },
-        { date: 'Jul 11', value: 12 },
-        { date: 'Jul 12', value: 15 },
-        { date: 'Jul 13', value: 18 },
-        { date: 'Jul 14', value: 15 },
-    ],
-};
+export const revalidate = 300;
 
-export default function IPODetail({ params }: { params: { slug: string } }) {
-    // In a real app, await params and fetch data
+// Generate static params for known slugs
+export async function generateStaticParams() {
+    const ipos = await getAllIPOs();
+    return ipos.map(ipo => ({ slug: ipo.slug }));
+}
+
+export default async function IPODetail({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const ipo = await getIPOBySlug(slug);
+
+    if (!ipo) {
+        notFound();
+    }
+
+    const gmpPositive = (ipo.gmpPercent ?? 0) > 0;
+    const gmpNegative = (ipo.gmpPercent ?? 0) < 0;
+
+    const statusVariant = ipo.status === 'Live' ? 'brand'
+        : ipo.status === 'Upcoming' ? 'neutral'
+            : 'success';
+
     return (
         <main className={styles.main}>
             <div className="container">
                 {/* Breadcrumb & Actions */}
                 <div className={styles.topBar}>
-                    <Link href="/" className={styles.backLink}>
+                    <Link href="/ipo" className={styles.backLink}>
                         <ArrowLeft size={20} /> Back to IPOs
                     </Link>
-                    <Button variant="ghost" size="icon"><Share2 size={20} /></Button>
                 </div>
 
                 {/* Header Section */}
                 <section className={styles.header}>
                     <div className={styles.logoName}>
-                        <div className={styles.logoCtx}>Z</div>
+                        <div className={styles.logoCtx}>{ipo.name.charAt(0)}</div>
                         <div>
-                            <h1 className={styles.title}>{IPO_DATA.name}</h1>
+                            <h1 className={styles.title}>{ipo.name}</h1>
                             <div className={styles.badges}>
-                                <Badge variant="brand">Mainboard</Badge>
-                                <Badge variant="success">Live Now</Badge>
+                                <Badge variant={statusVariant}>
+                                    {ipo.status === 'Live' && <span className={styles.liveDot} />}
+                                    {ipo.status}
+                                </Badge>
+                                <Badge variant="outline">{ipo.category}</Badge>
+                                {ipo.hasAnchor && (
+                                    <Badge variant="success">
+                                        <CheckCircle size={12} style={{ marginRight: 4 }} />
+                                        Anchor
+                                    </Badge>
+                                )}
+                                {ipo.rating > 0 && (
+                                    <div className={styles.ratingBadge}>
+                                        {Array.from({ length: ipo.rating }).map((_, i) => (
+                                            <Flame key={i} size={14} className={styles.fireIcon} />
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
-                    <div className={styles.ctaSection}>
-                        <div className={styles.priceBlock}>
-                            <span className={styles.label}>Price Band</span>
-                            <span className={styles.heroPrice}>{IPO_DATA.priceBand}</span>
+                    {ipo.price && (
+                        <div className={styles.ctaSection}>
+                            <div className={styles.priceBlock}>
+                                <span className={styles.label}>Issue Price</span>
+                                <span className={styles.heroPrice}>₹{ipo.price}</span>
+                            </div>
                         </div>
-                        <Button variant="primary" size="lg">Apply Now</Button>
-                    </div>
+                    )}
                 </section>
 
                 {/* Layout Grid */}
                 <div className={styles.grid}>
-                    {/* Left Column (Main Info) */}
+                    {/* Left Column */}
                     <div className={styles.colMain}>
-                        {/* Subscription Status */}
+                        {/* GMP Card */}
                         <Card className={styles.sectionCard}>
-                            <h2 className={styles.cardTitle}>Subscription Status</h2>
-                            <div className={styles.subGrid}>
-                                <div className={styles.subItem}>
-                                    <div className={styles.subLabel}> Retail (RII)</div>
-                                    <div className={styles.subVal}>{IPO_DATA.subscription.retail}x</div>
-                                    <ProgressBar progress={70} variant="brand" />
+                            <h2 className={styles.cardTitle}>Grey Market Premium (GMP)</h2>
+                            <div className={styles.gmpHero}>
+                                <div className={styles.gmpMain}>
+                                    {gmpPositive ? <TrendingUp size={28} className={styles.gmpIconGreen} /> :
+                                        gmpNegative ? <TrendingDown size={28} className={styles.gmpIconRed} /> : null}
+                                    <span className={gmpPositive ? styles.gmpValueGreen : gmpNegative ? styles.gmpValueRed : styles.gmpValueNeutral}>
+                                        {ipo.gmp !== null ? `${ipo.gmp >= 0 ? '+' : ''}₹${ipo.gmp}` : '—'}
+                                    </span>
+                                    {ipo.gmpPercent !== null && (
+                                        <span className={styles.gmpPct}>
+                                            ({ipo.gmpPercent >= 0 ? '+' : ''}{ipo.gmpPercent}%)
+                                        </span>
+                                    )}
                                 </div>
-                                <div className={styles.subItem}>
-                                    <div className={styles.subLabel}> Non-Inst (NII)</div>
-                                    <div className={styles.subVal}>{IPO_DATA.subscription.hni}x</div>
-                                    <ProgressBar progress={30} variant="warning" />
-                                </div>
-                                <div className={styles.subItem}>
-                                    <div className={styles.subLabel}> QIB</div>
-                                    <div className={styles.subVal}>{IPO_DATA.subscription.qib}x</div>
-                                    <ProgressBar progress={90} variant="success" />
-                                </div>
-                            </div>
-                            <div className={styles.totalSub}>
-                                <span>Total Subscription</span>
-                                <span className="text-brand">{IPO_DATA.subscription.total}x</span>
-                            </div>
-                        </Card>
-
-                        {/* GMP Trend */}
-                        <Card className={styles.sectionCard}>
-                            <div className={styles.cardHeader}>
-                                <h2 className={styles.cardTitle}>GMP Trend</h2>
-                                <Badge variant="neutral">Updated 1h ago</Badge>
-                            </div>
-                            <div className={styles.chartWrapper}>
-                                <FinancialChart data={IPO_DATA.gmpTrend} />
+                                {ipo.estListing && (
+                                    <div className={styles.estListing}>
+                                        <span className={styles.label}>Est. Listing Price</span>
+                                        <span className={styles.estListingVal}>₹{ipo.estListing}</span>
+                                    </div>
+                                )}
                             </div>
                             <p className={styles.disclaimer}>
                                 * Grey Market Premium is unofficial and non-binding.
                             </p>
                         </Card>
+
+                        {/* Subscription Card */}
+                        {ipo.subscription && (
+                            <Card className={styles.sectionCard}>
+                                <h2 className={styles.cardTitle}>Subscription Status</h2>
+                                <div className={styles.subHero}>
+                                    <span className={styles.subHeroVal}>{ipo.subscription}</span>
+                                </div>
+                            </Card>
+                        )}
                     </div>
 
                     {/* Right Column (Stats) */}
                     <aside className={styles.colSide}>
                         <Card className={styles.statsCard} variant="glass">
                             <h3 className={styles.sidebarTitle}>Issue Details</h3>
+
+                            {ipo.ipoSizeCr && (
+                                <div className={styles.statRow}>
+                                    <span>Issue Size</span>
+                                    <span className={styles.statVal}>₹{ipo.ipoSizeCr} Cr</span>
+                                </div>
+                            )}
+
+                            {ipo.lotSize && (
+                                <div className={styles.statRow}>
+                                    <span>Lot Size</span>
+                                    <span className={styles.statVal}>{ipo.lotSize} Shares</span>
+                                </div>
+                            )}
+
+                            {ipo.price && ipo.lotSize && (
+                                <div className={styles.statRow}>
+                                    <span>Min Investment</span>
+                                    <span className={styles.statVal}>₹{(ipo.price * ipo.lotSize).toLocaleString('en-IN')}</span>
+                                </div>
+                            )}
+
+                            {ipo.peRatio && (
+                                <div className={styles.statRow}>
+                                    <span>P/E Ratio</span>
+                                    <span className={styles.statVal}>{ipo.peRatio}</span>
+                                </div>
+                            )}
+
                             <div className={styles.statRow}>
-                                <span>Issue Size</span>
-                                <span className={styles.statVal}>{IPO_DATA.issueSize}</span>
+                                <span>Open Date</span>
+                                <span className={styles.statVal}>{ipo.openDate || 'TBA'}</span>
                             </div>
                             <div className={styles.statRow}>
-                                <span>Lot Size</span>
-                                <span className={styles.statVal}>{IPO_DATA.lotSize} Shares</span>
+                                <span>Close Date</span>
+                                <span className={styles.statVal}>{ipo.closeDate || 'TBA'}</span>
                             </div>
-                            <div className={styles.statRow}>
-                                <span>Min Investment</span>
-                                <span className={styles.statVal}>₹14,820</span>
-                            </div>
-                            <div className={styles.statRow}>
-                                <span>Dates</span>
-                                <span className={styles.statVal}>{IPO_DATA.openDate} - {IPO_DATA.closeDate}</span>
-                            </div>
+
+                            {ipo.boaDate && (
+                                <div className={styles.statRow}>
+                                    <span>Allotment</span>
+                                    <span className={styles.statVal}>{ipo.boaDate}</span>
+                                </div>
+                            )}
+
+                            {ipo.listingDate && (
+                                <div className={styles.statRow}>
+                                    <span>Listing Date</span>
+                                    <span className={styles.statVal}>{ipo.listingDate}</span>
+                                </div>
+                            )}
+
+                            {ipo.updatedOn && (
+                                <div className={styles.statRow + ' ' + styles.updatedRow}>
+                                    <span>Last Updated</span>
+                                    <span className={styles.statVal}>{ipo.updatedOn}</span>
+                                </div>
+                            )}
                         </Card>
                     </aside>
                 </div>

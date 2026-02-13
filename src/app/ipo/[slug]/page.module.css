@@ -55,7 +55,7 @@
 }
 
 .title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     line-height: 1.1;
     margin-bottom: 8px;
 }
@@ -63,6 +63,44 @@
 .badges {
     display: flex;
     gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.liveDot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-brand);
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+    display: inline-block;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.ratingBadge {
+    display: flex;
+    gap: 2px;
+}
+
+.fireIcon {
+    color: #f97316;
 }
 
 .ctaSection {
@@ -77,12 +115,14 @@
 
 .label {
     display: block;
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .heroPrice {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 700;
     font-family: var(--font-outfit);
 }
@@ -110,59 +150,71 @@
     padding: var(--spacing-lg);
 }
 
-.cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-lg);
-}
-
 .cardTitle {
     font-size: 1.25rem;
     margin-bottom: var(--spacing-md);
 }
 
-/* Subscription */
-.subGrid {
-    display: grid;
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-lg);
-}
-
-.subItem {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.subHeader {
+/* GMP Hero */
+.gmpHero {
     display: flex;
     justify-content: space-between;
-}
-
-.subLabel {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.subVal {
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 4px;
-}
-
-.totalSub {
-    display: flex;
-    justify-content: space-between;
-    padding-top: var(--spacing-md);
-    border-top: 1px solid var(--glass-border);
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-/* GMP Chart */
-.chartWrapper {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
     margin-bottom: var(--spacing-md);
+}
+
+.gmpMain {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gmpIconGreen {
+    color: #22c55e;
+}
+
+.gmpIconRed {
+    color: #ef4444;
+}
+
+.gmpValueGreen {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #22c55e;
+    font-family: var(--font-outfit);
+}
+
+.gmpValueRed {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ef4444;
+    font-family: var(--font-outfit);
+}
+
+.gmpValueNeutral {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    font-family: var(--font-outfit);
+}
+
+.gmpPct {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.estListing {
+    text-align: right;
+}
+
+.estListingVal {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-outfit);
+    color: var(--text-primary);
 }
 
 .disclaimer {
@@ -171,7 +223,25 @@
     font-style: italic;
 }
 
+/* Subscription */
+.subHero {
+    padding: var(--spacing-md) 0;
+}
+
+.subHeroVal {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-outfit);
+}
+
 /* Sidebar */
+.colSide {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
 .statsCard {
     padding: var(--spacing-lg);
     position: sticky;
@@ -198,4 +268,26 @@
 
 .statVal {
     font-weight: 600;
+}
+
+.updatedRow {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .heroPrice {
+        font-size: 1.4rem;
+    }
+
+    .gmpValueGreen,
+    .gmpValueRed,
+    .gmpValueNeutral {
+        font-size: 1.5rem;
+    }
 }

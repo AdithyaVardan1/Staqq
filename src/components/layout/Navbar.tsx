@@ -1,19 +1,20 @@
-
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { Menu, X, Search, User } from 'lucide-react';
+import { Menu, X, Search, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { supabase } from '@/lib/supabaseClient';
+import Logo from '@/components/ui/Logo';
+import { createClient } from '@/utils/supabase/client';
 import styles from './Navbar.module.css';
 
 const navLinks = [
     { name: 'IPO Hub', href: '/ipo' },
     { name: 'Stocks', href: '/stocks/screener' },
+    { name: 'Pulse', href: '/alerts' },
     { name: 'Learn', href: '/learn' },
     { name: 'Tools', href: '/tools' },
 ];
@@ -21,8 +22,10 @@ const navLinks = [
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const pathname = usePathname();
     const [user, setUser] = useState<any>(null);
+    const pathname = usePathname();
+    const router = useRouter();
+    const supabase = createClient();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -40,18 +43,21 @@ export const Navbar = () => {
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
+            if (_event === 'SIGNED_OUT') {
+                router.refresh();
+            }
         });
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
             subscription.unsubscribe();
         };
-    }, []);
+    }, [supabase, router]);
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
-        // creating a reload to force state update or redirect could be done here
-        window.location.href = '/';
+        router.push('/');
+        router.refresh();
     };
 
     return (
@@ -66,11 +72,9 @@ export const Navbar = () => {
                         {/* Logo */}
                         <Link href="/" className={styles.logo}>
                             <div className={styles.logoImageWrapper}>
-                                <Image
-                                    src="/staqq.png"
-                                    alt="STAQQ"
-                                    width={100}
-                                    height={32}
+                                <Logo
+                                    width={120}
+                                    height={120}
                                     className={styles.logoImage}
                                     priority
                                 />
@@ -105,7 +109,7 @@ export const Navbar = () => {
                                             <Button variant="ghost" size="sm">Watchlist</Button>
                                         </Link>
                                         <Link href="/profile" aria-label="Profile">
-                                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-white/10">
+                                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-white/10 hover:border-brand/50 transition-colors">
                                                 <User size={16} className="text-white" />
                                             </div>
                                         </Link>
@@ -115,7 +119,7 @@ export const Navbar = () => {
                                         <Link href="/login">
                                             <Button variant="ghost" size="sm">Log In</Button>
                                         </Link>
-                                        <Link href="/signup">
+                                        <Link href="/login">
                                             <Button variant="primary" size="sm">Get Started</Button>
                                         </Link>
                                     </div>
@@ -159,11 +163,14 @@ export const Navbar = () => {
                                 <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button variant="primary" fullWidth>My Profile</Button>
                                 </Link>
-                                <Button variant="ghost" fullWidth onClick={handleLogout}>Log Out</Button>
+                                <Button variant="ghost" fullWidth onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}>
+                                    <LogOut size={18} className="mr-2" />
+                                    Log Out
+                                </Button>
                             </>
                         ) : (
                             <>
-                                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button variant="primary" fullWidth>Get Started</Button>
                                 </Link>
                                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>

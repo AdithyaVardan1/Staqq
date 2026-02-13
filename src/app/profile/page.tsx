@@ -1,13 +1,72 @@
-
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { User, Award, Settings, LogOut } from 'lucide-react';
+import { User, Award, Settings, LogOut, Loader2 } from 'lucide-react';
 import styles from './page.module.css';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
+    const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState<any>(null);
+    const supabase = createClient();
+    const router = useRouter();
+
+    useEffect(() => {
+        const getProfile = async () => {
+            try {
+                const { data: { user } } = await supabase.auth.getUser();
+
+                if (!user) {
+                    router.push('/login');
+                    return;
+                }
+
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Error fetching profile:', error);
+                }
+
+                if (data) {
+                    setProfile(data);
+                } else {
+                    // Fallback if trigger didn't fire or legacy user
+                    setProfile({
+                        username: user.email?.split('@')[0],
+                        full_name: user.user_metadata?.full_name || 'Trader',
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getProfile();
+    }, [supabase, router]);
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        router.push('/');
+        router.refresh();
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-[#0A0A0A]">
+                <Loader2 className="w-8 h-8 animate-spin text-brand" />
+            </div>
+        );
+    }
+
     return (
         <main className={styles.main}>
             <div className="container">
@@ -16,8 +75,8 @@ export default function ProfilePage() {
                         <User size={48} className="text-brand" />
                     </div>
                     <div className={styles.userInfo}>
-                        <h1 className={styles.userName}>Adithya Vardan</h1>
-                        <p className={styles.userHandle}>@adithyav • Pro Member</p>
+                        <h1 className={styles.userName}>{profile?.full_name || 'Staqq Member'}</h1>
+                        <p className={styles.userHandle}>@{profile?.username || 'member'} • Pro Member</p>
                     </div>
                     <div className={styles.headerActions}>
                         <Button variant="outline" size="sm">Edit Profile</Button>
@@ -72,7 +131,10 @@ export default function ProfilePage() {
                             <Settings size={20} />
                             <span>Account Settings</span>
                         </button>
-                        <button className={`${styles.menuItem} ${styles.danger}`}>
+                        <button
+                            className={`${styles.menuItem} ${styles.danger}`}
+                            onClick={handleLogout}
+                        >
                             <LogOut size={20} />
                             <span>Log Out</span>
                         </button>

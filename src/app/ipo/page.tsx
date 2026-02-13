@@ -1,20 +1,22 @@
-
 import React from 'react';
-import { Button } from '@/components/ui/Button';
+import { getAllIPOs } from '@/lib/ipo';
+import type { IPOData } from '@/lib/ipo';
 import { IPOCard } from '@/components/ipo/IPOCard';
 import styles from './page.module.css';
 
-// Mock Data
-const LIVE_IPOS = [
-  { slug: 'zomato-limited', name: 'Zomato Ltd', priceBand: '₹72 - ₹76', openDate: 'Jul 14', closeDate: 'Jul 16', gmp: '+₹15', gmpPercent: 20, subscription: 4.5, status: 'Live' as const },
-  { slug: 'paytm', name: 'Paytm', priceBand: '₹2080 - ₹2150', openDate: 'Nov 08', closeDate: 'Nov 10', gmp: '-₹50', gmpPercent: -2, subscription: 0.8, status: 'Live' as const },
-];
+export const revalidate = 300; // Auto-refresh every 5 minutes
 
-const UPCOMING_IPOS = [
-  { slug: 'ola-electric', name: 'Ola Electric', priceBand: '₹100 - ₹120', openDate: 'Coming Soon', closeDate: '', status: 'Upcoming' as const },
-];
+export default async function IPODashboard() {
+  const allIPOs = await getAllIPOs();
 
-export default function IPODashboard() {
+  const liveIPOs = allIPOs.filter(i => i.status === 'Live');
+  const upcomingIPOs = allIPOs.filter(i => i.status === 'Upcoming');
+  const listedIPOs = allIPOs.filter(i => i.status === 'Listed' || i.status === 'Closed');
+
+  // Separate mainboard vs SME
+  const mainboardIPOs = allIPOs.filter(i => i.category === 'IPO');
+  const smeIPOs = allIPOs.filter(i => i.category === 'SME');
+
   return (
     <main className={styles.main}>
       {/* Hero Section */}
@@ -25,38 +27,76 @@ export default function IPODashboard() {
               IPO <span className="text-brand">Hub</span>
             </h1>
             <p className={styles.subtitle}>
-              Track live GMP, check subscription status, and analyze IPOs like a pro.
+              Live GMP, subscription status & analysis — updated every 5 minutes.
             </p>
+            <div className={styles.stats}>
+              <div className={styles.statPill}>
+                <span className={styles.statNum}>{liveIPOs.length}</span>
+                <span className={styles.statLabel}>Live</span>
+              </div>
+              <div className={styles.statPill}>
+                <span className={styles.statNum}>{upcomingIPOs.length}</span>
+                <span className={styles.statLabel}>Upcoming</span>
+              </div>
+              <div className={styles.statPill}>
+                <span className={styles.statNum}>{listedIPOs.length}</span>
+                <span className={styles.statLabel}>Listed</span>
+              </div>
+              <div className={styles.statPill}>
+                <span className={styles.statNum}>{mainboardIPOs.length}</span>
+                <span className={styles.statLabel}>Mainboard</span>
+              </div>
+              <div className={styles.statPill}>
+                <span className={styles.statNum}>{smeIPOs.length}</span>
+                <span className={styles.statLabel}>SME</span>
+              </div>
+            </div>
           </div>
 
-          <div className={styles.sectionHeader}>
-            <h2>Current IPOs</h2>
-            <Button variant="ghost" size="sm">View All</Button>
-          </div>
+          {/* Live IPOs */}
+          {liveIPOs.length > 0 && (
+            <>
+              <div className={styles.sectionHeader}>
+                <h2>🔴 Live IPOs</h2>
+                <span className={styles.count}>{liveIPOs.length} active</span>
+              </div>
+              <div className={styles.grid}>
+                {liveIPOs.map((ipo) => (
+                  <IPOCard key={ipo.id} ipo={ipo} />
+                ))}
+              </div>
+            </>
+          )}
 
-          <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
-            {LIVE_IPOS.map((ipo) => (
-              <IPOCard key={ipo.slug} {...ipo} />
-            ))}
-            {/* Adding more mock/placeholder to fill grid */}
-            <IPOCard slug="swiggy" name="Swiggy" priceBand="₹300 - ₹350" openDate="Aug 01" closeDate="Aug 03" gmp="+₹30" gmpPercent={10} subscription={1.2} status="Live" />
-          </div>
-        </div>
-      </section>
+          {/* Upcoming IPOs */}
+          {upcomingIPOs.length > 0 && (
+            <>
+              <div className={styles.sectionHeader}>
+                <h2>📅 Upcoming IPOs</h2>
+                <span className={styles.count}>{upcomingIPOs.length} scheduled</span>
+              </div>
+              <div className={styles.grid}>
+                {upcomingIPOs.map((ipo) => (
+                  <IPOCard key={ipo.id} ipo={ipo} />
+                ))}
+              </div>
+            </>
+          )}
 
-      {/* Upcoming Section */}
-      <section className={styles.section}>
-        <div className="container">
-          <div className={styles.sectionHeader}>
-            <h2>Upcoming Opportunities</h2>
-            <Button variant="ghost" size="sm">View Calendar</Button>
-          </div>
-          <div className="grid-cols-1 md:grid-cols-3" style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
-            {UPCOMING_IPOS.map((ipo) => (
-              <IPOCard key={ipo.slug} {...ipo} />
-            ))}
-            <IPOCard slug="ixigo" name="Ixigo" priceBand="₹80 - ₹90" openDate="Sep 10" closeDate="Sep 12" status="Upcoming" />
-          </div>
+          {/* Listed IPOs */}
+          {listedIPOs.length > 0 && (
+            <>
+              <div className={styles.sectionHeader}>
+                <h2>✅ Recently Listed</h2>
+                <span className={styles.count}>{listedIPOs.length} completed</span>
+              </div>
+              <div className={styles.grid}>
+                {listedIPOs.map((ipo) => (
+                  <IPOCard key={ipo.id} ipo={ipo} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
     </main>

@@ -42,10 +42,8 @@
 
 .logoImageWrapper {
     position: relative;
-    /* Adjust width/height as per your logo's aspect ratio. 
-       Assuming landscape logo approx 100x32 for now */
-    width: 100px;
-    height: 32px;
+    width: 110px;
+    height: 110px;
 }
 
 .logoImage {
