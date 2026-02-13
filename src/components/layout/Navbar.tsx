@@ -119,7 +119,7 @@ export const Navbar = () => {
                                         <Link href="/login">
                                             <Button variant="ghost" size="sm">Log In</Button>
                                         </Link>
-                                        <Link href="/login">
+                                        <Link href="/signup">
                                             <Button variant="primary" size="sm">Get Started</Button>
                                         </Link>
                                     </div>
@@ -170,7 +170,7 @@ export const Navbar = () => {
                             </>
                         ) : (
                             <>
-                                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button variant="primary" fullWidth>Get Started</Button>
                                 </Link>
                                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
