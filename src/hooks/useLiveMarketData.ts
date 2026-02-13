@@ -4,15 +4,19 @@ import { useStream } from '@/context/StreamContext';
 /**
  * Hook for fetching and subscribing to live market data from our Unified Stream.
  */
-export function useLiveMarketData(ticker: string, initialPrice: number) {
+export function useLiveMarketData(ticker: string, initialPrice?: number, initialChange?: number, initialChangePercent?: number) {
     const { subscribe, unsubscribe, getMarketData, status } = useStream();
 
     useEffect(() => {
         if (ticker) {
-            subscribe(ticker);
+            subscribe(ticker, {
+                price: initialPrice,
+                change: initialChange,
+                changePercent: initialChangePercent
+            });
             return () => unsubscribe(ticker);
         }
-    }, [ticker, subscribe, unsubscribe]);
+    }, [ticker, initialPrice, initialChange, initialChangePercent, subscribe, unsubscribe]);
 
     const liveData = getMarketData(ticker);
 

@@ -11,7 +11,7 @@ interface TickData {
 }
 
 interface StreamContextValue {
-    subscribe: (ticker: string) => Promise<void>;
+    subscribe: (ticker: string, initialData?: Partial<TickData>) => Promise<void>;
     unsubscribe: (ticker: string) => void;
     getPrice: (ticker: string) => number | null;
     getMarketData: (ticker: string) => TickData | null;
@@ -41,7 +41,7 @@ export const StreamProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
 
         setStatus('connecting');
-        const tickersParam = activeTickers.join(',');
+        const tickersParam = encodeURIComponent(activeTickers.join(','));
         const es = new EventSource(`/api/stocks/stream?tickers=${tickersParam}`);
         eventSourceRef.current = es;
 
@@ -88,29 +88,41 @@ export const StreamProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
     }, []);
 
-    const subscribe = useCallback(async (ticker: string) => {
+    const subscribe = useCallback(async (ticker: string, initialData?: Partial<TickData>) => {
         if (!subscribersRef.current.has(ticker)) {
-            console.log(`[StreamContext] Subscribing to ${ticker}`);
             subscribersRef.current.add(ticker);
 
-            // Fetch initial real price immediately so user doesn't see mock data
-            try {
-                const res = await fetch(`/api/stocks/price?ticker=${ticker}`);
-                const data = await res.json();
-                if (data.price) {
-                    console.log(`[StreamContext] Initial data for ${ticker}:`, data);
-                    setMarketData(prev => ({
-                        ...prev,
-                        [ticker]: {
-                            ticker,
-                            price: data.price,
-                            change: data.change,
-                            changePercent: data.changePercent
-                        }
-                    }));
+            // If initial data is provided (e.g. from screener), use it to avoid redundant fetch
+            if (initialData?.price) {
+                setMarketData(prev => ({
+                    ...prev,
+                    [ticker]: {
+                        ticker,
+                        price: initialData.price!,
+                        change: initialData.change,
+                        changePercent: initialData.changePercent,
+                        ...initialData
+                    }
+                }));
+            } else {
+                // Fetch initial real price immediately so user doesn't see mock data
+                try {
+                    const res = await fetch(`/api/stocks/price?ticker=${encodeURIComponent(ticker)}`);
+                    const data = await res.json();
+                    if (data.price) {
+                        setMarketData(prev => ({
+                            ...prev,
+                            [ticker]: {
+                                ticker,
+                                price: data.price,
+                                change: data.change,
+                                changePercent: data.changePercent
+                            }
+                        }));
+                    }
+                } catch (e) {
+                    console.error(`[StreamContext] Failed to fetch initial price for ${ticker}:`, e);
                 }
-            } catch (e) {
-                console.error(`[StreamContext] Failed to fetch initial price for ${ticker}:`, e);
             }
 
             if (updateTimeoutRef.current) clearTimeout(updateTimeoutRef.current);

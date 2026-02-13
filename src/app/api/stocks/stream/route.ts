@@ -13,19 +13,30 @@ export async function GET(req: NextRequest) {
 
     const tickers = tickersStr.split(',').map(t => t.trim());
     const tokenMap = new Map<string, string>(); // token -> ticker
+    const nseTokens: string[] = [];
+    const bseTokens: string[] = [];
 
-    // Resolve all tokens
+    // Resolve all tokens and group by exchange
+    const missedTickers: string[] = [];
     for (const ticker of tickers) {
-        const token = await angelOne.findToken(ticker);
-        if (token) {
-            tokenMap.set(String(token), ticker);
-            console.log(`[SSE] Resolved ${ticker} -> ${token}`);
+        const instrument = await angelOne.findInstrument(ticker);
+        if (instrument) {
+            tokenMap.set(String(instrument.token), ticker);
+            if (instrument.exchange === 'NSE') {
+                nseTokens.push(String(instrument.token));
+            } else if (instrument.exchange === 'BSE') {
+                bseTokens.push(String(instrument.token));
+            }
         } else {
-            console.warn(`[SSE] Could not resolve token for ${ticker}`);
+            missedTickers.push(ticker);
         }
     }
 
-    if (tokenMap.size === 0) {
+    if (missedTickers.length > 0) {
+        console.warn(`[SSE] Could not resolve tokens for: ${missedTickers.join(', ')}`);
+    }
+
+    if (nseTokens.length === 0 && bseTokens.length === 0) {
         return new Response('No valid tokens found', { status: 404 });
     }
 
@@ -58,13 +69,25 @@ export async function GET(req: NextRequest) {
                 ws.connect().then(() => {
                     safeEnqueue(`data: ${JSON.stringify({ status: 'connected' })}\n\n`);
 
-                    // Subscribe to all tickers in one go
-                    ws.fetchData({
-                        action: 1, // Subscribe
-                        mode: 1, // LTP
-                        exchangeType: 1, // NSE
-                        tokens: Array.from(tokenMap.keys())
-                    });
+                    // Subscribe to NSE tokens
+                    if (nseTokens.length > 0) {
+                        ws.fetchData({
+                            action: 1, // Subscribe
+                            mode: 1, // LTP
+                            exchangeType: 1, // NSE
+                            tokens: nseTokens
+                        });
+                    }
+
+                    // Subscribe to BSE tokens
+                    if (bseTokens.length > 0) {
+                        ws.fetchData({
+                            action: 1, // Subscribe
+                            mode: 1, // LTP
+                            exchangeType: 3, // BSE
+                            tokens: bseTokens
+                        });
+                    }
                 }).catch((err: any) => {
                     console.error('[SSE] WS Connect Error:', err);
                     cleanup();
@@ -76,7 +99,6 @@ export async function GET(req: NextRequest) {
                         const ticker = tokenMap.get(String(tick.token));
                         if (ticker) {
                             const price = parseFloat(tick.last_traded_price) / 100;
-                            console.log(`[SSE] Tick for ${ticker}: ${price} (raw: ${tick.last_traded_price})`);
                             const payload = JSON.stringify({
                                 ticker,
                                 price,

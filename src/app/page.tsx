@@ -1,11 +1,46 @@
+'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { NewsletterCTA } from '@/components/NewsletterCTA';
-import { TrendingUp, BookOpen, Layers } from 'lucide-react'; // Example icons
+import { TrendingUp, BookOpen, Layers, Activity } from 'lucide-react'; // Example icons
 import styles from './page.module.css';
+
+const TrendingSection = () => {
+  const [trending, setTrending] = useState<string[]>([]);
+
+  useEffect(() => {
+    fetch('/api/stocks/trending')
+      .then(res => res.json())
+      .then(data => {
+        if (data.tickers) {
+          // Deduplicate tickers
+          const uniqueTickers = Array.from(new Set(data.tickers as string[]));
+          setTrending(uniqueTickers);
+        }
+      })
+      .catch(e => console.error('Failed to fetch trending:', e));
+  }, []);
+
+  if (trending.length === 0) return null;
+
+  return (
+    <div className={styles.trendingContainer}>
+      <span className={styles.trendingLabel}>
+        <Activity size={14} className="text-brand" /> Trending:
+      </span>
+      <div className={styles.trendingList}>
+        {trending.map(ticker => (
+          <Link key={ticker} href={`/stocks/${ticker}`} className={styles.trendingItem}>
+            {ticker}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default function LandingPage() {
   return (
@@ -20,6 +55,7 @@ export default function LandingPage() {
             <p className={styles.heroSubtitle}>
               Uncomplicate your journey. Master IPOs, analyze Stocks, and Learn finance—all in one place.
             </p>
+            <TrendingSection />
             <div className={styles.heroActions}>
               <Link href="/ipo">
                 <Button size="lg">Explore IPOs</Button>

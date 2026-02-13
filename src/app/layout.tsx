@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { ComparisonTray } from "@/components/stocks/ComparisonTray";
 import { StreamProvider } from "@/context/StreamContext";
 
 export default function RootLayout({
@@ -26,6 +27,7 @@ export default function RootLayout({
           <Navbar />
           {children}
           <Footer />
+          <ComparisonTray />
         </StreamProvider>
       </body>
     </html>

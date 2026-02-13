@@ -10,13 +10,12 @@ export async function GET(req: NextRequest) {
     }
 
     try {
-        const token = await angelOne.findToken(ticker);
-        if (!token) {
-            return NextResponse.json({ error: `Token not found for ${ticker}` }, { status: 404 });
+        const instrument = await angelOne.findInstrument(ticker);
+        if (!instrument) {
+            return NextResponse.json({ error: `Instrument not found for ${ticker}` }, { status: 404 });
         }
 
-        const symbol = `${ticker}-EQ`;
-        const quote = await angelOne.getFullQuote('NSE', symbol, String(token));
+        const quote = await angelOne.getFullQuote(instrument.exchange, instrument.symbol, String(instrument.token));
 
         if (quote && quote.status && quote.data && quote.data.length > 0) {
             const data = quote.data[0];
