@@ -9,7 +9,12 @@ const SYSTEM_PROMPT =
     'Include key numbers, percentages, or names where relevant. ' +
     'Do not use any markdown formatting. Do not include phrases like "Read more" or "Click here".';
 
-export async function summarizeArticle(title: string, content: string): Promise<string | null> {
+const BRIEF_SYSTEM_PROMPT =
+    'You are a financial news editor. ' +
+    'Summarize the article in one very brief phrase, maximum 12-15 words. ' +
+    'Be direct and factual. No markdown. No filler words.';
+
+export async function summarizeArticle(title: string, content: string, brief = false): Promise<string | null> {
     if (!groq) {
         console.warn('[Groq] No API key configured, skipping summarization.');
         return null;
@@ -19,15 +24,15 @@ export async function summarizeArticle(title: string, content: string): Promise<
         const completion = await groq.chat.completions.create({
             model: 'llama-3.3-70b-versatile',
             messages: [
-                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'system', content: brief ? BRIEF_SYSTEM_PROMPT : SYSTEM_PROMPT },
                 { role: 'user', content: `Title: ${title}\n\nContent: ${content.slice(0, 800)}` },
             ],
-            max_tokens: 200,
+            max_tokens: brief ? 60 : 200,
             temperature: 0.2,
         });
 
         const summary = completion.choices[0]?.message?.content?.trim();
-        if (!summary || summary.length < 20) return null;
+        if (!summary || summary.length < 10) return null;
 
         return summary;
     } catch (error: any) {

@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Zap, CheckCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle, AlertCircle } from 'lucide-react';
 import styles from './NewsletterCTA.module.css';
 
 export function NewsletterCTA() {
@@ -41,51 +42,77 @@ export function NewsletterCTA() {
     return (
         <section className={styles.container}>
             <Card className={styles.card}>
-                <div className={styles.content}>
-                    <div className={styles.iconWrapper}>
-                        <Zap size={32} className="text-brand" />
-                    </div>
-                    <h2 className={styles.title}>
-                        Join <span className="text-brand">The Stack</span>
-                    </h2>
-                    <p className={styles.description}>
-                        Get the weekly edge in Indian markets. No noise, just signal.
-                        Sent every Wednesday.
-                    </p>
-
-                    {status !== 'success' && (
-                        <form onSubmit={handleSubmit} className={styles.form}>
-                            <input
-                                type="email"
-                                placeholder="Enter your email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className={styles.input}
-                                disabled={status === 'loading'}
-                                suppressHydrationWarning
+                <div className={styles.layout}>
+                    {/* Left: Logo */}
+                    <div className={styles.logoSection}>
+                        <div className={styles.logoWrapper}>
+                            <Image
+                                src="/logo.jpeg"
+                                alt="Staqq Logo"
+                                width={220}
+                                height={220}
+                                className={styles.logo}
                             />
-                            <Button
-                                type="submit"
-                                disabled={status === 'loading'}
-                                className={styles.button}
-                            >
-                                {status === 'loading' ? 'Joining...' : 'Subscribe Free'}
-                            </Button>
-                        </form>
-                    )}
-
-                    {message && (
-                        <div className={`${styles.status} ${status === 'success' ? styles.success : styles.error}`}>
-                            {status === 'success' ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
-                            <span>{message}</span>
                         </div>
-                    )}
+                    </div>
 
-                    <p className={styles.disclaimer}>
-                        Join 10,000+ investors. Unsubscribe anytime.
-                    </p>
+                    {/* Right: Content */}
+                    <div className={styles.content}>
+                        <h2 className={styles.title}>
+                            Join <span className="text-brand">The Stack</span>
+                        </h2>
+                        <p className={styles.description}>
+                            Get the weekly edge in Indian markets. No noise, just signal.
+                            Sent every Wednesday.
+                        </p>
+
+                        {status !== 'success' && (
+                            <form onSubmit={handleSubmit} className={styles.form}>
+                                <input
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className={styles.input}
+                                    disabled={status === 'loading'}
+                                    suppressHydrationWarning
+                                />
+                                <Button
+                                    type="submit"
+                                    disabled={status === 'loading'}
+                                    className={styles.button}
+                                >
+                                    {status === 'loading' ? 'Joining...' : 'Subscribe'}
+                                </Button>
+                            </form>
+                        )}
+
+                        {message && status === 'success' && (
+                            <div className={styles.successCard}>
+                                <div className={styles.successIconWrapper}>
+                                    <CheckCircle size={22} />
+                                </div>
+                                <div>
+                                    <h3 className={styles.successHeading}>You&apos;re in! 🎉</h3>
+                                    <p className={styles.successMessage}>{message}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        {message && status === 'error' && (
+                            <div className={`${styles.status} ${styles.error}`}>
+                                <AlertCircle size={16} />
+                                <span>{message}</span>
+                            </div>
+                        )}
+
+                        <p className={styles.disclaimer}>
+                            Grow your stack, we’ve got your back — unsubscribe anytime, no strings attached.
+                        </p>
+                    </div>
                 </div>
             </Card>
         </section>
     );
 }
+

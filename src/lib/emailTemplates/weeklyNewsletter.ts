@@ -96,6 +96,7 @@ export function buildWeeklyNewsletter(content: NewsletterContent, recipientEmail
       .email-container { width: 100% !important; }
       .content-padding { padding-left: 16px !important; padding-right: 16px !important; }
       .header-padding { padding: 32px 16px !important; }
+      .two-col { display: block !important; width: 100% !important; margin-left: 0 !important; }
     }
   </style>
 </head>
@@ -191,9 +192,87 @@ export function buildWeeklyNewsletter(content: NewsletterContent, recipientEmail
           </tr>
           ` : ''}
 
-          ${renderSection('🚨', 'IPO ALERTS', ipoNews.articles)}
-
-          ${renderSection('📱', "WHAT'S TRENDING", trendingStocks.articles)}
+          <!-- IPO ALERTS & QUICK HITS — Paired Row Layout -->
+          ${(ipoNews.articles.length > 0 || regulatoryNews.articles.length > 0) ? `
+          <tr>
+            <td class="content-padding" style="padding: 36px 40px 0;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <!-- Section Headers Row -->
+                <tr>
+                  <td width="48%" valign="top" style="padding-bottom: 16px;">
+                    <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">🚨</span>
+                    <span style="font-size: 18px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.02em; vertical-align: middle;">IPO ALERTS</span>
+                    <div style="height: 3px; width: 60px; background: linear-gradient(90deg, #CAFF00, transparent); border-radius: 2px; margin-top: 8px;"></div>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" valign="top" style="padding-bottom: 16px;">
+                    <span style="font-size: 18px; margin-right: 8px; vertical-align: middle;">📰</span>
+                    <span style="font-size: 18px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.02em; vertical-align: middle;">QUICK HITS</span>
+                    <div style="height: 3px; width: 60px; background: linear-gradient(90deg, #CAFF00, transparent); border-radius: 2px; margin-top: 8px;"></div>
+                  </td>
+                </tr>
+                <!-- Paired Article Rows -->
+                ${(() => {
+        const maxLen = Math.max(ipoNews.articles.length, regulatoryNews.articles.length);
+        let rows = '';
+        for (let i = 0; i < maxLen; i++) {
+          const ipoArticle = ipoNews.articles[i];
+          const quickArticle = regulatoryNews.articles[i];
+          rows += `
+                <tr>
+                  <td width="48%" valign="top" style="padding-bottom: 16px;">
+                    ${ipoArticle ? `
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: linear-gradient(135deg, rgba(202,255,0,0.04), rgba(202,255,0,0.01)); border: 1px solid rgba(202,255,0,0.1); border-radius: 12px; height: 100%;">
+                      <tr>
+                        <td style="padding: 20px;">
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="width: 40px; vertical-align: top; padding-right: 16px;">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #CAFF00, #8ABF00); text-align: center; line-height: 36px; font-size: 15px; font-weight: 800; color: #0A0A0A;">${i + 1}</div>
+                              </td>
+                              <td>
+                                <a href="${escapeHtml(ipoArticle.url)}" style="color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 15px; line-height: 1.4;">${escapeHtml(ipoArticle.title)}</a>
+                                <p style="color: #A1A1AA; font-size: 13px; line-height: 1.6; margin: 8px 0 0;">${escapeHtml(ipoArticle.content)}</p>
+                                <a href="${escapeHtml(ipoArticle.url)}" style="display: inline-block; margin-top: 10px; font-size: 12px; font-weight: 600; color: #CAFF00; text-decoration: none; letter-spacing: 0.03em;">READ MORE →</a>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                    ` : ''}
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" valign="top" style="padding-bottom: 16px;">
+                    ${quickArticle ? `
+                    <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: linear-gradient(135deg, rgba(202,255,0,0.04), rgba(202,255,0,0.01)); border: 1px solid rgba(202,255,0,0.1); border-radius: 12px; height: 100%;">
+                      <tr>
+                        <td style="padding: 20px;">
+                          <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="width: 40px; vertical-align: top; padding-right: 16px;">
+                                <div style="width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, #CAFF00, #8ABF00); text-align: center; line-height: 36px; font-size: 15px; font-weight: 800; color: #0A0A0A;">${i + 1}</div>
+                              </td>
+                              <td>
+                                <a href="${escapeHtml(quickArticle.url)}" style="color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 15px; line-height: 1.4;">${escapeHtml(quickArticle.title)}</a>
+                                <p style="color: #A1A1AA; font-size: 13px; line-height: 1.6; margin: 8px 0 0;">${escapeHtml(quickArticle.content)}</p>
+                                <a href="${escapeHtml(quickArticle.url)}" style="display: inline-block; margin-top: 10px; font-size: 12px; font-weight: 600; color: #CAFF00; text-decoration: none; letter-spacing: 0.03em;">READ MORE →</a>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                    ` : ''}
+                  </td>
+                </tr>`;
+        }
+        return rows;
+      })()}
+              </table>
+            </td>
+          </tr>
+          ` : ''}
 
           <!-- Learn Section (CTA) -->
           <tr>
@@ -219,8 +298,6 @@ export function buildWeeklyNewsletter(content: NewsletterContent, recipientEmail
               </table>
             </td>
           </tr>
-
-          ${renderSection('📰', 'QUICK HITS', regulatoryNews.articles)}
 
           ${financialInsight.articles.length > 0 ? renderSection('💡', 'INSIGHTS & TIPS', financialInsight.articles) : ''}
 
