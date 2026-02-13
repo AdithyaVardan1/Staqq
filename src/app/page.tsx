@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { NewsletterCTA } from '@/components/NewsletterCTA';
 import { TrendingUp, BookOpen, Layers } from 'lucide-react'; // Example icons
 import styles from './page.module.css';
 
@@ -72,6 +73,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Newsletter CTA */}
+      <NewsletterCTA />
     </main>
   );
 }

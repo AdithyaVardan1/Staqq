@@ -1,6 +1,6 @@
 .card {
   background: #000000;
-  border: 1px solid #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 14px;
   padding: 1.8rem;
   text-decoration: none;
@@ -8,6 +8,32 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #CAFF00, transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(202, 255, 0, 0.3);
+  box-shadow: 0 0 30px rgba(202, 255, 0, 0.1);
+  transform: translateY(-5px);
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .card h3 {
