@@ -1,12 +1,14 @@
-
 import React from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import clsx from 'clsx';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { TrendingUp, TrendingDown, ChevronRight, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronRight, Activity, Plus, Trash2 } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { StockLogo } from './StockLogo';
 import { useLiveMarketData } from '@/hooks/useLiveMarketData';
+import { useComparisonStore } from '@/store/useComparisonStore';
 import styles from './StockCard.module.css';
 
 interface StockCardProps {
@@ -32,10 +34,29 @@ export const StockCard: React.FC<StockCardProps> = ({
     return1Y,
     sparklineData,
 }) => {
-    const { price, change, changePercent, status } = useLiveMarketData(ticker, initialPrice);
+    const { price, change, changePercent, status } = useLiveMarketData(ticker, initialPrice, initialChangeAmount, initialChange);
+    const { selectedTickers, addTicker, removeTicker } = useComparisonStore();
+
+    const router = useRouter();
+    const isSelected = selectedTickers.includes(ticker);
+
+    const toggleCompare = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isSelected) {
+            removeTicker(ticker);
+        } else {
+            if (selectedTickers.length >= 3) {
+                addTicker(ticker);
+                router.push('/stocks/compare');
+            } else {
+                addTicker(ticker);
+            }
+        }
+    };
 
     // Live calculations
-    const displayPrice = price;
+    const displayPrice = price ?? initialPrice;
 
     // Use live change if available, otherwise fallback to initial props
     // This avoids incorrect calculations when mixing real price with mock open price
@@ -53,11 +74,21 @@ export const StockCard: React.FC<StockCardProps> = ({
                     <div className={styles.tickerInfo}>
                         <div className={styles.tickerHeader}>
                             <h4 className={styles.ticker}>{ticker}</h4>
-                            {status === 'connected' && (
-                                <span className={styles.liveIndicator} title="Live Data Stream">
-                                    <Activity size={10} /> LIVE
-                                </span>
-                            )}
+                            <div className={styles.headerBadges}>
+                                {status === 'connected' && (
+                                    <span className={styles.liveIndicator} title="Live Data Stream">
+                                        <Activity size={10} /> LIVE
+                                    </span>
+                                )}
+                                <button
+                                    className={clsx(styles.compareBtn, isSelected && styles.selected)}
+                                    onClick={toggleCompare}
+                                    title={isSelected ? "Remove from comparison" : "Add to comparison"}
+                                >
+                                    {isSelected ? <Trash2 size={12} /> : <Plus size={12} />}
+                                    {isSelected ? 'Remove' : 'Compare'}
+                                </button>
+                            </div>
                         </div>
                         <div className={styles.name}>{name}</div>
                     </div>
@@ -88,7 +119,7 @@ export const StockCard: React.FC<StockCardProps> = ({
                     <div className={styles.metric}>
                         <span className={styles.metricLabel}>1Y Return</span>
                         <span className={styles.metricValue} style={{ color: isReturnPositive ? 'var(--status-success)' : 'var(--status-danger)' }}>
-                            {isReturnPositive ? '+' : ''}{return1Y}%
+                            {isReturnPositive ? '+' : ''}{return1Y.toFixed(4)}%
                         </span>
                     </div>
                 </div>
