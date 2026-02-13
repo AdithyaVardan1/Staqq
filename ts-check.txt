@@ -1,0 +1,442 @@
+﻿[96mnode_modules/@types/mdx/types.d.ts[0m:[93m23[0m:[93m38[0m - [91merror[0m[90m TS2503: [0mCannot find namespace 'JSX'.
+
+[7m23[0m type StringComponent = Extract<keyof JSX.IntrinsicElements, ElementType extends never ? string : ElementType>;
+[7m  [0m [91m                                     ~~~[0m
+
+[96mnode_modules/@types/mdx/types.d.ts[0m:[93m28[0m:[93m23[0m - [91merror[0m[90m TS2503: [0mCannot find namespace 'JSX'.
+
+[7m28[0m export type Element = JSX.Element;
+[7m  [0m [91m                      ~~~[0m
+
+[96mnode_modules/@types/mdx/types.d.ts[0m:[93m47[0m:[93m28[0m - [91merror[0m[90m TS2503: [0mCannot find namespace 'JSX'.
+
+[7m47[0m     ? new(props: Props) => JSX.ElementClass
+[7m  [0m [91m                           ~~~[0m
+
+[96mnode_modules/@types/mdx/types.d.ts[0m:[93m73[0m:[93m46[0m - [91merror[0m[90m TS2503: [0mCannot find namespace 'JSX'.
+
+[7m73[0m         [Key in StringComponent]?: Component<JSX.IntrinsicElements[Key]>;
+[7m  [0m [91m                                             ~~~[0m
+
+[96mnode_modules/next/dist/build/templates/app-page.d.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2307: [0mCannot find module 'VAR_MODULE_GLOBAL_ERROR' or its corresponding type declarations.
+
+[7m3[0m import GlobalError from 'VAR_MODULE_GLOBAL_ERROR';
+[7m [0m [91m                        ~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/build/webpack-config.d.ts[0m:[93m10[0m:[93m104[0m - [91merror[0m[90m TS2694: [0mNamespace '"E:/Staqq/node_modules/next/dist/compiled/webpack/webpack".webpack' has no exported member 'RuleSetUseItem'.
+
+[7m10[0m export declare function attachReactRefresh(webpackConfig: webpack.Configuration, targetLoader: webpack.RuleSetUseItem): void;
+[7m  [0m [91m                                                                                                       ~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/build/webpack/loaders/next-app-loader/index.d.ts[0m:[93m1[0m:[93m13[0m - [91merror[0m[90m TS2613: [0mModule '"E:/Staqq/node_modules/next/dist/compiled/webpack/webpack"' has no default export. Did you mean to use 'import { webpack } from "E:/Staqq/node_modules/next/dist/compiled/webpack/webpack"' instead?
+
+[7m1[0m import type webpack from 'next/dist/compiled/webpack/webpack';
+[7m [0m [91m            ~~~~~~~[0m
+
+[96mnode_modules/next/dist/client/components/error-boundary.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React, { type JSX } from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/client/components/http-access-fallback/error-boundary.d.ts[0m:[93m11[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m11[0m import React from 'react';
+[7m  [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/client/components/layout-router.d.ts[0m:[93m2[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m2[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/client/with-router.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/lib/metadata/metadata.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/server/app-render/entry-base.d.ts[0m:[93m1[0m:[93m114[0m - [91merror[0m[90m TS2307: [0mCannot find module 'react-server-dom-webpack/server' or its corresponding type declarations.
+
+[7m1[0m export { createTemporaryReferenceSet, renderToReadableStream, decodeReply, decodeAction, decodeFormState, } from 'react-server-dom-webpack/server';
+[7m [0m [91m                                                                                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/server/app-render/entry-base.d.ts[0m:[93m2[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module 'react-server-dom-webpack/static' or its corresponding type declarations.
+
+[7m2[0m export { prerender } from 'react-server-dom-webpack/static';
+[7m [0m [91m                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/server/web/spec-extension/adapters/headers.d.ts[0m:[93m39[0m:[93m16[0m - [91merror[0m[90m TS2304: [0mCannot find name 'HeadersIterator'.
+
+[7m39[0m     entries(): HeadersIterator<[string, string]>;
+[7m  [0m [91m               ~~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/server/web/spec-extension/adapters/headers.d.ts[0m:[93m40[0m:[93m13[0m - [91merror[0m[90m TS2304: [0mCannot find name 'HeadersIterator'.
+
+[7m40[0m     keys(): HeadersIterator<string>;
+[7m  [0m [91m            ~~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/server/web/spec-extension/adapters/headers.d.ts[0m:[93m41[0m:[93m15[0m - [91merror[0m[90m TS2304: [0mCannot find name 'HeadersIterator'.
+
+[7m41[0m     values(): HeadersIterator<string>;
+[7m  [0m [91m              ~~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/server/web/spec-extension/adapters/headers.d.ts[0m:[93m42[0m:[93m26[0m - [91merror[0m[90m TS2304: [0mCannot find name 'HeadersIterator'.
+
+[7m42[0m     [Symbol.iterator](): HeadersIterator<[string, string]>;
+[7m  [0m [91m                         ~~~~~~~~~~~~~~~[0m
+
+[96mnode_modules/next/dist/shared/lib/app-router-context.shared-runtime.d.ts[0m:[93m4[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m4[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/app-router-types.d.ts[0m:[93m7[0m:[93m13[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m7[0m import type React from 'react';
+[7m [0m [91m            ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/head-manager-context.shared-runtime.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/image-config-context.shared-runtime.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/loadable-context.shared-runtime.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/loadable.shared-runtime.d.ts[0m:[93m21[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m21[0m import React from 'react';
+[7m  [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/router-context.shared-runtime.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/server-inserted-html.shared-runtime.d.ts[0m:[93m1[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m1[0m import React from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96mnode_modules/next/dist/shared/lib/utils.d.ts[0m:[93m10[0m:[93m13[0m - [91merror[0m[90m TS1192: [0mModule '"fs"' has no default export.
+
+[7m10[0m import type fs from 'fs';
+[7m  [0m [91m            ~~[0m
+
+[96msrc/app/api/newsletter/test-send/route.ts[0m:[93m2[0m:[93m43[0m - [91merror[0m[90m TS2307: [0mCannot find module '@/lib/newsletterGenerator' or its corresponding type declarations.
+
+[7m2[0m import { generateNewsletterContent } from '@/lib/newsletterGenerator';
+[7m [0m [91m                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app/api/newsletter/test-send/route.ts[0m:[93m3[0m:[93m39[0m - [91merror[0m[90m TS2307: [0mCannot find module '@/lib/emailTemplates/weeklyNewsletter' or its corresponding type declarations.
+
+[7m3[0m import { buildWeeklyNewsletter } from '@/lib/emailTemplates/weeklyNewsletter';
+[7m [0m [91m                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/app/api/newsletter/test-send/route.ts[0m:[93m4[0m:[93m27[0m - [91merror[0m[90m TS2307: [0mCannot find module '@/lib/resend' or its corresponding type declarations.
+
+[7m4[0m import { sendEmail } from '@/lib/resend';
+[7m [0m [91m                          ~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m3[0m:[93m8[0m - [91merror[0m[90m TS1259: [0mModule '"E:/Staqq/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag
+
+[7m3[0m import React, { useState } from 'react';
+[7m [0m [91m       ~~~~~[0m
+
+  [96mnode_modules/@types/react/index.d.ts[0m:[93m66[0m:[93m1[0m
+    [7m66[0m export = React;
+    [7m  [0m [96m~~~~~~~~~~~~~~~[0m
+    This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m6[0m:[93m20[0m - [91merror[0m[90m TS2307: [0mCannot find module './NewsletterCTA.module.css' or its corresponding type declarations.
+
+[7m6[0m import styles from './NewsletterCTA.module.css';
+[7m [0m [91m                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m57[0m:[93m9[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m57[0m         <section className={styles.section}>
+[7m  [0m [91m        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m58[0m:[93m13[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m58[0m             <div className="container">
+[7m  [0m [91m            ~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m59[0m:[93m17[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m 59[0m                 <motion.div
+[7m   [0m [91m                ~~~~~~~~~~~[0m
+[7m 60[0m                     className={`${styles.ctaBanner} ${state !== 'collapsed' ? styles.expanded : ''}`}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 62[0m                     layout
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 63[0m                 >
+[7m   [0m [91m~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m65[0m:[93m21[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m65[0m                     <div className={styles.gradientLine} />
+[7m  [0m [91m                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m69[0m:[93m25[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m 69[0m                         <motion.div
+[7m   [0m [91m                        ~~~~~~~~~~~[0m
+[7m 70[0m                             className={styles.successState}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m 73[0m                             transition={{ duration: 0.4, ease: [0.175, 0.885, 0.32, 1.275] }}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m 74[0m                         >
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m75[0m:[93m29[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m75[0m                             <div className={styles.successIcon}>≡ƒÄë</div>
+[7m  [0m [91m                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m76[0m:[93m29[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m76[0m                             <h3>You&apos;re on the list!</h3>
+[7m  [0m [91m                            ~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m77[0m:[93m29[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m77[0m                             <p>Check your inbox ΓÇö your first edition of The Stack is on its way.</p>
+[7m  [0m [91m                            ~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m80[0m:[93m25[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m80[0m                         <>
+[7m  [0m [91m                        ~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m82[0m:[93m29[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m82[0m                             <div className={styles.bannerContent}>
+[7m  [0m [91m                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m83[0m:[93m33[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m83[0m                                 <div className={styles.bannerLeft}>
+[7m  [0m [91m                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m84[0m:[93m37[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m84[0m                                     <div className={styles.iconPulse}>≡ƒôº</div>
+[7m  [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m85[0m:[93m37[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m85[0m                                     <div className={styles.bannerText}>
+[7m  [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m86[0m:[93m41[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m86[0m                                         <h3>Subscribe to The Stack</h3>
+[7m  [0m [91m                                        ~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m87[0m:[93m41[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m87[0m                                         <p>Your weekly edge in Indian markets ΓÇö every Sunday at 7 PM</p>
+[7m  [0m [91m                                        ~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m91[0m:[93m37[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m91[0m                                     <ArrowRight size={22} className={styles.arrowIcon} />
+[7m  [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m96[0m:[93m29[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m96[0m                             <AnimatePresence>
+[7m  [0m [91m                            ~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m98[0m:[93m37[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m 98[0m                                     <motion.div
+[7m   [0m [91m                                    ~~~~~~~~~~~[0m
+[7m 99[0m                                         className={styles.formArea}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m103[0m                                         transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m104[0m                                     >
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m105[0m:[93m41[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m105[0m                                         <form onSubmit={handleSubscribe}>
+[7m   [0m [91m                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m106[0m:[93m45[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m106[0m                                             <div className={styles.formWrapper}>
+[7m   [0m [91m                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m107[0m:[93m49[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m107[0m                                                 <input
+[7m   [0m [91m                                                ~~~~~~[0m
+[7m108[0m                                                     type="email"
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m117[0m                                                     disabled={state === 'loading'}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m118[0m                                                 />
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m119[0m:[93m49[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m119[0m                                                 <button
+[7m   [0m [91m                                                ~~~~~~~[0m
+[7m120[0m                                                     type="submit"
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m...[0m 
+[7m122[0m                                                     disabled={state === 'loading' || !email}
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+[7m123[0m                                                 >
+[7m   [0m [91m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m125[0m:[93m57[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m125[0m                                                         <>
+[7m   [0m [91m                                                        ~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m126[0m:[93m61[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m126[0m                                                             <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
+[7m   [0m [91m                                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m136[0m:[93m49[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m136[0m                                                 <p className={styles.errorMsg}>{errorMessage}</p>
+[7m   [0m [91m                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m139[0m:[93m45[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m139[0m                                             <div className={styles.formFooter}>
+[7m   [0m [91m                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m140[0m:[93m49[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m140[0m                                                 <Shield size={14} />
+[7m   [0m [91m                                                ~~~~~~~~~~~~~~~~~~~~[0m
+
+[96msrc/components/NewsletterCTA.tsx[0m:[93m141[0m:[93m49[0m - [91merror[0m[90m TS17004: [0mCannot use JSX unless the '--jsx' flag is provided.
+
+[7m141[0m                                                 <span>Free forever. No spam. Unsubscribe anytime.</span>
+[7m   [0m [91m                                                ~~~~~~[0m
+
+
+Found 61 errors in 23 files.
+
+Errors  Files
+     4  node_modules/@types/mdx/types.d.ts[90m:23[0m
+     1  node_modules/next/dist/build/templates/app-page.d.ts[90m:3[0m
+     1  node_modules/next/dist/build/webpack-config.d.ts[90m:10[0m
+     1  node_modules/next/dist/build/webpack/loaders/next-app-loader/index.d.ts[90m:1[0m
+     1  node_modules/next/dist/client/components/error-boundary.d.ts[90m:1[0m
+     1  node_modules/next/dist/client/components/http-access-fallback/error-boundary.d.ts[90m:11[0m
+     1  node_modules/next/dist/client/components/layout-router.d.ts[90m:2[0m
+     1  node_modules/next/dist/client/with-router.d.ts[90m:1[0m
+     1  node_modules/next/dist/lib/metadata/metadata.d.ts[90m:1[0m
+     1  node_modules/next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup.d.ts[90m:1[0m
+     2  node_modules/next/dist/server/app-render/entry-base.d.ts[90m:1[0m
+     4  node_modules/next/dist/server/web/spec-extension/adapters/headers.d.ts[90m:39[0m
+     1  node_modules/next/dist/shared/lib/app-router-context.shared-runtime.d.ts[90m:4[0m
+     1  node_modules/next/dist/shared/lib/app-router-types.d.ts[90m:7[0m
+     1  node_modules/next/dist/shared/lib/head-manager-context.shared-runtime.d.ts[90m:1[0m
+     1  node_modules/next/dist/shared/lib/image-config-context.shared-runtime.d.ts[90m:1[0m
+     1  node_modules/next/dist/shared/lib/loadable-context.shared-runtime.d.ts[90m:1[0m
+     1  node_modules/next/dist/shared/lib/loadable.shared-runtime.d.ts[90m:21[0m
+     1  node_modules/next/dist/shared/lib/router-context.shared-runtime.d.ts[90m:1[0m
+     1  node_modules/next/dist/shared/lib/server-inserted-html.shared-runtime.d.ts[90m:1[0m
+     1  node_modules/next/dist/shared/lib/utils.d.ts[90m:10[0m
+     3  src/app/api/newsletter/test-send/route.ts[90m:2[0m
+    30  src/components/NewsletterCTA.tsx[90m:3[0m

@@ -67,11 +67,32 @@
   text-align: center;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.featureCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--primary-brand), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .featureCard:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: var(--primary-brand);
+  border-color: rgba(202, 255, 0, 0.3);
+  box-shadow: 0 0 30px rgba(202, 255, 0, 0.1);
+  transform: translateY(-5px);
+}
+
+.featureCard:hover::before {
+  opacity: 1;
 }
 
 .iconWrapper {
