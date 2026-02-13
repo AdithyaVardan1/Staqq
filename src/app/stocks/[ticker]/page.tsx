@@ -1,7 +1,8 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -16,12 +17,14 @@ import {
     ExternalLink,
     Briefcase,
     Search,
-    ChevronRight,
-    Bookmark
+    Bookmark,
+    Activity
 } from 'lucide-react';
 import Link from 'next/link';
 import clsx from 'clsx';
 import { use } from 'react';
+import { useWatchlist } from '@/hooks/useWatchlist';
+import { useComparisonStore } from '@/store/useComparisonStore';
 import { StockLogo } from '@/components/stocks/StockLogo';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, LabelList } from 'recharts';
 import styles from './page.module.css';
@@ -278,7 +281,6 @@ const STOCK_DATA: any = {
 };
 
 import { useLiveMarketData } from '@/hooks/useLiveMarketData';
-import { Activity } from 'lucide-react';
 
 interface FundamentalData {
     ticker: string;
@@ -319,27 +321,109 @@ interface FundamentalData {
 
 export default function StockDetailPage({ params }: { params: Promise<{ ticker: string }> }) {
     const resolvedParams = use(params);
-    const ticker = resolvedParams.ticker?.toUpperCase() || 'RELIANCE';
-    const data = STOCK_DATA[ticker] || STOCK_DATA.RELIANCE;
+    const router = useRouter();
+    const ticker = resolvedParams.ticker?.toUpperCase() || '';
+
+    // Initial dynamic state before fundamentals load
+    const [data, setData] = useState({
+        ticker: ticker,
+        fullTicker: ticker.includes('.') ? ticker : `${ticker}.NS`,
+        name: ticker,
+        price: 0,
+        change: 0,
+        changePercent: 0,
+        about: "Loading stock information...",
+        sector: "---",
+        industry: "---",
+        founded: "---",
+        website: "---",
+        stats: [],
+        metrics: {
+            valuation: [],
+            profitability: [],
+            leverage: []
+        },
+        financials: {
+            quarterly: [],
+            annual: []
+        },
+        news: [],
+        events: [],
+        shareholding: [
+            { name: 'Promoters', value: 50.1, color: '#22C55E' },
+            { name: 'FII', value: 23.4, color: '#3B82F6' },
+            { name: 'DII', value: 14.2, color: '#8B5CF6' },
+            { name: 'Public', value: 12.3, color: '#F59E0B' },
+        ],
+        technicals: [
+            { name: 'RSI (14)', value: '55.4', status: 'Neutral', interpretation: 'Market is in a balanced state.' },
+            { name: 'MACD', value: '+12.5', status: 'Bullish', interpretation: 'Short-term momentum is positive.' },
+            { name: 'Moving Average', value: 'Above 200DMA', status: 'Bullish', interpretation: 'Long-term trend is upward.' }
+        ]
+    });
+
     const [timeframe, setTimeframe] = useState('1D');
-    const [fundamentals, setFundamentals] = useState<FundamentalData | null>(null);
+    const [fundamentals, setFundamentals] = useState<any | null>(null);
     const [isLoadingFundamentals, setIsLoadingFundamentals] = useState(true);
     const [fundamentalsError, setFundamentalsError] = useState<string | null>(null);
-    const [dataSource, setDataSource] = useState<'yahoo-finance' | 'mock-fallback' | null>(null);
+    const [dataSource, setDataSource] = useState<'yfinance' | 'yfinance-python' | 'mock-fallback' | null>(null);
 
     // Financial chart state
     const [activeMetric, setActiveMetric] = useState<'revenue' | 'profit' | 'networth'>('revenue');
     const [activePeriod, setActivePeriod] = useState<'quarterly' | 'yearly'>('quarterly');
+    const [activeHeaderTab, setActiveHeaderTab] = useState('Overview');
+    const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
+    const isWatched = isInWatchlist(data.ticker);
+
+    // Comparison Logic
+    const { selectedTickers, addTicker, removeTicker, setTriggerSearch } = useComparisonStore();
+    const isInComparison = selectedTickers.includes(data.ticker);
+
+    const toggleStock = () => {
+        if (isInComparison) {
+            removeTicker(data.ticker);
+        } else {
+            if (selectedTickers.length >= 3) {
+                // If this is the 4th stock, add it and go directly to comparison
+                addTicker(data.ticker);
+                router.push('/stocks/compare');
+            } else {
+                addTicker(data.ticker);
+                setTriggerSearch(true);
+            }
+        }
+    };
     const [showDetails, setShowDetails] = useState(false);
+
+    const handleWatchlistToggle = () => {
+        if (isWatched) {
+            removeFromWatchlist(data.ticker);
+        } else {
+            addToWatchlist(data.ticker);
+        }
+    };
 
     const { price: displayPrice, change: liveChange, changePercent: liveChangePercent, status } = useLiveMarketData(ticker, data.price);
 
-    // Use live values if they exist, otherwise fallback to mock/initial data
+    // Use live values if they exist, otherwise fallback to initial data
     const currentChangeAmount = liveChange !== undefined ? liveChange : data.change;
     const currentChangePercent = liveChangePercent !== undefined ? liveChangePercent : data.changePercent;
 
+    const isPositive = currentChangePercent >= 0;
+
     const [historicalChartData, setHistoricalChartData] = useState<any[]>([]);
     const [isLoadingChart, setIsLoadingChart] = useState(false);
+
+    // Track "Recently Viewed" and "Trending"
+    useEffect(() => {
+        if (ticker) {
+            fetch('/api/user/recently-viewed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticker })
+            }).catch(e => console.error('Failed to track view:', e));
+        }
+    }, [ticker]);
 
     // Fetch Fundamentals from Yahoo Finance
     React.useEffect(() => {
@@ -360,13 +444,35 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                 console.log(`[StockDetail] API Response:`, result);
 
                 if (result.fundamentals) {
-                    setFundamentals(result.fundamentals);
-                    setDataSource(result.source || 'yahoo-finance');
-                    console.log(`[StockDetail] Loaded fundamentals for ${ticker}:`, result.fundamentals);
+                    const f = result.fundamentals;
+                    setFundamentals(f);
+                    setDataSource(result.source || 'yfinance-python');
 
-                    if (result.warning) {
-                        console.warn(`[StockDetail] Warning: ${result.warning}`);
-                    }
+                    // Update main data state with fresh info
+                    setData(prev => ({
+                        ...prev,
+                        name: f.name || prev.name,
+                        about: f.description || prev.about,
+                        sector: f.sector || prev.sector,
+                        industry: f.industry || prev.industry,
+                        website: f.website || prev.website,
+                        financials: f.financials || prev.financials,
+                        events: (f.events || []).map((e: any, idx: number) => ({
+                            ...e,
+                            id: e.id || `event-${idx}`
+                        })),
+                        news: (f.news || []).map((n: any, idx: number) => ({
+                            id: n.id || `news-${idx}`,
+                            title: n.title || '',
+                            source: n.source || 'Market News',
+                            link: n.link || '',
+                            date: n.date || 'Recent'
+                        })),
+                        shareholding: f.shareholding || prev.shareholding,
+                        technicals: f.technicals || prev.technicals
+                    }));
+
+                    console.log(`[StockDetail] Loaded fundamentals for ${ticker}:`, f);
                 } else {
                     setFundamentalsError(result.error || 'Failed to fetch fundamentals');
                 }
@@ -404,7 +510,6 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
         fetchHistory();
     }, [ticker, timeframe]);
 
-    const isPositive = currentChangeAmount >= 0;
 
     // Helper functions to format Yahoo Finance data
     const formatMarketCap = (marketCap: number) => {
@@ -423,96 +528,19 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
     };
 
     // Generate real-time stats from fundamentals
+    // Generate real-time stats from fundamentals
     const getRealStats = () => {
         if (!fundamentals) return data.stats;
 
         return [
             { label: 'Market Cap', value: formatMarketCap(fundamentals.marketCap) },
-            { label: '52-Week High', value: `₹${fundamentals.high52.toFixed(2)}` },
-            { label: '52-Week Low', value: `₹${fundamentals.low52.toFixed(2)}` },
+            { label: '52-Week High', value: `₹${fundamentals.high52?.toFixed(2) || '--'}` },
+            { label: '52-Week Low', value: `₹${fundamentals.low52?.toFixed(2) || '--'}` },
             { label: 'P/E Ratio', value: formatRatio(fundamentals.peRatio) },
             { label: 'Div Yield', value: formatPercentage(fundamentals.divYield) },
             { label: 'Beta', value: formatRatio(fundamentals.beta) },
-            { label: 'Volume', value: data.stats.find((s: any) => s.label === 'Volume')?.value || 'N/A' }, // Keep mock volume for now
+            { label: 'Source', value: 'yFinance' },
         ];
-    };
-
-    // Generate real metrics from fundamentals
-    const getRealMetrics = () => {
-        if (!fundamentals) return data.metrics;
-
-        // Calculate industry averages based on sector (simplified approach)
-        const getIndustryAverage = (metric: string, sector: string) => {
-            const industryAverages: Record<string, Record<string, number>> = {
-                'Energy': { pe: 15.5, pb: 1.2, peg: 1.1, netMargin: 0.08, roe: 0.12, roa: 0.06, debtEquity: 0.45 },
-                'Technology': { pe: 28.5, pb: 4.2, peg: 1.8, netMargin: 0.18, roe: 0.22, roa: 0.12, debtEquity: 0.15 },
-                'Financial Services': { pe: 12.8, pb: 1.1, peg: 1.0, netMargin: 0.25, roe: 0.15, roa: 0.01, debtEquity: 0.85 },
-                'Consumer Goods': { pe: 35.2, pb: 8.5, peg: 2.1, netMargin: 0.12, roe: 0.18, roa: 0.08, debtEquity: 0.25 },
-                'default': { pe: 21.2, pb: 1.8, peg: 1.2, netMargin: 0.105, roe: 0.128, roa: 0.071, debtEquity: 0.65 }
-            };
-
-            const sectorData = industryAverages[sector] || industryAverages['default'];
-            return sectorData[metric] || industryAverages['default'][metric];
-        };
-
-        const sector = fundamentals.sector || 'default';
-
-        return {
-            valuation: [
-                {
-                    name: 'P/E Ratio',
-                    value: fundamentals.peRatio,
-                    industry: getIndustryAverage('pe', sector),
-                    info: 'Price to Earnings: How much investors pay for $1 of profit.'
-                },
-                {
-                    name: 'P/B Ratio',
-                    value: fundamentals.pbRatio,
-                    industry: getIndustryAverage('pb', sector),
-                    info: 'Price to Book Value: Compares market value to accounting value.'
-                },
-                {
-                    name: 'PEG Ratio',
-                    value: fundamentals.pegRatio,
-                    industry: getIndustryAverage('peg', sector),
-                    info: 'Price/Earnings to Growth: PE adjusted for earnings growth.'
-                },
-            ],
-            profitability: [
-                {
-                    name: 'Net Margin',
-                    value: formatPercentage(fundamentals.netMargin),
-                    industry: formatPercentage(getIndustryAverage('netMargin', sector)),
-                    info: 'Percentage of revenue left as profit.'
-                },
-                {
-                    name: 'Return on Equity',
-                    value: formatPercentage(fundamentals.roe),
-                    industry: formatPercentage(getIndustryAverage('roe', sector)),
-                    info: 'Profit generated with shareholders money.'
-                },
-                {
-                    name: 'Return on Assets',
-                    value: formatPercentage(fundamentals.roa),
-                    industry: formatPercentage(getIndustryAverage('roa', sector)),
-                    info: 'How efficiently company uses its assets.'
-                },
-            ],
-            leverage: [
-                {
-                    name: 'Debt/Equity',
-                    value: fundamentals.debtToEquity,
-                    industry: getIndustryAverage('debtEquity', sector),
-                    info: 'Total debt relative to shareholder equity.'
-                },
-                {
-                    name: 'Interest Coverage',
-                    value: data.metrics.leverage[1]?.value || 12.5, // Keep mock for now
-                    industry: data.metrics.leverage[1]?.industry || 8.4,
-                    info: 'Ability to pay interest on loans from profits.'
-                },
-            ]
-        };
     };
 
     // Get company info from fundamentals
@@ -527,44 +555,33 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
         };
 
         return {
-            name: data.name, // Keep display name from mock
-            about: fundamentals.description || data.about,
-            sector: fundamentals.sector || data.sector,
-            industry: fundamentals.industry || data.industry,
-            website: fundamentals.website || data.website,
-            founded: data.founded // Keep mock founded date for now
+            name: fundamentals.name || ticker,
+            about: fundamentals.description || "No description available.",
+            sector: fundamentals.sector || "N/A",
+            industry: fundamentals.industry || "N/A",
+            website: fundamentals.website || "N/A",
+            founded: "---"
         };
     };
 
     const stats = getRealStats();
-    const metrics = getRealMetrics();
     const companyInfo = getCompanyInfo();
 
     // Helper functions for chart data
     const getChartData = () => {
-        // First try to use real fundamentals data
-        if (fundamentals?.financials) {
-            const sourceData = activePeriod === 'quarterly'
-                ? fundamentals.financials.quarterly
-                : fundamentals.financials.annual;
+        const sourceData = activePeriod === 'quarterly'
+            ? fundamentals?.financials?.quarterly
+            : fundamentals?.financials?.annual;
 
-            if (sourceData && sourceData.length > 0) {
-                return sourceData.map(item => ({
-                    ...item,
-                    period: 'period' in item ? item.period : (item as any).year,
-                }));
-            }
+        if (sourceData && sourceData.length > 0) {
+            return [...sourceData].reverse().map(item => ({
+                ...item,
+                period: 'period' in item ? item.period : (item as any).year,
+                networth: item.revenue ? Math.round(item.revenue * 0.4) : 0 // Synthetic placeholder for UI
+            }));
         }
 
-        // Fallback to mock data if fundamentals are not available
-        const sourceData = activePeriod === 'quarterly' ? data.financials.quarterly : data.financials.annual;
-        if (!sourceData || sourceData.length === 0) return [];
-
-        return sourceData.map((item: any) => ({
-            ...item,
-            period: activePeriod === 'quarterly' ? item.period : item.year,
-            networth: Math.round(item.revenue * 0.15) // Calculate net worth as 15% of revenue for demo
-        }));
+        return [];
     };
 
     const getMetricConfig = () => {
@@ -607,8 +624,23 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                     </Link>
                     <div className={styles.actions}>
                         <Button variant="ghost" size="icon"><Share2 size={20} /></Button>
-                        <Button variant="outline" size="sm" className={styles.watchlistBtn}>
-                            <Bookmark size={18} /> Watchlist
+                        <Button
+                            variant={isInComparison ? "primary" : "outline"}
+                            size="sm"
+                            className={styles.watchlistBtn}
+                            onClick={toggleStock}
+                        >
+                            <Activity size={18} />
+                            {isInComparison ? 'Added to Compare' : 'Compare'}
+                        </Button>
+                        <Button
+                            variant={isWatched ? "primary" : "outline"}
+                            size="sm"
+                            className={styles.watchlistBtn}
+                            onClick={handleWatchlistToggle}
+                        >
+                            <Bookmark size={18} fill={isWatched ? "currentColor" : "none"} />
+                            {isWatched ? 'In Watchlist' : 'Watchlist'}
                         </Button>
                     </div>
                 </div>
@@ -616,24 +648,23 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                 {/* Stock Header Section */}
                 <section className={styles.headerSection}>
                     <div className={styles.lhs}>
-                        <div className={styles.nameRow}>
-                            <div className={styles.logoAndTitle}>
-                                <StockLogo ticker={data.ticker} name={companyInfo.name} size="xl" />
-                                <div>
-                                    <h1 className={styles.title}>{companyInfo.name}</h1>
-                                    <div className={styles.tickerRow}>
-                                        <Badge variant="neutral" className={styles.tickerBadge}>{data.fullTicker}</Badge>
-                                        {status === 'connected' && (
-                                            <span className={styles.liveIndicator}>
-                                                <Activity size={12} /> LIVE
-                                            </span>
-                                        )}
-                                    </div>
+                        <div className={styles.logoAndTitle}>
+                            <StockLogo ticker={data.ticker} name={companyInfo.name} size="md" />
+                            <div>
+                                <h1 className={styles.title}>{companyInfo.name} ({data.ticker})</h1>
+                                <div className={styles.tickerRow}>
+                                    <Badge variant="neutral" className={styles.tickerBadge}>{data.fullTicker}</Badge>
+                                    <span className="text-secondary text-sm font-medium">{companyInfo.sector} • {companyInfo.industry}</span>
+                                    {status === 'connected' && (
+                                        <span className={styles.liveIndicator}>
+                                            <Activity size={12} /> LIVE
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
                         <div className={styles.priceRow}>
-                            <div className={styles.price}>₹{displayPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
+                            <div className={styles.price}>₹{(displayPrice ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
                             <div className={styles.change} style={{ color: isPositive ? 'var(--status-success)' : 'var(--status-danger)' }}>
                                 {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
                                 {isPositive ? '+' : ''}{currentChangeAmount.toFixed(2)} ({currentChangePercent.toFixed(2)}%)
@@ -680,6 +711,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                 {/* Grid Layout for details */}
                 <div className={styles.detailsGrid}>
                     <div className={styles.mainContent}>
+                        {/* News Highlights */}
 
                         {/* Quick Stats Grid */}
                         <section className={styles.section}>
@@ -687,10 +719,10 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                 <h2 className={styles.sectionHeading}>Quick Stats</h2>
                                 {fundamentals && !isLoadingFundamentals && (
                                     <Badge
-                                        variant={dataSource === 'yahoo-finance' ? 'success' : 'warning'}
+                                        variant={dataSource === 'yfinance-python' ? 'success' : 'warning'}
                                         style={{ fontSize: '11px' }}
                                     >
-                                        {dataSource === 'yahoo-finance' ? 'Live Data' : 'Sample Data'}
+                                        {dataSource === 'yfinance-python' ? 'Live Data' : 'Sample Data'}
                                     </Badge>
                                 )}
                             </div>
@@ -715,62 +747,6 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                             )}
                         </section>
 
-                        {/* Key Metrics Section */}
-                        <section className={styles.section}>
-                            <div className={styles.sectionHeader}>
-                                <h2 className={styles.sectionHeading}>Key Metrics</h2>
-                                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                    <Badge variant="neutral">Industrial Comparison</Badge>
-                                    {fundamentals && !isLoadingFundamentals && (
-                                        <Badge
-                                            variant={dataSource === 'yahoo-finance' ? 'success' : 'warning'}
-                                            style={{ fontSize: '11px' }}
-                                        >
-                                            {dataSource === 'yahoo-finance' ? 'Yahoo Finance' : 'Sample Data'}
-                                        </Badge>
-                                    )}
-                                </div>
-                            </div>
-
-                            {isLoadingFundamentals ? (
-                                <div className={styles.metricsContainer}>
-                                    <div className={styles.metricGroup}>
-                                        <h3 className={styles.groupTitle}>Loading...</h3>
-                                        <div style={{ padding: '20px', textAlign: 'center', color: '#888' }}>
-                                            Fetching real-time fundamentals from Yahoo Finance...
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : fundamentalsError ? (
-                                <div className={styles.metricsContainer}>
-                                    <div className={styles.metricGroup}>
-                                        <h3 className={styles.groupTitle}>Error Loading Data</h3>
-                                        <div style={{ padding: '20px', textAlign: 'center', color: '#ff6b6b' }}>
-                                            {fundamentalsError}
-                                            <br />
-                                            <small style={{ color: '#888', marginTop: '8px', display: 'block' }}>
-                                                Showing fallback data from mock dataset
-                                            </small>
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className={styles.metricsContainer}>
-                                    <div className={styles.metricGroup}>
-                                        <h3 className={styles.groupTitle}>Valuation</h3>
-                                        {metrics.valuation.map((m: any) => <MetricRow key={m.name} metric={m} />)}
-                                    </div>
-                                    <div className={styles.metricGroup}>
-                                        <h3 className={styles.groupTitle}>Profitability</h3>
-                                        {metrics.profitability.map((m: any) => <MetricRow key={m.name} metric={m} />)}
-                                    </div>
-                                    <div className={styles.metricGroup}>
-                                        <h3 className={styles.groupTitle}>Leverage</h3>
-                                        {metrics.leverage.map((m: any) => <MetricRow key={m.name} metric={m} />)}
-                                    </div>
-                                </div>
-                            )}
-                        </section>
 
                         {/* Financial Performance */}
                         <section className={styles.section}>
@@ -802,19 +778,19 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                     className={`${styles.tabButton} ${activeMetric === 'revenue' ? styles.active : ''}`}
                                                     onClick={() => setActiveMetric('revenue')}
                                                 >
-                                                    Revenue
+                                                    <span>Revenue</span>
                                                 </button>
                                                 <button
                                                     className={`${styles.tabButton} ${activeMetric === 'profit' ? styles.active : ''}`}
                                                     onClick={() => setActiveMetric('profit')}
                                                 >
-                                                    Profit
+                                                    <span>Profit</span>
                                                 </button>
                                                 <button
                                                     className={`${styles.tabButton} ${activeMetric === 'networth' ? styles.active : ''}`}
                                                     onClick={() => setActiveMetric('networth')}
                                                 >
-                                                    Net Worth
+                                                    <span>Net Worth</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -891,7 +867,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                             fill="#ccc"
                                                             fontSize={12}
                                                             fontWeight={600}
-                                                            formatter={(val: number) => val.toLocaleString('en-IN')}
+                                                            formatter={(val: any) => val?.toLocaleString?.('en-IN') || val}
                                                         />
                                                         {chartData.map((entry: any, index: number) => (
                                                             <Cell
@@ -980,7 +956,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                             </div>
                                             <div className={styles.metricValue}>
                                                 {(() => {
-                                                    const quarterly = data.financials.quarterly;
+                                                    const quarterly = data.financials.quarterly as any[];
                                                     if (!quarterly || quarterly.length < 2) return 'N/A';
 
                                                     const latest = quarterly[0];
@@ -993,7 +969,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                 })()}
                                             </div>
                                             <div className={styles.metricSubtext}>
-                                                ₹{data.financials.quarterly[0]?.revenue?.toLocaleString('en-IN') || 'N/A'} Cr
+                                                ₹{(data.financials.quarterly[0] as any)?.revenue?.toLocaleString('en-IN') || 'N/A'} Cr
                                             </div>
                                         </Card>
 
@@ -1004,7 +980,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                             </div>
                                             <div className={styles.metricValue}>
                                                 {(() => {
-                                                    const quarterly = data.financials.quarterly;
+                                                    const quarterly = data.financials.quarterly as any[];
                                                     if (!quarterly || quarterly.length < 2) return 'N/A';
 
                                                     const latest = quarterly[0];
@@ -1017,7 +993,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                 })()}
                                             </div>
                                             <div className={styles.metricSubtext}>
-                                                ₹{data.financials.quarterly[0]?.profit?.toLocaleString('en-IN') || 'N/A'} Cr
+                                                ₹{(data.financials.quarterly[0] as any)?.profit?.toLocaleString('en-IN') || 'N/A'} Cr
                                             </div>
                                         </Card>
 
@@ -1028,7 +1004,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                             </div>
                                             <div className={styles.metricValue}>
                                                 {(() => {
-                                                    const quarterly = data.financials.quarterly;
+                                                    const quarterly = data.financials.quarterly as any[];
                                                     if (!quarterly || quarterly.length < 2) return 'N/A';
 
                                                     const latest = quarterly[0];
@@ -1041,7 +1017,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                 })()}
                                             </div>
                                             <div className={styles.metricSubtext}>
-                                                ₹{data.financials.quarterly[0]?.eps || 'N/A'}
+                                                ₹{(data.financials.quarterly[0] as any)?.eps || 'N/A'}
                                             </div>
                                         </Card>
 
@@ -1052,7 +1028,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                             </div>
                                             <div className={styles.metricValue}>
                                                 {(() => {
-                                                    const quarterly = data.financials.quarterly;
+                                                    const quarterly = data.financials.quarterly as any[];
                                                     if (!quarterly || quarterly.length === 0) return 'N/A';
 
                                                     const latest = quarterly[0];
@@ -1079,7 +1055,12 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                     <Card key={tech.name} className={styles.techCard}>
                                         <div className={styles.techHeader}>
                                             <span className={styles.techName}>{tech.name}</span>
-                                            <Badge variant={tech.status.toLowerCase() as any}>{tech.value}</Badge>
+                                            <Badge
+                                                variant={tech.status.toLowerCase() as any}
+                                                title={tech.value} /* Tooltip for full value */
+                                            >
+                                                {tech.value}
+                                            </Badge>
                                         </div>
                                         <p className={styles.techDesc}>{tech.interpretation}</p>
                                     </Card>
@@ -1158,10 +1139,10 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                             <h3 className={styles.sidebarHeading}>News & Events</h3>
                             <div className={styles.newsList}>
                                 {data.news.map((item: any) => (
-                                    <div key={item.id} className={styles.newsItem}>
+                                    <a key={item.id} href={item.link || '#'} target="_blank" rel="noopener noreferrer" className={styles.newsItem}>
                                         <div className={styles.newsTitle}>{item.title}</div>
                                         <div className={styles.newsMeta}>{item.source} • {item.date}</div>
-                                    </div>
+                                    </a>
                                 ))}
                             </div>
                             <div className={styles.eventsList}>
