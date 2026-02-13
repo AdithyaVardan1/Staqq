@@ -9,6 +9,8 @@ import clsx from 'clsx';
 import { Menu, X, Search, User } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { supabase } from '@/lib/supabaseClient';
+import { SearchModal } from './SearchModal';
+import { useComparisonStore } from '@/store/useComparisonStore';
 import styles from './Navbar.module.css';
 
 const navLinks = [
@@ -21,8 +23,17 @@ const navLinks = [
 export const Navbar = () => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const pathname = usePathname();
     const [user, setUser] = useState<any>(null);
+    const { triggerSearch, setTriggerSearch } = useComparisonStore();
+
+    useEffect(() => {
+        if (triggerSearch) {
+            setIsSearchOpen(true);
+            setTriggerSearch(false);
+        }
+    }, [triggerSearch, setTriggerSearch]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -46,6 +57,24 @@ export const Navbar = () => {
             window.removeEventListener('scroll', handleScroll);
             subscription.unsubscribe();
         };
+    }, []);
+
+    useEffect(() => {
+        const handleKeys = (e: KeyboardEvent) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                setIsSearchOpen(true);
+            }
+            if (e.key === '/') {
+                const target = e.target as HTMLElement;
+                if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+                    e.preventDefault();
+                    setIsSearchOpen(true);
+                }
+            }
+        };
+        window.addEventListener('keydown', handleKeys);
+        return () => window.removeEventListener('keydown', handleKeys);
     }, []);
 
     const handleLogout = async () => {
@@ -94,16 +123,22 @@ export const Navbar = () => {
 
                         {/* Actions */}
                         <div className={styles.actions}>
-                            <button className={styles.iconBtn} aria-label="Search" suppressHydrationWarning>
+                            <button
+                                className={styles.iconBtn}
+                                aria-label="Search"
+                                onClick={() => setIsSearchOpen(true)}
+                                suppressHydrationWarning
+                            >
                                 <Search size={20} />
                             </button>
+
+                            <Link href="/watchlist" className={styles.watchlistLink}>
+                                <Button variant="ghost" size="sm" className="hidden md:flex">Watchlist</Button>
+                            </Link>
 
                             <div className={styles.desktopAuth}>
                                 {user ? (
                                     <div className="flex items-center gap-3">
-                                        <Link href="/watchlist">
-                                            <Button variant="ghost" size="sm">Watchlist</Button>
-                                        </Link>
                                         <Link href="/profile" aria-label="Profile">
                                             <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-white/10">
                                                 <User size={16} className="text-white" />
@@ -151,11 +186,11 @@ export const Navbar = () => {
                         </Link>
                     ))}
                     <div className={styles.mobileAuth}>
+                        <Link href="/watchlist" onClick={() => setIsMobileMenuOpen(false)}>
+                            <Button variant="outline" fullWidth>Watchlist</Button>
+                        </Link>
                         {user ? (
                             <>
-                                <Link href="/watchlist" onClick={() => setIsMobileMenuOpen(false)}>
-                                    <Button variant="outline" fullWidth>Watchlist</Button>
-                                </Link>
                                 <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button variant="primary" fullWidth>My Profile</Button>
                                 </Link>
@@ -174,6 +209,11 @@ export const Navbar = () => {
                     </div>
                 </div>
             </div>
+
+            <SearchModal
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
+            />
         </>
     );
 };

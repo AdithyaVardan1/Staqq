@@ -1,0 +1,124 @@
+.container {
+    height: 100%;
+    min-height: 200px;
+    padding: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.shimmer div {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0.05) 25%,
+            rgba(255, 255, 255, 0.1) 50%,
+            rgba(255, 255, 255, 0.05) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.header {
+    display: flex;
+    gap: var(--spacing-sm);
+    background: none !important;
+}
+
+.logoCircle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50% !important;
+    flex-shrink: 0;
+}
+
+.tickerInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    background: none !important;
+}
+
+.tickerLine {
+    height: 18px;
+    width: 60px;
+}
+
+.nameLine {
+    height: 14px;
+    width: 120px;
+}
+
+.priceRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: none !important;
+}
+
+.priceSection {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: none !important;
+}
+
+.priceLine {
+    height: 24px;
+    width: 100px;
+}
+
+.changeLine {
+    height: 14px;
+    width: 80px;
+}
+
+.chartPlaceholder {
+    height: 40px;
+    width: 100px;
+}
+
+.metrics {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    background: none !important;
+}
+
+.metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    background: none !important;
+}
+
+.metricLabelLine {
+    height: 12px;
+    width: 100%;
+}
+
+.metricValueLine {
+    height: 14px;
+    width: 70%;
+}
+
+.buttonPlaceholder {
+    height: 36px;
+    width: 100%;
+    margin-top: var(--spacing-xs);
+}

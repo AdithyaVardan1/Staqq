@@ -4,6 +4,80 @@
     min-height: 100vh;
 }
 
+.recentlyViewedSection {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+}
+
+.rvTitle {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.rvGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.trendingContainer {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+}
+
+.trendingLabel {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.trendingList {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.trendingItem {
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.trendingItem:hover {
+    transform: translateY(-2px);
+    background: var(--primary-brand);
+    color: #000;
+    border-color: var(--primary-brand);
+    box-shadow: 0 4px 12px rgba(var(--primary-brand-rgb), 0.3);
+}
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -36,6 +110,10 @@
 @media (min-width: 1024px) {
     .sidebar {
         display: block;
+        position: sticky;
+        top: 100px;
+        align-self: flex-start;
+        z-index: 10;
     }
 
     .filterToggle {
@@ -45,8 +123,6 @@
 
 .filterCard {
     padding: var(--spacing-md);
-    position: sticky;
-    top: 100px;
     overflow: visible !important;
 }
 
@@ -273,6 +349,23 @@
     align-items: center;
     margin-bottom: var(--spacing-md);
     gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.resultsInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.resultCount {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.previewNote {
+    font-size: 0.8rem;
+    color: var(--text-muted);
 }
 
 .toolbarRight {
@@ -399,4 +492,93 @@
 .clearAll:hover {
     color: var(--text-primary);
     background: rgba(255, 255, 255, 0.05);
+}
+
+/* Infinite Scroll Improvements */
+.infiniteTrigger {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+}
+
+.loadingMore {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    color: var(--primary-brand);
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadMoreWrapper {
+    display: flex;
+    justify-content: center;
+    margin: var(--spacing-xl) 0;
+}
+
+.loadMoreBtn {
+    min-width: 200px;
+    backdrop-filter: blur(8px);
+}
+
+.endMessage {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--glass-border);
+}
+
+.emptyState {
+    padding: 60px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    border: 1px dashed var(--glass-border);
+    margin-top: var(--spacing-lg);
+}
+
+.emptyState h3 {
+    margin: var(--spacing-md) 0 var(--spacing-sm);
+    font-size: 1.25rem;
+    color: var(--text-primary);
+}
+
+.emptyState p {
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-lg);
+}
+
+.emptyIcon {
+    opacity: 0.5;
+    margin-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 640px) {
+    .resultsToolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .toolbarRight {
+        width: 100%;
+        justify-content: space-between;
+    }
 }

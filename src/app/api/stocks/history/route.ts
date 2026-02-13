@@ -21,11 +21,6 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: 'Ticker is required' }, { status: 400 });
     }
 
-    const token = TICKER_MAP[ticker.toUpperCase()];
-    if (!token) {
-        return NextResponse.json({ error: 'Token not found' }, { status: 404 });
-    }
-
     // Determine Interval and From/To Dates
     const now = new Date();
     let fromDate = new Date();
@@ -80,9 +75,14 @@ export async function GET(req: NextRequest) {
     };
 
     try {
+        const instrument = await angelOne.findInstrument(ticker);
+        if (!instrument) {
+            return NextResponse.json({ error: `Instrument not found for ${ticker}` }, { status: 404 });
+        }
+
         const response = await angelOne.getCandleData(
-            'NSE',
-            token,
+            instrument.exchange,
+            instrument.token,
             interval,
             formatDate(fromDate),
             formatDate(now)

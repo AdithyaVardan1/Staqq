@@ -130,15 +130,114 @@ export class AngelOneService {
         this.tokensCache = map;
     }
 
-    /**
-     * Finds a token for a given ticker.
-     */
-    public async findToken(ticker: string, exchange: string = 'NSE') {
+    public async findInstrument(ticker: string) {
         const tokensMap = await this.getInstrumentTokens();
-        const symbol = exchange === 'NSE' ? `${ticker}-EQ` : ticker;
-        const key = `${exchange}:${symbol}`;
-        const instrument = tokensMap?.get(key);
-        return instrument ? instrument.token : null;
+
+        // Try NSE Equity first
+        const nseSymbol = `${ticker}-EQ`;
+        const nseKey = `NSE:${nseSymbol}`;
+        let instrument = tokensMap?.get(nseKey);
+
+        if (instrument) {
+            return {
+                token: instrument.token,
+                exchange: 'NSE',
+                symbol: nseSymbol
+            };
+        }
+
+        // Try BSE Equity
+        const bseKey = `BSE:${ticker}`;
+        instrument = tokensMap?.get(bseKey);
+
+        if (instrument) {
+            return {
+                token: instrument.token,
+                exchange: 'BSE',
+                symbol: ticker
+            };
+        }
+
+        // Try raw NSE (without -EQ)
+        const nseRawKey = `NSE:${ticker}`;
+        instrument = tokensMap?.get(nseRawKey);
+        if (instrument) {
+            return {
+                token: instrument.token,
+                exchange: 'NSE',
+                symbol: ticker
+            };
+        }
+
+        return null;
+    }
+
+    public async findToken(ticker: string, exchange: string = 'NSE') {
+        const instrument = await this.findInstrument(ticker);
+        return instrument?.token || null;
+    }
+
+    public async searchInstruments(query: string) {
+        console.log(`[AngelOne] Searching for: "${query}"`);
+        // Ensure tokens are loaded
+        await this.getInstrumentTokens();
+
+        if (!this.tokensCache) {
+            console.error('[AngelOne] Search failed: tokensCache is empty. Ensure master list is loaded.');
+            return [];
+        }
+
+        const searchTerm = query.toUpperCase();
+        const results: any[] = [];
+
+        if (!this.tokensCache) {
+            await this.getInstrumentTokens();
+        }
+
+        if (!this.tokensCache) {
+            console.warn('[AngelOne] Token cache not available for search');
+            return [];
+        }
+
+        const startTime = Date.now();
+
+        for (const item of this.tokensCache.values()) {
+            // Include NSE and BSE
+            if (item.exch_seg !== 'NSE' && item.exch_seg !== 'BSE') continue;
+
+            // Prioritize Equity
+            const isEquity = item.symbol.endsWith('-EQ') || item.instrumenttype === 'SYMBOL';
+            const cleanSymbol = item.symbol.replace('-EQ', '');
+            const itemName = (item.name || '').toUpperCase();
+
+            // Match logic
+            let score = 0;
+            if (cleanSymbol === searchTerm) score = 100;
+            else if (cleanSymbol.startsWith(searchTerm)) score = 80;
+            else if (itemName.includes(searchTerm)) score = 50;
+
+            if (score > 0) {
+                results.push({
+                    symbol: cleanSymbol,
+                    name: item.name,
+                    exchange: item.exch_seg,
+                    token: item.token,
+                    type: item.instrumenttype,
+                    score
+                });
+            }
+
+            if (results.length > 500) break; // Safeguard
+        }
+
+        // Sort by score and then by symbol length (shorter symbols first)
+        const sortedResults = results
+            .sort((a, b) => b.score - a.score || a.symbol.length - b.symbol.length)
+            .slice(0, 15)
+            .map(({ score, ...rest }) => rest);
+
+        console.log(`[AngelOne] Search for "${query}" found ${sortedResults.length} results in ${Date.now() - startTime}ms`);
+        return sortedResults;
     }
 
     /**
@@ -246,6 +345,42 @@ export class AngelOneService {
             return response;
         } catch (error: any) {
             console.error('Angel One LTP Error:', error.message);
+            return null;
+        }
+    }
+    /**
+     * Gets Fundamental Data (including shareholding pattern) for a specific symbol.
+     */
+    public async getFundamentalData(exchange: string, token: string) {
+        if (!this.sessionData) {
+            await this.authenticate();
+        }
+
+        try {
+            // This is a direct call to the V1 fundamental endpoint
+            const response = await fetch('https://apiconnect.angelbroking.com/rest/auth/angelbroking/market/v1/getFundamental', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.sessionData.jwtToken}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-UserType': 'USER',
+                    'X-SourceID': 'WEB',
+                    'X-ClientLocalIP': '192.168.1.1',
+                    'X-ClientPublicIP': '1.1.1.1',
+                    'X-MACAddress': 'test',
+                    'X-PrivateKey': API_KEY
+                },
+                body: JSON.stringify({
+                    exchange,
+                    symboltoken: token
+                })
+            });
+
+            const result = await response.json();
+            return result;
+        } catch (error: any) {
+            console.error('Angel One Fundamental Error:', error.message);
             return null;
         }
     }

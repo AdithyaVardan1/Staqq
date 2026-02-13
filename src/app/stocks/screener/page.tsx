@@ -1,84 +1,38 @@
 
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { StockCard } from '@/components/stocks/StockCard';
 import { StockTable } from '@/components/stocks/StockTable';
-import { Filter, Info, LayoutGrid, List, ArrowUpDown, X } from 'lucide-react';
+import { StockCardSkeleton } from '@/components/stocks/StockCardSkeleton';
+import { BackToTop } from '@/components/ui/BackToTop';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { useDebounce } from '@/hooks/useDebounce';
+import { Filter, Info, LayoutGrid, List, ArrowUpDown, X, Loader2, AlertCircle, Activity } from 'lucide-react';
 import clsx from 'clsx';
 import styles from './page.module.css';
 
 // Mock Data Enhanced
-const STOCKS = [
-    {
-        ticker: 'RELIANCE',
-        name: 'Reliance Industries',
-        price: 2450.50,
-        change: 1.2,
-        changeAmount: 29.4,
-        marketCap: '16.5T',
-        peRatio: 24.5,
-        return1Y: 18.2,
-        sector: 'energy',
-        debt: 'low',
-        sparklineData: [2400, 2410, 2390, 2420, 2450, 2440, 2450.5]
-    },
-    {
-        ticker: 'TCS',
-        name: 'Tata Consultancy Services',
-        price: 3400.00,
-        change: -0.5,
-        changeAmount: -17.1,
-        marketCap: '12.4T',
-        peRatio: 29.1,
-        return1Y: 12.5,
-        sector: 'it',
-        debt: 'low',
-        sparklineData: [3450, 3420, 3440, 3410, 3390, 3400, 3400]
-    },
-    {
-        ticker: 'HDFCBANK',
-        name: 'HDFC Bank',
-        price: 1650.75,
-        change: 0.8,
-        changeAmount: 13.2,
-        marketCap: '9.2T',
-        peRatio: 18.4,
-        return1Y: -5.2,
-        sector: 'banking',
-        debt: 'medium',
-        sparklineData: [1620, 1630, 1640, 1635, 1645, 1650, 1650.75]
-    },
-    {
-        ticker: 'INFY',
-        name: 'Infosys Ltd',
-        price: 1450.20,
-        change: -1.2,
-        changeAmount: -17.5,
-        marketCap: '6.1T',
-        peRatio: 22.8,
-        return1Y: 8.4,
-        sector: 'it',
-        debt: 'low',
-        sparklineData: [1480, 1470, 1465, 1460, 1455, 1450, 1450.2]
-    },
-    {
-        ticker: 'ITC',
-        name: 'ITC Limited',
-        price: 450.00,
-        change: 2.5,
-        changeAmount: 10.9,
-        marketCap: '5.6T',
-        peRatio: 26.5,
-        return1Y: 32.1,
-        sector: 'consumer',
-        debt: 'low',
-        sparklineData: [430, 435, 438, 442, 445, 448, 450]
-    },
-];
+// STOCKS constant removed as we use API
+
+interface Stock {
+    ticker: string;
+    symbol: string;
+    name: string;
+    price: number;
+    change: number;
+    changeAmount: number;
+    marketCap: number;
+    peRatio: number;
+    return1Y: number;
+    sector: string;
+    debt: string;
+    sparklineData: number[];
+}
 
 const INITIAL_FILTERS = {
     priceRange: 10000,
@@ -90,10 +44,110 @@ const INITIAL_FILTERS = {
     debt: 'all'
 };
 
+const RecentlyViewedSection = () => {
+    const [recent, setRecent] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchRecent = async () => {
+            try {
+                const res = await fetch('/api/user/recently-viewed');
+                const data = await res.json();
+                if (data.stocks) {
+                    setRecent(data.stocks.map((s: any) => s.symbol).slice(0, 8));
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        };
+        fetchRecent();
+    }, []);
+
+    if (recent.length === 0) return null;
+
+    return (
+        <div className={styles.trendingSection}>
+            <div className={styles.trendingHeader}>
+                <Activity size={16} className={styles.trendingIcon} />
+                <span className={styles.trendingLabel}>RECENTLY VIEWED:</span>
+            </div>
+            <div className={styles.trendingList}>
+                {recent.map(symbol => (
+                    <Link key={symbol} href={`/stocks/${symbol}`} className={styles.trendingTag}>
+                        {symbol}
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 export default function StockScreener() {
     const [filters, setFilters] = useState(INITIAL_FILTERS);
+    const debouncedFilters = useDebounce(filters, 300);
     const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
     const [sortBy, setSortBy] = useState('marketCap');
+    // The `recentlyViewed` state here seems to duplicate the functionality of `RecentlyViewedSection`.
+    // If `RecentlyViewedSection` is a separate component, this state might not be needed in StockScreener
+    // unless StockScreener itself needs to display or interact with the full list of recently viewed stocks.
+    // For now, keeping it as per original code, but noting potential redundancy.
+    const [recentlyViewed, setRecentlyViewed] = useState<Stock[]>([]);
+
+    useEffect(() => {
+        const fetchRecent = async () => {
+            try {
+                const res = await fetch('/api/user/recently-viewed');
+                const data = await res.json();
+                if (data.stocks) {
+                    // Deduplicate by symbol
+                    const uniqueStocks = data.stocks.filter((stock: any, index: number, self: any[]) =>
+                        index === self.findIndex((s) => s.symbol === stock.symbol)
+                    );
+                    setRecentlyViewed(uniqueStocks);
+                }
+            } catch (e) {
+                console.error('Failed to fetch recent stocks:', e);
+            }
+        };
+        fetchRecent();
+    }, []);
+
+    const fetchStocks = useCallback(async (offset: number) => {
+        const params = new URLSearchParams({
+            offset: offset.toString(),
+            limit: '10',
+            priceMin: '0',
+            priceMax: debouncedFilters.priceRange.toString(),
+            sector: debouncedFilters.sector,
+            peMax: debouncedFilters.peRatio.toString(),
+            marketCap: debouncedFilters.marketCaps.join(','),
+        });
+
+        const res = await fetch(`/api/stocks/screener?${params.toString()}`);
+        if (!res.ok) throw new Error('Failed to fetch stocks');
+
+        const data = await res.json();
+        return {
+            items: data.stocks,
+            hasMore: data.hasMore,
+            total: data.total,
+            nextOffset: data.nextOffset
+        };
+    }, [debouncedFilters]);
+
+    const {
+        items: stocks,
+        isLoading,
+        error,
+        total,
+        loadMore,
+        intersectionRef,
+        showLoadMoreButton
+    } = useInfiniteScroll<Stock>({
+        fetchData: fetchStocks,
+        dependencies: [debouncedFilters], // Reset on debounced filter change
+        maxAutoLoads: 10,
+        limit: 10
+    });
 
     const handleClearAll = () => {
         setFilters({
@@ -113,38 +167,20 @@ export default function StockScreener() {
         }));
     };
 
-    const filteredStocks = useMemo(() => {
-        return STOCKS.filter(stock => {
-            // Price Filter
-            if (stock.price > filters.priceRange) return false;
-
-            // Sector Filter
-            if (filters.sector !== 'all' && stock.sector !== filters.sector) return false;
-
-            // PE Ratio Filter
-            if (stock.peRatio > filters.peRatio) return false;
-
-            // Debt Filter
-            if (filters.debt !== 'all' && stock.debt !== filters.debt) return false;
-
-            return true;
-        });
-    }, [filters]);
+    // Memoized filtered stocks removed in favor of useInfiniteScroll's items
 
     const sortedStocks = useMemo(() => {
-        return [...filteredStocks].sort((a, b) => {
+        return [...stocks].sort((a, b) => {
             if (sortBy === 'price-high') return b.price - a.price;
             if (sortBy === 'price-low') return a.price - b.price;
             if (sortBy === 'pe') return a.peRatio - b.peRatio;
             if (sortBy === 'returns') return b.return1Y - a.return1Y;
             if (sortBy === 'marketCap') {
-                const valA = parseFloat(a.marketCap.replace('T', ''));
-                const valB = parseFloat(b.marketCap.replace('T', ''));
-                return valB - valA;
+                return b.marketCap - a.marketCap;
             }
             return 0;
         });
-    }, [filteredStocks, sortBy]);
+    }, [stocks, sortBy]);
 
     return (
         <main className={styles.main}>
@@ -157,6 +193,8 @@ export default function StockScreener() {
                         </Button>
                     </div>
                 </div>
+
+                <RecentlyViewedSection />
 
                 <div className={styles.layout}>
                     {/* Sidebar Filters (Desktop) */}
@@ -320,6 +358,13 @@ export default function StockScreener() {
                     {/* Results Container */}
                     <div className={styles.results}>
                         <div className={styles.resultsToolbar}>
+                            <div className={styles.resultsInfo}>
+                                <span className={styles.resultCount}>{total} stocks found</span>
+                                <span className={styles.previewNote}>
+                                    Showing {stocks.length} of {total}
+                                </span>
+                            </div>
+
                             <div className={styles.activeFilters}>
                                 {filters.marketCaps.map(cap => (
                                     <div key={cap} className={styles.filterBadge}>
@@ -349,6 +394,22 @@ export default function StockScreener() {
                                     <span className={styles.clearAll} onClick={handleClearAll}>Clear All</span>
                                 )}
                             </div>
+                            {recentlyViewed.length > 0 && (
+                                <section className={styles.recentlyViewedSection}>
+                                    <h2 className={styles.rvTitle}>
+                                        <Activity size={20} className="text-brand" /> Recently Viewed
+                                    </h2>
+                                    <div className={styles.rvGrid}>
+                                        {recentlyViewed.map(stock => (
+                                            <StockCard
+                                                key={`rv-${stock.symbol}`}
+                                                {...stock}
+                                                marketCap={formatMarketCap(stock.marketCap)}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
 
                             <div className={styles.toolbarRight}>
                                 <div className={styles.sortDropdown}>
@@ -388,19 +449,100 @@ export default function StockScreener() {
                             </div>
                         </div>
 
-                        {sortedStocks.length > 0 ? (
-                            viewMode === 'card' ? (
-                                <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
-                                    {sortedStocks.map((stock) => (
-                                        <StockCard key={stock.ticker} {...stock} />
-                                    ))}
+                        {/* Error State */}
+                        {error && !isLoading && (
+                            <Card variant="glass" className={styles.emptyState}>
+                                <AlertCircle size={48} className={styles.emptyIcon} style={{ color: 'var(--status-danger)' }} />
+                                <h3>Oops! Something went wrong</h3>
+                                <p>We couldn't load the stocks. Please try again.</p>
+                                <Button variant="primary" onClick={() => window.location.reload()}>
+                                    Retry
+                                </Button>
+                            </Card>
+                        )}
+
+                        {/* Empty State */}
+                        {!error && !isLoading && stocks.length === 0 && (
+                            <Card variant="glass" className={styles.emptyState}>
+                                <Filter size={48} className={styles.emptyIcon} />
+                                <h3>No stocks found</h3>
+                                <p>Try adjusting your filters to see more results</p>
+                                <Button variant="secondary" onClick={handleClearAll}>
+                                    Clear All Filters
+                                </Button>
+                            </Card>
+                        )}
+
+                        {recentlyViewed.length > 0 && (
+                            <div className={styles.recentlyViewedContainer}>
+                                <section className={styles.recentlyViewedSection}>
+                                    <h2 className={styles.rvTitle}>
+                                        <Activity size={20} className="text-brand" /> Recently Viewed
+                                    </h2>
+                                    <div className={styles.rvGrid}>
+                                        {recentlyViewed.map(stock => (
+                                            <StockCard
+                                                key={`rv-${stock.symbol}`}
+                                                {...stock}
+                                                marketCap={formatMarketCap(stock.marketCap)}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            </div>
+                        )}
+
+                        {stocks.length > 0 || isLoading ? (
+                            <>
+                                {viewMode === 'card' ? (
+                                    <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
+                                        {sortedStocks.map((stock) => (
+                                            <StockCard
+                                                key={stock.symbol}
+                                                {...stock}
+                                                marketCap={formatMarketCap(stock.marketCap)}
+                                            />
+                                        ))}
+
+                                        {isLoading && [...Array(3)].map((_, i) => (
+                                            <StockCardSkeleton key={`skeleton-${i}`} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <StockTable stocks={sortedStocks} />
+                                )}
+
+                                {/* Infinite Scroll Trigger */}
+                                <div ref={intersectionRef} className={styles.infiniteTrigger}>
+                                    {isLoading && stocks.length > 0 && (
+                                        <div className={styles.loadingMore}>
+                                            <Loader2 className={styles.spinner} />
+                                            <span>Loading more stocks...</span>
+                                        </div>
+                                    )}
                                 </div>
-                            ) : (
-                                <StockTable stocks={sortedStocks} />
-                            )
+
+                                {showLoadMoreButton && (
+                                    <div className={styles.loadMoreWrapper}>
+                                        <Button
+                                            variant="secondary"
+                                            onClick={() => loadMore()}
+                                            className={styles.loadMoreBtn}
+                                        >
+                                            Show More Results
+                                        </Button>
+                                    </div>
+                                )}
+
+                                {!isLoading && !showLoadMoreButton && stocks.length > 0 && stocks.length >= total && (
+                                    <div className={styles.endMessage}>
+                                        You've reached the end of results
+                                    </div>
+                                )}
+                            </>
                         ) : (
-                            <div style={{ padding: '40px', textAlign: 'center', background: 'rgba(255,255,255,0.02)', borderRadius: '16px', border: '1px dashed rgba(255,255,255,0.1)' }}>
-                                <p style={{ color: 'var(--text-secondary)' }}>No stocks match your filters.</p>
+                            <div className={styles.emptyState}>
+                                <p>No stocks match your filters.</p>
                                 <Button variant="secondary" size="sm" onClick={handleClearAll} style={{ marginTop: '12px' }}>
                                     Reset Filters
                                 </Button>
@@ -409,6 +551,14 @@ export default function StockScreener() {
                     </div>
                 </div>
             </div>
+            <BackToTop />
         </main>
     );
+}
+
+// Helper
+function formatMarketCap(value: number) {
+    if (value >= 1e12) return `${(value / 1e12).toFixed(1)}T`;
+    if (value >= 1e7) return `${(value / 1e7).toFixed(1)}Cr`;
+    return value.toLocaleString();
 }
