@@ -6,6 +6,7 @@ import { ArrowLeft, Share2, TrendingUp, TrendingDown, Flame, CheckCircle } from 
 import Link from 'next/link';
 import { getIPOBySlug, getAllIPOs } from '@/lib/ipo';
 import styles from './page.module.css';
+import IPOTracker from '@/components/ipo/IPOTracker';
 
 export const revalidate = 300;
 
@@ -41,6 +42,7 @@ export default async function IPODetail({ params }: { params: Promise<{ slug: st
                 </div>
 
                 {/* Header Section */}
+                <IPOTracker slug={slug} />
                 <section className={styles.header}>
                     <div className={styles.logoName}>
                         <div className={styles.logoCtx}>{ipo.name.charAt(0)}</div>

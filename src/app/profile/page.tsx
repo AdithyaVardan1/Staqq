@@ -7,12 +7,22 @@ import { User, Award, Settings, LogOut, Loader2 } from 'lucide-react';
 import styles from './page.module.css';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import AchievementsList from '@/components/achievements/AchievementsList';
+import { useAchievementsStore } from '@/store/useAchievementsStore';
 
 export default function ProfilePage() {
     const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState<any>(null);
     const supabase = createClient();
     const router = useRouter();
+    const { unlockedIds, achievements } = useAchievementsStore();
+
+    const xp = React.useMemo(() => {
+        return Array.from(unlockedIds).reduce((total, id) => {
+            const ach = achievements.find(a => a.id === id);
+            return total + (ach?.points || 0);
+        }, 0);
+    }, [unlockedIds, achievements]);
 
     useEffect(() => {
         const getProfile = async () => {
@@ -97,7 +107,7 @@ export default function ProfilePage() {
                                 <span className={styles.statLabel}>Modules</span>
                             </div>
                             <div className={styles.statItem}>
-                                <span className={styles.statValue}>850</span>
+                                <span className={styles.statValue}>{xp}</span>
                                 <span className={styles.statLabel}>XP</span>
                             </div>
                         </div>
@@ -105,23 +115,9 @@ export default function ProfilePage() {
 
                     {/* Badges/Achievements */}
                     <Card className={styles.achievementsCard}>
-                        <div className={styles.cardHeader}>
-                            <h3>Achievements</h3>
-                            <Button variant="ghost" size="sm">View All</Button>
-                        </div>
-                        <div className={styles.badgesList}>
-                            <div className={styles.badge}>
-                                <Award size={24} className="text-yellow-400" />
-                                <span>Fast Learner</span>
-                            </div>
-                            <div className={styles.badge}>
-                                <Award size={24} className="text-blue-400" />
-                                <span>IPO Guru</span>
-                            </div>
-                            <div className={styles.badge}>
-                                <Award size={24} className="text-purple-400" />
-                                <span>Early Bird</span>
-                            </div>
+                        <div className="p-6">
+                            {/* Full List */}
+                            <AchievementsList />
                         </div>
                     </Card>
 

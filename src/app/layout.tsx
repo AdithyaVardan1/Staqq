@@ -15,6 +15,9 @@ import { Footer } from "@/components/layout/Footer";
 import { ComparisonTray } from "@/components/stocks/ComparisonTray";
 import { StreamProvider } from "@/context/StreamContext";
 
+import AchievementsProvider from '@/components/providers/AchievementsProvider';
+import ProgressTracker from '@/components/providers/ProgressTracker';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,10 +27,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable}`}>
         <StreamProvider>
-          <Navbar />
-          {children}
-          <Footer />
-          <ComparisonTray />
+          <AchievementsProvider>
+            <ProgressTracker />
+            <Navbar />
+            {children}
+            <Footer />
+            <ComparisonTray />
+          </AchievementsProvider>
         </StreamProvider>
       </body>
     </html>

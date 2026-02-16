@@ -31,7 +31,8 @@ export async function GET(request: Request) {
         try {
             const pythonScript = path.join(process.cwd(), 'src', 'scripts', 'ysearch.py');
             console.log(`[Search API] Executing python script: ${pythonScript}`);
-            const { stdout, stderr } = await execPromise(`python "${pythonScript}" "${query}"`);
+            const pythonExecutable = path.join(process.cwd(), '.venv/bin/python3');
+            const { stdout, stderr } = await execPromise(`"${pythonExecutable}" "${pythonScript}" "${query}"`);
 
             if (stderr) console.warn('[Search API] Python stderr:', stderr);
 

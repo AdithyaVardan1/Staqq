@@ -27,7 +27,7 @@ export default async function PulsePage() {
                     Market <span className={styles.accent}>Pulse</span>
                 </h1>
                 <p className={styles.subtitle}>
-                    Live stock market discussions from Reddit & X — track sentiment, spot trends, make moves.
+                    Live stock market discussions from Reddit & X track sentiment, spot trends, make moves.
                 </p>
 
                 <div className={styles.stats}>

@@ -35,13 +35,7 @@ def load_env():
             env[key.strip()] = val.strip()
     return env
 
-# Search queries for Indian stock market content
-SEARCH_QUERIES = [
-    "indian stock market",
-    "#nifty50 OR #sensex",
-    "nifty stocks india",
-    "BSE NSE stocks",
-]
+# Search queries are defined inside fetch_tweets to use dynamic dates
 
 async def fetch_tweets():
     from twikit import Client
@@ -63,13 +57,27 @@ async def fetch_tweets():
         "ct0": ct0,
     })
 
+    today = datetime.now().strftime("%Y-%m-%d")
+    yesterday = (datetime.now().timestamp() - 86400)
+    yesterday_str = datetime.fromtimestamp(yesterday).strftime("%Y-%m-%d")
+    
+    # Improved queries for freshness and quality
+    # We want tweets from the last 24h with at least some engagement
+    QUERIES = [
+        f"(#stockmarketindia OR #nifty50 OR #banknifty) min_faves:10 since:{yesterday_str}",
+        f"(\"indian stock market\" OR \"sensex\") min_faves:5 since:{yesterday_str}",
+        f"(flattening yield curve OR market crash OR bull run) india min_faves:20 since:{yesterday_str}",
+        f"from:ETMarkets OR from:Moneycontrol OR from:CNBCTV18News since:{yesterday_str}", # Trusted sources
+    ]
+
     all_tweets = []
     seen_ids = set()
 
-    for query in SEARCH_QUERIES:
+    for query in QUERIES:
         try:
             print(f"🔍 Searching: \"{query}\"...")
-            results = await client.search_tweet(query, product="Top", count=20)
+            # Use 'Latest' to get real-time info, but we filter by likes in query so it should be decent
+            results = await client.search_tweet(query, product="Latest", count=15)
 
             count = 0
             for tweet in results:
@@ -117,6 +125,19 @@ async def fetch_tweets():
                     [t for t in word_matches if t not in ignore]
                 ))[:5]
 
+                # Extract Media (Image)
+                image_url = None
+                if hasattr(tweet, "media") and tweet.media:
+                    # media is a list of objects usually
+                    media_list = tweet.media
+                    if media_list and len(media_list) > 0:
+                        first_media = media_list[0]
+                        # Check for media_url_https or similar
+                        if hasattr(first_media, "media_url_https"):
+                            image_url = first_media.media_url_https
+                        elif "media_url_https" in first_media:
+                             image_url = first_media["media_url_https"]
+
                 all_tweets.append({
                     "id": f"twitter-{tweet.id}",
                     "title": text[:140] + ("…" if len(text) > 140 else ""),
@@ -131,6 +152,7 @@ async def fetch_tweets():
                     "createdAt": ts,
                     "tickers": tickers,
                     "isHot": (likes + retweets) > 50 or replies > 20,
+                    "image": image_url,
                 })
                 count += 1
 

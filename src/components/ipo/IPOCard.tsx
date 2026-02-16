@@ -41,88 +41,90 @@ export const IPOCard: React.FC<IPOCardProps> = ({ ipo }) => {
     return (
         <Card hoverEffect className={styles.container}>
             <Link href={`/ipo/${ipo.slug}`} className={styles.link}>
-                <div className={styles.header}>
-                    <div className={styles.companyInfo}>
-                        <div className={styles.logoPlaceholder}>{ipo.name.charAt(0)}</div>
-                        <div>
-                            <h3 className={styles.name}>{ipo.name}</h3>
-                            <p className={styles.dates}>
-                                <Calendar size={12} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
-                                {dateDisplay}
-                            </p>
+                <div className={styles.contentWrapper}>
+                    <div className={styles.header}>
+                        <div className={styles.companyInfo}>
+                            <div className={styles.logoPlaceholder}>{ipo.name.charAt(0)}</div>
+                            <div>
+                                <h3 className={styles.name}>{ipo.name}</h3>
+                                <p className={styles.dates}>
+                                    <Calendar size={12} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
+                                    {dateDisplay}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div className={styles.badgeStack}>
-                        <Badge variant={statusVariant} size="sm">
-                            {isLive && <span className={styles.liveDot} />}
-                            {ipo.status}
-                        </Badge>
-                        <Badge variant="outline" size="sm">
-                            {ipo.category}
-                        </Badge>
-                    </div>
-                </div>
-
-                <div className={styles.body}>
-                    <div className={styles.priceSection}>
-                        <span className={styles.label}>Price</span>
-                        <span className={styles.value}>{priceDisplay}</span>
-                    </div>
-
-                    <div className={styles.gmpSection}>
-                        <span className={styles.label}>GMP</span>
-                        <div className={styles.gmpValue}>
-                            {gmpPositive
-                                ? <TrendingUp size={14} className={styles[gmpVariant]} />
-                                : gmpNegative
-                                    ? <TrendingDown size={14} className={styles[gmpVariant]} />
-                                    : null
-                            }
-                            <span className={styles[gmpVariant]}>
-                                {gmpDisplay} {gmpPctDisplay}
-                            </span>
+                        <div className={styles.badgeStack}>
+                            <Badge variant={statusVariant} size="sm">
+                                {isLive && <span className={styles.liveDot} />}
+                                {ipo.status}
+                            </Badge>
+                            <Badge variant="outline" size="sm">
+                                {ipo.category}
+                            </Badge>
                         </div>
                     </div>
 
-                    {ipo.estListing && (
+                    <div className={styles.body}>
                         <div className={styles.priceSection}>
-                            <span className={styles.label}>Est. Listing</span>
-                            <span className={styles.value}>₹{ipo.estListing}</span>
+                            <span className={styles.label}>Price</span>
+                            <span className={styles.value}>{priceDisplay}</span>
+                        </div>
+
+                        <div className={styles.gmpSection}>
+                            <span className={styles.label}>GMP</span>
+                            <div className={styles.gmpValue}>
+                                {gmpPositive
+                                    ? <TrendingUp size={14} className={styles[gmpVariant]} />
+                                    : gmpNegative
+                                        ? <TrendingDown size={14} className={styles[gmpVariant]} />
+                                        : null
+                                }
+                                <span className={styles[gmpVariant]}>
+                                    {gmpDisplay} {gmpPctDisplay}
+                                </span>
+                            </div>
+                        </div>
+
+                        {ipo.estListing && (
+                            <div className={styles.priceSection}>
+                                <span className={styles.label}>Est. Listing</span>
+                                <span className={styles.value}>₹{ipo.estListing}</span>
+                            </div>
+                        )}
+
+                        {ipo.ipoSizeCr && (
+                            <div className={styles.priceSection}>
+                                <span className={styles.label}>Size</span>
+                                <span className={styles.value}>₹{ipo.ipoSizeCr} Cr</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {ipo.subscriptionNum !== null && ipo.subscriptionNum > 0 && (
+                        <div className={styles.subscription}>
+                            <div className={styles.subHeader}>
+                                <span className={styles.label}>Subscription</span>
+                                <span className={styles.subValue}>{ipo.subscriptionNum}x</span>
+                            </div>
+                            <ProgressBar
+                                progress={Math.min(ipo.subscriptionNum * 10, 100)}
+                                variant={ipo.subscriptionNum >= 10 ? 'success' : isLive ? 'brand' : 'neutral'}
+                            />
                         </div>
                     )}
 
-                    {ipo.ipoSizeCr && (
-                        <div className={styles.priceSection}>
-                            <span className={styles.label}>Size</span>
-                            <span className={styles.value}>₹{ipo.ipoSizeCr} Cr</span>
+                    {ipo.rating > 0 && (
+                        <div className={styles.ratingRow}>
+                            {Array.from({ length: ipo.rating }).map((_, i) => (
+                                <Flame key={i} size={14} className={styles.fireIcon} />
+                            ))}
                         </div>
                     )}
-                </div>
 
-                {ipo.subscriptionNum !== null && ipo.subscriptionNum > 0 && (
-                    <div className={styles.subscription}>
-                        <div className={styles.subHeader}>
-                            <span className={styles.label}>Subscription</span>
-                            <span className={styles.subValue}>{ipo.subscriptionNum}x</span>
+                    <div className={styles.footer}>
+                        <div className={styles.footerBtn}>
+                            View Details <ArrowUpRight size={16} />
                         </div>
-                        <ProgressBar
-                            progress={Math.min(ipo.subscriptionNum * 10, 100)}
-                            variant={ipo.subscriptionNum >= 10 ? 'success' : isLive ? 'brand' : 'neutral'}
-                        />
-                    </div>
-                )}
-
-                {ipo.rating > 0 && (
-                    <div className={styles.ratingRow}>
-                        {Array.from({ length: ipo.rating }).map((_, i) => (
-                            <Flame key={i} size={14} className={styles.fireIcon} />
-                        ))}
-                    </div>
-                )}
-
-                <div className={styles.footer}>
-                    <div className={styles.footerBtn}>
-                        View Details <ArrowUpRight size={16} />
                     </div>
                 </div>
             </Link>

@@ -6,19 +6,21 @@
 }
 
 .hero {
-  padding: 120px 0 80px;
+  padding: 120px 0 30px;
+  /* Reduced from 80px to 30px */
   text-align: center;
 }
 
 .heroTitle {
-  font-size: 4rem;
+  font-size: 5.5rem;
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.05;
   margin-bottom: var(--spacing-lg);
   background: linear-gradient(180deg, #fff 0%, #ccc 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  letter-spacing: -0.03em;
 }
 
 .heroTitle span {
@@ -40,7 +42,8 @@
 }
 
 .trendingContainer {
-  margin-top: 3rem;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -99,7 +102,8 @@
 }
 
 .features {
-  padding: 80px 0;
+  padding: 30px 0 80px;
+  /* Reduced top padding from 80px to 30px */
 }
 
 .grid {

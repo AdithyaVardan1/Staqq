@@ -12,6 +12,8 @@ import { StockCardSkeleton } from '@/components/stocks/StockCardSkeleton';
 import { BackToTop } from '@/components/ui/BackToTop';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useAchievementsStore } from '@/store/useAchievementsStore';
+import { ACHIEVEMENT_IDS } from '@/lib/achievements';
 import { Filter, Info, LayoutGrid, List, ArrowUpDown, X, Loader2, AlertCircle, Activity } from 'lucide-react';
 import clsx from 'clsx';
 import styles from './page.module.css';
@@ -83,9 +85,10 @@ const RecentlyViewedSection = () => {
 
 export default function StockScreener() {
     const [filters, setFilters] = useState(INITIAL_FILTERS);
+    const { unlock } = useAchievementsStore();
     const debouncedFilters = useDebounce(filters, 300);
     const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
-    const [sortBy, setSortBy] = useState('marketCap');
+    const [sortBy, setSortBy] = useState('trending');
     // The `recentlyViewed` state here seems to duplicate the functionality of `RecentlyViewedSection`.
     // If `RecentlyViewedSection` is a separate component, this state might not be needed in StockScreener
     // unless StockScreener itself needs to display or interact with the full list of recently viewed stocks.
@@ -111,6 +114,21 @@ export default function StockScreener() {
         fetchRecent();
     }, []);
 
+    // Achievement Check
+    useEffect(() => {
+        let activeCount = 0;
+        if (filters.marketCaps.length > 0) activeCount++;
+        if (filters.sector !== 'all') activeCount++;
+        if (filters.peRatio < 50) activeCount++; // Initial is 50? No, initial is 50 in code but UI max 100?
+        if (filters.divYield > 0) activeCount++;
+        if (filters.debt !== 'all') activeCount++;
+        if (filters.priceRange < 10000) activeCount++;
+
+        if (activeCount >= 3) {
+            unlock(ACHIEVEMENT_IDS.SCREENER_PRO);
+        }
+    }, [filters, unlock]);
+
     const fetchStocks = useCallback(async (offset: number) => {
         const params = new URLSearchParams({
             offset: offset.toString(),
@@ -120,6 +138,7 @@ export default function StockScreener() {
             sector: debouncedFilters.sector,
             peMax: debouncedFilters.peRatio.toString(),
             marketCap: debouncedFilters.marketCaps.join(','),
+            sortBy: sortBy,
         });
 
         const res = await fetch(`/api/stocks/screener?${params.toString()}`);
@@ -132,7 +151,7 @@ export default function StockScreener() {
             total: data.total,
             nextOffset: data.nextOffset
         };
-    }, [debouncedFilters]);
+    }, [debouncedFilters, sortBy]);
 
     const {
         items: stocks,
@@ -144,7 +163,7 @@ export default function StockScreener() {
         showLoadMoreButton
     } = useInfiniteScroll<Stock>({
         fetchData: fetchStocks,
-        dependencies: [debouncedFilters], // Reset on debounced filter change
+        dependencies: [debouncedFilters, sortBy], // Reset on sort change
         maxAutoLoads: 10,
         limit: 10
     });
@@ -170,6 +189,7 @@ export default function StockScreener() {
     // Memoized filtered stocks removed in favor of useInfiniteScroll's items
 
     const sortedStocks = useMemo(() => {
+        if (sortBy === 'trending') return stocks;
         return [...stocks].sort((a, b) => {
             if (sortBy === 'price-high') return b.price - a.price;
             if (sortBy === 'price-low') return a.price - b.price;
@@ -420,6 +440,7 @@ export default function StockScreener() {
                                         onChange={(e) => setSortBy(e.target.value)}
                                         suppressHydrationWarning
                                     >
+                                        <option value="trending">🔥 Trending Now</option>
                                         <option value="marketCap">Market Cap</option>
                                         <option value="price-high">Price: High to Low</option>
                                         <option value="price-low">Price: Low to High</option>

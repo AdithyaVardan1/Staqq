@@ -50,18 +50,17 @@ export default function LandingPage() {
         <div className="container">
           <div className={styles.heroContent}>
             <h1 className={styles.heroTitle}>
-              The Financial Stack for <span className="text-brand">Gen Z</span>
+              Track IPOs, Sentiment & <span className="text-brand">Stocks</span>.
             </h1>
             <p className={styles.heroSubtitle}>
-              Uncomplicate your journey. Master IPOs, analyze Stocks, and Learn finance—all in one place.
+              Live GMP, Reddit/Twitter Trends, and Smart Screening. No clutter, just data.
             </p>
-            <TrendingSection />
             <div className={styles.heroActions}>
               <Link href="/ipo">
-                <Button size="lg">Explore IPOs</Button>
+                <Button size="lg">Explore IPO Hub</Button>
               </Link>
-              <Link href="/learn">
-                <Button variant="outline" size="lg">Start Learning</Button>
+              <Link href="/pulse">
+                <Button variant="outline" size="lg">Check Market Pulse</Button>
               </Link>
             </div>
           </div>
@@ -79,7 +78,7 @@ export default function LandingPage() {
                 <div className={styles.iconWrapper}>
                   <Layers size={40} className="text-brand" />
                 </div>
-                <h3>IPO Hub</h3>
+                <h3>Live IPO Tracker</h3>
                 <p>Real-time GMP, subscription status, and deep analysis for every listing.</p>
               </Card>
             </Link>
@@ -90,8 +89,8 @@ export default function LandingPage() {
                 <div className={styles.iconWrapper}>
                   <TrendingUp size={40} className="text-brand" />
                 </div>
-                <h3>Stocks Section</h3>
-                <p>Powerful screener and simplified technicals to find your next winner.</p>
+                <h3>Smart Screener</h3>
+                <p>Filter stocks by technicals, sentiment, and fundamentals to find winners.</p>
               </Card>
             </Link>
 
@@ -101,8 +100,8 @@ export default function LandingPage() {
                 <div className={styles.iconWrapper}>
                   <BookOpen size={40} className="text-brand" />
                 </div>
-                <h3>Learn Hub</h3>
-                <p>Gamified lessons. No jargon. Master the market in 5 minutes a day.</p>
+                <h3>Financial Academy</h3>
+                <p>Zero jargon. Gamified lessons. Master the market in 5 minutes a day.</p>
               </Card>
             </Link>
 

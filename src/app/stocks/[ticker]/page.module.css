@@ -27,10 +27,13 @@
 
 .actions {
     display: flex;
+    align-items: center;
     gap: 12px;
 }
 
 .watchlistBtn {
+    display: flex;
+    align-items: center;
     gap: 8px;
     border-radius: 20px;
 }

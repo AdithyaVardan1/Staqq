@@ -101,10 +101,10 @@
 /* ── Feed grid ── */
 .feed {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
   width: 100%;
-  max-width: 920px;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 0 24px;
   box-sizing: border-box;
@@ -140,25 +140,20 @@
 
 /* ── Responsive ── */
 @media (max-width: 640px) {
-  .title {
-    font-size: 2rem;
-  }
-
-  .subtitle {
-    font-size: 0.9rem;
-  }
-
-  .feed {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
-
-  .pill {
-    padding: 8px 14px;
-    min-width: 60px;
-  }
-
   .pillNum {
     font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .feed {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 800px;
+  }
+}
+
+@media (max-width: 640px) {
+  .feed {
+    grid-template-columns: 1fr;
   }
 }

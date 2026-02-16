@@ -12,7 +12,7 @@ export default function LearnPage() {
 
   return (
     <main className={styles.container}>
-      <h1 className={styles.title}>Investment Learning Hub</h1>
+      <h1 className={styles.title}>Investment <span className="text-brand">Learning Hub</span></h1>
       <p className={styles.subtitle}>
         Master the stock market, step by step.
       </p>
@@ -37,6 +37,10 @@ export default function LearnPage() {
               modules={path.modules.length}
               progress={progress}
               slug={key}
+              difficulty={path.difficulty}
+              duration={path.duration}
+              color={path.color}
+              icon={path.icon}
             />
           );
         })}

@@ -54,12 +54,28 @@ export async function middleware(request: NextRequest) {
         }
     );
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+    let user = null;
+    try {
+        const {
+            data: { user: supabaseUser },
+        } = await supabase.auth.getUser();
+        user = supabaseUser;
+    } catch (e) {
+        // Error handling for malformed sessions (e.g. double-stringification)
+        console.error('Middleware Auth Error:', e);
+        // Clear all Supabase cookies to reset state
+        const allCookies = request.cookies.getAll();
+        allCookies.forEach(cookie => {
+            if (cookie.name.startsWith('sb-')) {
+                request.cookies.delete(cookie.name);
+                response.cookies.delete(cookie.name);
+            }
+        });
+        user = null;
+    }
 
     // Protected routes pattern
-    const protectedRoutes = ['/profile', '/watchlist', '/tools'];
+    const protectedRoutes = ['/profile', '/watchlist'];
     const isProtectedRoute = protectedRoutes.some((route) =>
         request.nextUrl.pathname.startsWith(route)
     );

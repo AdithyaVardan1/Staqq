@@ -5,6 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import styles from './IPOAllotment.module.css';
+import { useAchievementsStore } from '@/store/useAchievementsStore';
+import { ACHIEVEMENT_IDS } from '@/lib/achievements';
 
 export const IPOAllotmentCalculator = () => {
     // State
@@ -17,6 +19,7 @@ export const IPOAllotmentCalculator = () => {
     // Results
     const [probability, setProbability] = useState(0);
     const [allotmentStatus, setAllotmentStatus] = useState<string>('Low Chance');
+    const { unlock, debugReset } = useAchievementsStore();
 
     useEffect(() => {
         // Logic:
@@ -42,7 +45,14 @@ export const IPOAllotmentCalculator = () => {
         else if (prob >= 5) setAllotmentStatus('Low Chance');
         else setAllotmentStatus('Lottery Ticket');
 
-    }, [subscriptionRate, applications, category]);
+        if (prob >= 20) setAllotmentStatus('Moderate Luck');
+        else if (prob >= 5) setAllotmentStatus('Low Chance');
+        else setAllotmentStatus('Lottery Ticket');
+
+        // Unlock Achievement
+        unlock(ACHIEVEMENT_IDS.ALLOTMENT_TRACKER);
+
+    }, [subscriptionRate, applications, category, unlock]);
 
 
     return (
@@ -112,6 +122,20 @@ export const IPOAllotmentCalculator = () => {
 
                     <Button variant="primary" fullWidth className="mt-4">Track Live GMP</Button>
                 </Card>
+            </div>
+
+            <div className="mt-8 text-center w-full">
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                        debugReset(ACHIEVEMENT_IDS.ALLOTMENT_TRACKER);
+                        alert('Achievement reset! Change values above to trigger it again.');
+                    }}
+                    className="text-gray-600 hover:text-red-400"
+                >
+                    Reset Achievement (Debug)
+                </Button>
             </div>
         </div>
     );

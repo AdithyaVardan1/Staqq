@@ -30,7 +30,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 var(--spacing-xl);
+    padding-right: var(--spacing-xl);
+    padding-left: var(--spacing-md);
+    /* Reduced left padding to move logo left */
 }
 
 .logo {

@@ -75,6 +75,18 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                     </p>
                 )}
 
+                {/* Media Image */}
+                {post.image && (
+                    <div className={styles.imageWrapper}>
+                        <img
+                            src={post.image}
+                            alt="Post media"
+                            className={styles.postImage}
+                            loading="lazy"
+                        />
+                    </div>
+                )}
+
                 {/* Tickers */}
                 {post.tickers.length > 0 && (
                     <div className={styles.tickers}>

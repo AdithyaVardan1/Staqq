@@ -4,6 +4,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
 import { stockCache } from '@/lib/stock-cache';
+import { getTrendingTickers } from '@/lib/social';
 
 const execPromise = promisify(exec);
 
@@ -14,7 +15,8 @@ async function fetchBatchYFinanceData(tickers: string[]): Promise<any> {
     try {
         const pythonScript = path.join(process.cwd(), 'src', 'scripts', 'ybatch.py');
         // Use comma separated for simpler shell escaping
-        const { stdout } = await execPromise(`python "${pythonScript}" "${tickers.join(',')}"`);
+        const pythonExecutable = path.join(process.cwd(), '.venv/bin/python3');
+        const { stdout } = await execPromise(`"${pythonExecutable}" "${pythonScript}" "${tickers.join(',')}"`);
         return JSON.parse(stdout);
     } catch (error) {
         console.error(`[Screener] Batch fetch failed:`, error);
@@ -27,6 +29,7 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const offset = parseInt(searchParams.get('offset') || '0');
         const limit = parseInt(searchParams.get('limit') || '10');
+        const sortBy = searchParams.get('sortBy'); // New param
 
         // Filters
         const priceMin = parseFloat(searchParams.get('priceMin') || '0');
@@ -34,7 +37,7 @@ export async function GET(request: Request) {
         const sector = searchParams.get('sector');
         const peMax = parseFloat(searchParams.get('peMax') || '1000');
 
-        console.log(`[Screener API] Fetching from offset ${offset} with limit ${limit}`);
+        console.log(`[Screener API] Fetching offset=${offset} limit=${limit} sort=${sortBy}`);
 
         const tokensMap = await angelOne.getInstrumentTokens();
         if (!tokensMap) throw new Error('Failed to load instrument tokens');
@@ -53,7 +56,22 @@ export async function GET(request: Request) {
                 });
             }
         }
-        universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
+
+        // Sorting Logic
+        if (sortBy === 'trending') {
+            const trendingTickers = await getTrendingTickers();
+            const trendingSet = new Set(trendingTickers);
+
+            universe.sort((a, b) => {
+                const aT = trendingSet.has(a.ticker);
+                const bT = trendingSet.has(b.ticker);
+                if (aT && !bT) return -1;
+                if (!aT && bT) return 1;
+                return a.ticker.localeCompare(b.ticker);
+            });
+        } else {
+            universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
+        }
 
         // 2. Depth Search Logic
         // Scan through the universe starting from offset until we find 'limit' matches OR hit MAX_SCAN

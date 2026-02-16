@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useAchievementsStore } from '@/store/useAchievementsStore';
+import { ACHIEVEMENT_IDS } from '@/lib/achievements';
 
 interface ProgressData {
     completedLessons: string[]; // Array of "path/module/chapter" slugs
@@ -37,6 +39,7 @@ function isYesterday(date1: Date, date2: Date): boolean {
 export function useProgress() {
     const [progress, setProgress] = useState<ProgressData>(getDefaultProgress);
     const [isLoaded, setIsLoaded] = useState(false);
+    const { unlock } = useAchievementsStore();
 
     // Load from localStorage on mount
     useEffect(() => {
@@ -73,6 +76,8 @@ export function useProgress() {
         }
     }, [progress, isLoaded]);
 
+
+
     const markLessonComplete = useCallback((path: string, moduleSlug: string, chapterSlug: string) => {
         const lessonKey = `${path}/${moduleSlug}/${chapterSlug}`;
 
@@ -97,6 +102,22 @@ export function useProgress() {
                     // Starting new streak (or first activity)
                     newStreak = 1;
                 }
+            }
+
+            // Check for achievements
+            // 1. First Stack (1 completed lesson)
+            if (prev.completedLessons.length === 0) { // 0 means this is the first one
+                unlock(ACHIEVEMENT_IDS.FIRST_STACK);
+            }
+
+            // 2. Early Bird (7 day streak)
+            if (newStreak >= 7) {
+                unlock(ACHIEVEMENT_IDS.EARLY_BIRD);
+            }
+
+            // 3. Staqq Addict (30 day streak)
+            if (newStreak >= 30) {
+                unlock(ACHIEVEMENT_IDS.STAQQ_ADDICT);
             }
 
             return {

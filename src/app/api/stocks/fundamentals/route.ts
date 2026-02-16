@@ -14,7 +14,8 @@ export const dynamic = 'force-dynamic';
 async function fetchTechnicals(ticker: string): Promise<any> {
     try {
         const pythonScript = path.join(process.cwd(), 'src', 'scripts', 'calculate_technicals.py');
-        const { stdout } = await execPromise(`python "${pythonScript}" "${ticker}"`);
+        const pythonExecutable = path.join(process.cwd(), '.venv/bin/python3');
+        const { stdout } = await execPromise(`"${pythonExecutable}" "${pythonScript}" "${ticker}"`);
         const result = JSON.parse(stdout);
         return result.indicators || [];
     } catch (error) {
@@ -56,7 +57,8 @@ export async function GET(request: Request) {
         const [yfinanceResult, technicalsResult] = await Promise.allSettled([
             (async () => {
                 const pythonScript = path.join(process.cwd(), 'src', 'scripts', 'yinfo.py');
-                const { stdout } = await execPromise(`python "${pythonScript}" "${ticker}"`);
+                const pythonExecutable = path.join(process.cwd(), '.venv/bin/python3');
+                const { stdout } = await execPromise(`"${pythonExecutable}" "${pythonScript}" "${ticker}"`);
                 return JSON.parse(stdout);
             })(),
             fetchTechnicals(ticker)

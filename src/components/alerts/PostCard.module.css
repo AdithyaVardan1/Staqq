@@ -79,6 +79,25 @@
     letter-spacing: 0.02em;
 }
 
+.imageWrapper {
+    margin: 12px 0 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.2);
+    /* Limit height to prevent taking up too much vertical space */
+    max-height: 240px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.postImage {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+}
+
 /* Content */
 .title {
     font-size: 1.1rem;
