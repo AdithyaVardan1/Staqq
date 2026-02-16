@@ -6,6 +6,11 @@ class RedisService {
     private client: Redis | null = null;
 
     getClient() {
+        // Reset client if connection is closed/ended so we can try reconnecting
+        if (this.client && this.client.status === 'end') {
+            this.client = null;
+        }
+
         if (!this.client) {
             try {
                 this.client = new Redis(redisUrl, {
@@ -24,8 +29,8 @@ class RedisService {
                 });
 
                 this.client.on('error', (err) => {
-                    // Only log once every 30 seconds to avoid spam
-                    console.error('[Redis] Connection Error. Ensure Redis is running at:', redisUrl);
+                    // Silently handle - Redis is optional for development
+                    // Errors are already caught in the call() method
                 });
 
                 this.client.on('connect', () => {
@@ -46,11 +51,7 @@ class RedisService {
             if (client.status === 'end') return null;
             return await fn(client);
         } catch (error: any) {
-            if (error.message.includes('Max retries reached')) {
-                // Silently return null to avoid flooding terminal
-                return null;
-            }
-            console.error('[Redis] Command failed:', error.message);
+            // Silently handle Redis errors - it's optional for development
             return null;
         }
     }
@@ -94,6 +95,28 @@ class RedisService {
     async zrevrange(key: string, start: number, stop: number) {
         const res = await this.call(c => c.zrevrange(key, start, stop));
         return res || [];
+    }
+
+    async zadd(key: string, score: number, member: string) {
+        return this.call(c => c.zadd(key, score, member));
+    }
+
+    // HASH helpers for Session
+    async hget(key: string, field: string) {
+        return this.call(c => c.hget(key, field));
+    }
+
+    async hdel(key: string, field: string) {
+        return this.call(c => c.hdel(key, field));
+    }
+
+    async hSetWithExpiry(key: string, field: string, value: string, ttlSeconds: number) {
+        return this.call(async (c) => {
+            const pipeline = c.pipeline();
+            pipeline.hset(key, field, value);
+            pipeline.expire(key, ttlSeconds);
+            await pipeline.exec();
+        });
     }
 
     // Counter helpers for Rate Limiting
