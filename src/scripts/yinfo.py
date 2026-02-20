@@ -65,8 +65,22 @@ def get_ticker_info(ticker_symbol):
             },
             "shareholding": [],
             "news": [],
-            "events": []
+            "events": [],
+            "sparkline": []
         }
+        
+        # Get Sparkline Data (Last 30 days daily closes for chart)
+        try:
+            # We need simple price history for the sparkline
+            # Fetch 1mo history with 1d interval
+            history = ticker.history(period="1mo", interval="1d")
+            if not history.empty:
+                # Get Closing prices as list, handle NaN
+                closes = history['Close'].fillna(0).tolist()
+                # Round to 2 decimal places
+                data["sparkline"] = [round(x, 2) for x in closes]
+        except Exception:
+            pass
         
         # Get Shareholding Pattern
         try:

@@ -21,6 +21,8 @@ interface StockCardProps {
     peRatio: number;
     return1Y: number;
     sparklineData: number[];
+    qualifiers?: string[];
+    metricLabel?: string;
 }
 
 export const StockCard: React.FC<StockCardProps> = ({
@@ -33,6 +35,8 @@ export const StockCard: React.FC<StockCardProps> = ({
     peRatio,
     return1Y,
     sparklineData,
+    qualifiers = [],
+    metricLabel,
 }) => {
     const { price, change, changePercent, status } = useLiveMarketData(ticker, initialPrice, initialChangeAmount, initialChange);
     const { selectedTickers, addTicker, removeTicker } = useComparisonStore();
@@ -67,14 +71,22 @@ export const StockCard: React.FC<StockCardProps> = ({
     const changeColor = isPositive ? 'var(--status-success)' : 'var(--status-danger)';
 
     return (
-        <Card hoverEffect className={styles.container}>
+        <Card hoverEffect className={clsx(styles.container, "group relative overflow-hidden")}>
+
+
             <div className={styles.cardContent}>
                 <div className={styles.header}>
                     <StockLogo ticker={ticker} name={name} size="md" />
+                    {/* ... rest of header ... */}
                     <div className={styles.tickerInfo}>
                         <div className={styles.tickerHeader}>
                             <h4 className={styles.ticker}>{ticker}</h4>
                             <div className={styles.headerBadges}>
+                                {qualifiers.map((q, idx) => (
+                                    <span key={idx} className={styles.qualifierBadge}>
+                                        {q}
+                                    </span>
+                                ))}
                                 {status === 'connected' && (
                                     <span className={styles.liveIndicator} title="Live Data Stream">
                                         <Activity size={10} /> LIVE
@@ -82,8 +94,10 @@ export const StockCard: React.FC<StockCardProps> = ({
                                 )}
                                 <button
                                     className={clsx(styles.compareBtn, isSelected && styles.selected)}
-                                    onClick={toggleCompare}
+                                    // Stop propagation to prevent hologram click interference if any
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCompare(e); }}
                                     title={isSelected ? "Remove from comparison" : "Add to comparison"}
+                                    style={{ zIndex: 20, position: 'relative' }} // Ensure accessible above hologram
                                 >
                                     {isSelected ? <Trash2 size={12} /> : <Plus size={12} />}
                                     {isSelected ? 'Remove' : 'Compare'}
@@ -117,9 +131,9 @@ export const StockCard: React.FC<StockCardProps> = ({
                         <span className={styles.metricValue}>{peRatio}</span>
                     </div>
                     <div className={styles.metric}>
-                        <span className={styles.metricLabel}>1Y Return</span>
+                        <span className={styles.metricLabel}>{metricLabel || '1Y Return'}</span>
                         <span className={styles.metricValue} style={{ color: isReturnPositive ? 'var(--status-success)' : 'var(--status-danger)' }}>
-                            {isReturnPositive ? '+' : ''}{return1Y.toFixed(4)}%
+                            {isReturnPositive ? '+' : ''}{return1Y.toFixed(2)}{metricLabel ? '' : '%'}
                         </span>
                     </div>
                 </div>
