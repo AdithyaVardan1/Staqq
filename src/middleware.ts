@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse, type NextRequest, type NextFetchEvent } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest, event: NextFetchEvent) {
     let response = NextResponse.next({
         request: {
             headers: request.headers,
@@ -60,6 +60,18 @@ export async function middleware(request: NextRequest) {
             data: { user: supabaseUser },
         } = await supabase.auth.getUser();
         user = supabaseUser;
+
+        // Track user session asynchronously (fire-and-forget)
+        if (user) {
+            const trackUrl = new URL('/api/session/track', request.url);
+            event.waitUntil(
+                fetch(trackUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: user.id }),
+                }).catch(err => console.error('Session Track Error:', err))
+            );
+        }
     } catch (e) {
         // Error handling for malformed sessions (e.g. double-stringification)
         console.error('Middleware Auth Error:', e);
