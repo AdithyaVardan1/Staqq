@@ -1,0 +1,16 @@
+﻿Auth OK
+
+=== CACHING HISTORICAL STATS ===
+MAYASHEEL-SM: 247 candles | avg5d=5,265,576 | last_vol=4,402,002 | spike=0.8x | 52WH=487.95 | 52WL=186.55
+VEER-ST: 247 candles | avg5d=5,959 | last_vol=3,758 | spike=0.6x | 52WH=653.1 | 52WL=358.3
+SHANKARA: 247 candles | avg5d=753,546 | last_vol=376,135 | spike=0.5x | 52WH=1309.0 | 52WL=979.5
+PICTUREHS: 247 candles | avg5d=1,456,588 | last_vol=2,793,054 | spike=1.9x | 52WH=2.4 | 52WL=0.98
+
+=== LIVE MARKET DATA ===
+  GENPHARMA | LTP=1.28 | Close=1.31 | Change=-2.29% | Vol=2,793,054 | 52WH=2.4 | 52WL=0.98
+
+=== REDIS VERIFICATION ===
+  MAYASHEEL-SM: avg_vol=b'5265576', 52WH=b'487.95', 52WL=b'186.55', token=b'21626', exchange=b'NSE'
+  VEER-ST: avg_vol=b'5959', 52WH=b'653.1', 52WL=b'358.3', token=b'19379', exchange=b'NSE'
+  SHANKARA: avg_vol=b'753546', 52WH=b'1309.0', 52WL=b'979.5', token=b'12401', exchange=b'NSE'
+  PICTUREHS: avg_vol=b'1456588', 52WH=b'2.4', 52WL=b'0.98', token=b'531592', exchange=b'BSE'

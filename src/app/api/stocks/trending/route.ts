@@ -1,13 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
     try {
-        // Fetch top 5 trending stocks
-        const tickers = await redis.zrevrange('trending_stocks', 0, 4);
-        return NextResponse.json({ tickers });
-    } catch (error: any) {
-        console.error('[API/Trending] GET Error:', error.message);
-        return NextResponse.json({ tickers: [] });
+        const cached = await redis.get('trending_algorithm_result');
+        if (!cached) {
+            return NextResponse.json({ stocks: [] });
+        }
+
+        const data = JSON.parse(cached);
+        return NextResponse.json(data);
+    } catch (error) {
+        console.error('Trending API Error:', error);
+        return NextResponse.json({ stocks: [] }, { status: 500 });
     }
 }

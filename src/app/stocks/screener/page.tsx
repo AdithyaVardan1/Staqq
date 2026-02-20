@@ -88,8 +88,8 @@ export default function StockScreener() {
     const { unlock } = useAchievementsStore();
     const debouncedFilters = useDebounce(filters, 300);
     const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
-    const [sortBy, setSortBy] = useState('trending');
-    // The `recentlyViewed` state here seems to duplicate the functionality of `RecentlyViewedSection`.
+    const [sortBy, setSortBy] = useState('marketCap');
+    const [isSortOpen, setIsSortOpen] = useState(false);
     // If `RecentlyViewedSection` is a separate component, this state might not be needed in StockScreener
     // unless StockScreener itself needs to display or interact with the full list of recently viewed stocks.
     // For now, keeping it as per original code, but noting potential redundancy.
@@ -130,6 +130,71 @@ export default function StockScreener() {
     }, [filters, unlock]);
 
     const fetchStocks = useCallback(async (offset: number) => {
+        // If sorting by a trending category, use the special endpoint
+        const trendingCategories = [
+            'top_gainers', 'top_losers', 'volume_shockers',
+            'breakouts_52w', 'breakdowns_52w', 'outperformers'
+        ];
+
+        if (trendingCategories.includes(sortBy)) {
+            const res = await fetch('/api/stocks/trending');
+            if (!res.ok) throw new Error('Failed to fetch trending stocks');
+            const data = await res.json();
+            let categoryStocks = data.categories?.[sortBy] || [];
+
+            // Apply Filters to Trending Data
+            categoryStocks = categoryStocks.filter((s: any) => {
+                // Price Filter
+                if (s.ltp > debouncedFilters.priceRange) return false;
+
+                // Sector Filter
+                if (debouncedFilters.sector !== 'all' && s.sector?.toLowerCase() !== debouncedFilters.sector.toLowerCase()) return false;
+
+                // Market Cap Filter
+                if (debouncedFilters.marketCaps.length > 0) {
+                    const mc = s.market_cap || 0;
+                    const matchesSmall = debouncedFilters.marketCaps.includes('small') && mc < 50000000000;
+                    const matchesMid = debouncedFilters.marketCaps.includes('mid') && mc >= 50000000000 && mc < 200000000000;
+                    const matchesLarge = debouncedFilters.marketCaps.includes('large') && mc >= 200000000000;
+
+                    if (!matchesSmall && !matchesMid && !matchesLarge) return false;
+                }
+
+                return true;
+            });
+
+            return {
+                items: categoryStocks.map((s: any) => ({
+                    ...s,
+                    ticker: s.symbol,
+                    price: s.ltp,
+                    changeAmount: (s.change / 100) * s.ltp,
+                    marketCap: s.market_cap || 0,
+                    peRatio: s.pe_ratio || 0,
+                    sparklineData: [],
+                    return1Y: sortBy === 'volume_shockers' ? s.spike :
+                        sortBy === 'outperformers' ? s.rs :
+                            sortBy === 'breakouts_52w' ? (s.ltp / s.high_52w - 1) * 100 :
+                                sortBy === 'breakdowns_52w' ? (s.ltp / s.low_52w - 1) * 100 :
+                                    s.change,
+                    metricLabel: sortBy === 'volume_shockers' ? 'Vol Spike' :
+                        sortBy === 'outperformers' ? 'RS Score' :
+                            sortBy === 'breakouts_52w' ? 'Dist High' :
+                                sortBy === 'breakdowns_52w' ? 'Dist Low' :
+                                    'Day Change',
+                    qualifiers: sortBy === 'top_gainers' ? ['TOP GAINER'] :
+                        sortBy === 'top_losers' ? ['TOP LOSER'] :
+                            sortBy === 'volume_shockers' ? [`${s.spike.toFixed(1)}x Vol`] :
+                                sortBy === 'breakouts_52w' ? ['52W High'] :
+                                    sortBy === 'breakdowns_52w' ? ['52W Low'] :
+                                        ['OUTPERFORMER']
+                })),
+                hasMore: false,
+                total: categoryStocks.length,
+                nextOffset: 0
+            };
+        }
+
         const params = new URLSearchParams({
             offset: offset.toString(),
             limit: '10',
@@ -293,21 +358,6 @@ export default function StockScreener() {
                                 </select>
                             </div>
 
-                            {/* Performance */}
-                            <div className={styles.filterGroup}>
-                                <h4 className={styles.filterTitle}>Performance</h4>
-                                <select
-                                    className={styles.select}
-                                    value={filters.performance}
-                                    onChange={(e) => setFilters(prev => ({ ...prev, performance: e.target.value }))}
-                                    suppressHydrationWarning
-                                >
-                                    <option value="today">Top Gainers Today</option>
-                                    <option value="1w">Last 1 Week</option>
-                                    <option value="1m">Last 1 Month</option>
-                                    <option value="1y">Last 1 Year</option>
-                                </select>
-                            </div>
 
                             {/* Dividend Yield */}
                             <div className={styles.filterGroup}>
@@ -378,12 +428,7 @@ export default function StockScreener() {
                     {/* Results Container */}
                     <div className={styles.results}>
                         <div className={styles.resultsToolbar}>
-                            <div className={styles.resultsInfo}>
-                                <span className={styles.resultCount}>{total} stocks found</span>
-                                <span className={styles.previewNote}>
-                                    Showing {stocks.length} of {total}
-                                </span>
-                            </div>
+                            {/* Counter removed as requested */}
 
                             <div className={styles.activeFilters}>
                                 {filters.marketCaps.map(cap => (
@@ -432,21 +477,50 @@ export default function StockScreener() {
                             )}
 
                             <div className={styles.toolbarRight}>
-                                <div className={styles.sortDropdown}>
-                                    <ArrowUpDown size={14} className={styles.sortIcon} />
-                                    <select
-                                        className={styles.compactSelect}
-                                        value={sortBy}
-                                        onChange={(e) => setSortBy(e.target.value)}
-                                        suppressHydrationWarning
+                                <div className={styles.customSort}>
+                                    <div
+                                        className={styles.sortTrigger}
+                                        onClick={() => setIsSortOpen(!isSortOpen)}
                                     >
-                                        <option value="trending">🔥 Trending Now</option>
-                                        <option value="marketCap">Market Cap</option>
-                                        <option value="price-high">Price: High to Low</option>
-                                        <option value="price-low">Price: Low to High</option>
-                                        <option value="pe">P/E Ratio</option>
-                                        <option value="returns">1Y Returns</option>
-                                    </select>
+                                        <ArrowUpDown size={14} className={styles.sortIcon} />
+                                        <span>
+                                            {sortBy === 'marketCap' && '💎 Market Cap'}
+                                            {sortBy === 'top_gainers' && '🚀 Top Gainers'}
+                                            {sortBy === 'top_losers' && '📉 Top Losers'}
+                                            {sortBy === 'volume_shockers' && '⚡ Volume Shockers'}
+                                            {sortBy === 'breakouts_52w' && '📈 52W Highs'}
+                                            {sortBy === 'breakdowns_52w' && '📉 52W Lows'}
+                                            {sortBy === 'outperformers' && '🏆 Outperformers'}
+                                        </span>
+                                    </div>
+
+                                    {isSortOpen && (
+                                        <>
+                                            <div className={styles.sortOverlay} onClick={() => setIsSortOpen(false)} />
+                                            <div className={styles.sortMenu}>
+                                                {[
+                                                    { id: 'marketCap', label: '💎 Market Cap' },
+                                                    { id: 'top_gainers', label: '🚀 Top Gainers' },
+                                                    { id: 'top_losers', label: '📉 Top Losers' },
+                                                    { id: 'volume_shockers', label: '⚡ Volume Shockers' },
+                                                    { id: 'breakouts_52w', label: '📈 52W Highs' },
+                                                    { id: 'breakdowns_52w', label: '📉 52W Lows' },
+                                                    { id: 'outperformers', label: '🏆 Outperformers' }
+                                                ].map(opt => (
+                                                    <div
+                                                        key={opt.id}
+                                                        className={clsx(styles.sortOption, sortBy === opt.id && styles.activeOption)}
+                                                        onClick={() => {
+                                                            setSortBy(opt.id);
+                                                            setIsSortOpen(false);
+                                                        }}
+                                                    >
+                                                        {opt.label}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
 
                                 <div className={styles.viewToggle}>
