@@ -54,7 +54,7 @@ export async function fetchAchievements() {
         .order('category', { ascending: true });
 
     if (error) {
-        console.error('Error fetching achievements:', error);
+        console.error('Error fetching achievements:', JSON.stringify(error, null, 2));
         return [];
     }
     return data as Achievement[];

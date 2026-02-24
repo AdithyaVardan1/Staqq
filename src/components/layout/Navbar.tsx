@@ -138,9 +138,11 @@ export const Navbar = () => {
                                 <Search size={20} />
                             </button>
 
-                            <Link href="/watchlist" className={styles.watchlistLink}>
-                                <Button variant="ghost" size="sm" className="hidden md:flex">Watchlist</Button>
-                            </Link>
+                            {pathname !== '/' && (
+                                <Link href="/watchlist" className={styles.watchlistLink}>
+                                    <Button variant="ghost" size="sm" className="hidden md:flex">Watchlist</Button>
+                                </Link>
+                            )}
 
                             <div className={styles.desktopAuth}>
                                 {user ? (
@@ -192,9 +194,11 @@ export const Navbar = () => {
                         </Link>
                     ))}
                     <div className={styles.mobileAuth}>
-                        <Link href="/watchlist" onClick={() => setIsMobileMenuOpen(false)}>
-                            <Button variant="outline" fullWidth>Watchlist</Button>
-                        </Link>
+                        {pathname !== '/' && (
+                            <Link href="/watchlist" onClick={() => setIsMobileMenuOpen(false)}>
+                                <Button variant="outline" fullWidth>Watchlist</Button>
+                            </Link>
+                        )}
                         {user ? (
                             <>
                                 <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
