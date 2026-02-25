@@ -30,10 +30,11 @@ export function buildRobustNewsletter(content: NewsletterContent): string {
         numberOfWeek,
         ipoSpotlight,
         conceptOfWeek,
+        topStories,
     } = content;
 
-    // Top 2 market stories for "Stories worth your time"
-    const stories = marketSummary.articles.slice(0, 2);
+    // Stories are Groq-curated from all feeds (market, regulatory, trending, IPO)
+    const stories = topStories;
 
     // Verdict badge color
     const verdictColor = ipoSpotlight.verdict === 'Apply'
@@ -265,9 +266,11 @@ export function buildRobustNewsletter(content: NewsletterContent): string {
                                                 <table width="100%" style="border-top: 1px solid #1e2e00; padding-top: 20px;">
                                                     <tr>
                                                         <td width="120" valign="middle">
-                                                            <div style="background-color: ${verdictColor}; color: ${verdictTextColor}; font-family: 'Archivo Black', Arial Black, sans-serif; font-size: 12px; padding: 10px 24px; border-radius: 50px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                                ${ipoSpotlight.verdict === 'Apply' ? '✓' : ipoSpotlight.verdict === 'Avoid' ? '✗' : '~'} ${esc(ipoSpotlight.verdict)}
-                                                            </div>
+                                                            <a href="https://staqq.in/ipo" style="text-decoration: none; display: inline-block;">
+                                                                <div style="background-color: ${verdictColor}; color: ${verdictTextColor}; font-family: 'Archivo Black', Arial Black, sans-serif; font-size: 12px; padding: 10px 24px; border-radius: 50px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer;">
+                                                                    ${ipoSpotlight.verdict === 'Apply' ? '✓' : ipoSpotlight.verdict === 'Avoid' ? '✗' : '~'} ${esc(ipoSpotlight.verdict)}
+                                                                </div>
+                                                            </a>
                                                         </td>
                                                         <td align="right" valign="bottom" style="font-family: 'DM Sans', Helvetica, Arial, sans-serif; font-size: 12px; color: #888888; line-height: 1.7; padding-left: 20px;">
                                                             <div style="font-style: normal; color: #888888; text-align: right;">${esc(ipoSpotlight.description)}</div>
@@ -405,9 +408,8 @@ export function buildRobustNewsletter(content: NewsletterContent): string {
                                                     <a href="https://staqq.in/learn" style="font-family: 'DM Sans', Helvetica, Arial, sans-serif; font-size: 11px; color: #555555; text-decoration: none; margin: 0 10px;">Learn Hub</a>
                                                     <a href="#" style="font-family: 'DM Sans', Helvetica, Arial, sans-serif; font-size: 11px; color: #555555; text-decoration: none; margin: 0 10px;">Unsubscribe</a>
                                                 </div>
-                                                <div style="font-family: 'DM Sans', Helvetica, Arial, sans-serif; font-size: 10px; color: #ffffff; line-height: 1.5; max-width: 400px; margin: 0 auto;">
-                                                    © 2026 Staqq Finance Pvt. Ltd. Investments are subject to market
-                                                    risks. Not investment advice.
+                                                <div style="font-family: 'DM Sans', Helvetica, Arial, sans-serif; font-size: 10px; color: #666666; line-height: 1.7; max-width: 480px; margin: 0 auto;">
+                                                    Disclaimer: Content is for educational purposes only, not investment advice. Staqq is not a SEBI-registered advisor. Do your own research before investing. Investments carry risk, including loss of capital.
                                                 </div>
                                             </td>
                                         </tr>

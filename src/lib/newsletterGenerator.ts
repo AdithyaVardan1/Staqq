@@ -13,14 +13,16 @@ import {
     extractNumberOfWeek,
     generateIPOVerdict,
     extractConceptOfWeek,
+    pickTopStories,
     type MarketAlert,
     type NumberOfWeek,
     type IPOSpotlight,
     type ConceptOfWeek,
+    type TopStory,
 } from './groqSummarizer';
 import { getAllIPOs, type IPOData } from './ipo';
 
-export type { MarketAlert, NumberOfWeek, IPOSpotlight, ConceptOfWeek };
+export type { MarketAlert, NumberOfWeek, IPOSpotlight, ConceptOfWeek, TopStory };
 
 export interface NewsletterContent {
     issueDate: string;
@@ -37,6 +39,8 @@ export interface NewsletterContent {
     numberOfWeek: NumberOfWeek;
     ipoSpotlight: IPOSpotlight;
     conceptOfWeek: ConceptOfWeek;
+    // Groq-curated top 2 stories from all feeds
+    topStories: TopStory[];
 }
 
 /**
@@ -164,12 +168,18 @@ export async function generateNewsletterContent(): Promise<NewsletterContent> {
         description: 'No active IPO available this week.',
     };
 
-    // Run structured extractors in parallel
-    const [marketAlert, numberOfWeek, ipoSpotlight, conceptOfWeek] = await Promise.all([
+    // Run structured extractors + story picker in parallel
+    const [marketAlert, numberOfWeek, ipoSpotlight, conceptOfWeek, topStories] = await Promise.all([
         extractMarketAlert([...regulatoryNewsRaw.articles, ...marketSummaryRaw.articles]),
         extractNumberOfWeek(allArticles),
         bestIPO ? buildIPOSpotlight(bestIPO) : Promise.resolve(ipoSpotlightFallback),
         extractConceptOfWeek(allArticles),
+        pickTopStories([
+            ...marketSummaryRaw.articles,
+            ...regulatoryNewsRaw.articles,
+            ...trendingStocksRaw.articles,
+            ...ipoNewsRaw.articles,
+        ]),
     ]);
 
     console.log('[Newsletter] All data ready.');
@@ -186,5 +196,6 @@ export async function generateNewsletterContent(): Promise<NewsletterContent> {
         numberOfWeek,
         ipoSpotlight,
         conceptOfWeek,
+        topStories,
     };
 }

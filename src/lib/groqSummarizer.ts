@@ -287,3 +287,59 @@ export async function extractConceptOfWeek(
 
     return fallback;
 }
+
+export interface TopStory {
+    title: string;
+    content: string;
+    url: string;
+}
+
+/**
+ * Given a merged pool of articles from all Tavily feeds, ask Groq to pick
+ * the 2 most impactful stories for Indian retail investors this week.
+ * Falls back to top 2 by Tavily relevance score.
+ */
+export async function pickTopStories(
+    articles: { title: string; content: string; url: string; score?: number }[]
+): Promise<TopStory[]> {
+    const fallback = articles
+        .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+        .slice(0, 2)
+        .map(a => ({ title: a.title, content: a.content, url: a.url }));
+
+    if (!groq || articles.length === 0) return fallback;
+
+    // Send titles + indices to Groq — it picks indices, we map back
+    const numbered = articles
+        .slice(0, 12)
+        .map((a, i) => `${i}: ${a.title}`)
+        .join('\n');
+
+    const raw = await callGroq(
+        'You are a curator for an Indian retail investor newsletter. ' +
+        'From the numbered list of news headlines, pick the 2 most impactful and interesting stories for a Gen Z Indian retail investor this week. ' +
+        'Prioritise: regulatory changes, major market moves, IPO news, significant company news. Avoid generic macro filler. ' +
+        'Return a JSON array of exactly 2 numbers (the indices), e.g. [3, 7]. Return ONLY the JSON array, nothing else.',
+        `Headlines:\n${numbered}`,
+        60
+    );
+
+    try {
+        if (raw) {
+            const indices: number[] = JSON.parse(raw);
+            if (
+                Array.isArray(indices) &&
+                indices.length === 2 &&
+                indices.every(i => typeof i === 'number' && i >= 0 && i < articles.length)
+            ) {
+                return indices.map(i => ({
+                    title: articles[i].title,
+                    content: articles[i].content,
+                    url: articles[i].url,
+                }));
+            }
+        }
+    } catch { /* fall through */ }
+
+    return fallback;
+}
