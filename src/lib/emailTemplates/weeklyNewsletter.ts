@@ -115,23 +115,16 @@ export function buildWeeklyNewsletter(content: NewsletterContent, recipientEmail
         <!-- Main container — full width -->
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #0E0E0E;">
 
-          <!-- Neon top accent bar -->
+          <!-- Header image — custom designed header, fonts preserved as image -->
           <tr>
-            <td style="height: 4px; background: linear-gradient(90deg, #0A0A0A, #CAFF00 30%, #CAFF00 70%, #0A0A0A);"></td>
-          </tr>
-
-          <!-- Header -->
-          <tr>
-            <td class="header-padding" style="background: linear-gradient(180deg, #0E1A00 0%, #0E0E0E 100%); padding: 48px 40px; text-align: center;">
-              <!-- Logo mark -->
-              <div style="display: inline-block; width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #CAFF00, #8ABF00); text-align: center; line-height: 48px; font-size: 22px; margin-bottom: 16px;">📊</div>
-              <h1 style="margin: 0 0 6px; font-size: 32px; font-weight: 900; color: #FFFFFF; letter-spacing: -0.04em;">
-                THE STACK
-              </h1>
-              <p style="margin: 0 0 4px; font-size: 12px; font-weight: 700; color: #CAFF00; letter-spacing: 0.2em; text-transform: uppercase;">BY STAQQ</p>
-              <div style="height: 1px; width: 80px; background: rgba(202,255,0,0.3); margin: 16px auto;"></div>
-              <p style="margin: 0; font-size: 15px; color: #A1A1AA; font-weight: 400;">Your weekly edge in Indian markets</p>
-              <p style="margin: 8px 0 0; font-size: 13px; color: #52525B;">${escapeHtml(issueDate)}</p>
+            <td style="padding: 0; line-height: 0; font-size: 0;">
+              <img
+                src="https://staqq.in/newsletter/header.png"
+                alt="The Stack by Staqq — Issue 01"
+                width="780"
+                height="240"
+                style="display: block; width: 100%; max-width: 780px; height: auto; border: 0; outline: none; text-decoration: none;"
+              />
             </td>
           </tr>
 

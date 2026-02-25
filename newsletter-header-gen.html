@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@800&family=DM+Sans:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 780px;
+            height: 240px;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        .masthead {
+            width: 780px;
+            height: 240px;
+            background: #CCFF00;
+            border-radius: 16px 16px 0 0;
+            padding: 28px 32px 24px 28px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .masthead-top {
+            display: flex;
+            align-items: flex-start;
+            flex: 1;
+        }
+
+        .issue-badge {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 10px;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(0, 0, 0, 0.45);
+            line-height: 1;
+            padding-top: 4px;
+            flex-shrink: 0;
+        }
+
+        .masthead-title-block {
+            flex: 1;
+            padding-left: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .the-word {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 38px;
+            color: rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.06em;
+            line-height: 1;
+            display: block;
+            margin-bottom: -6px;
+        }
+
+        .stack-word {
+            font-family: 'Syne', sans-serif;
+            font-size: 130px;
+            font-weight: 800;
+            color: #000;
+            line-height: 0.85;
+            display: block;
+            letter-spacing: -5px;
+        }
+
+        .masthead-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .staqq-tag {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(0, 0, 0, 0.45);
+        }
+
+        .date-stamp {
+            background: #000;
+            color: #CCFF00;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="masthead">
+        <div class="masthead-top">
+            <div class="issue-badge">Issue 01 · Feb 2026</div>
+            <div class="masthead-title-block">
+                <span class="the-word">THE</span>
+                <span class="stack-word">STACK</span>
+            </div>
+        </div>
+        <div class="masthead-footer">
+            <span class="staqq-tag">By Staqq</span>
+            <div class="date-stamp">WED, 12 FEB 2026</div>
+        </div>
+    </div>
+</body>
+
+</html>
