@@ -20,7 +20,7 @@ export function NewsletterCTA() {
         setMessage('');
 
         try {
-            const res = await fetch('/api/newsletter/test-send', {
+            const res = await fetch('/api/newsletter/subscribe', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
@@ -31,7 +31,7 @@ export function NewsletterCTA() {
             if (!res.ok) throw new Error(data.error || 'Failed to subscribe');
 
             setStatus('success');
-            setMessage('You have successfully subscribed! The newsletter will arrive shortly.');
+            setMessage("You're subscribed! The Stack lands every Wednesday morning.");
             setEmail('');
         } catch (error: any) {
             setStatus('error');
