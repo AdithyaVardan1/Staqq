@@ -55,15 +55,6 @@ const WatchlistItem = ({ symbol, onRemove }: { symbol: string; onRemove: (s: str
                 // Or maybe yfinance '52WeekChange' exists. yinfo.py didn't seem to include it.
                 // I'll default to 0 for now to avoid break.
                 sparklineData={data.sparkline || []}
-
-                // Hologram Props
-                sector={data.sector}
-                industry={data.industry}
-                high52={data.high52}
-                low52={data.low52}
-                beta={data.beta}
-                divYield={data.divYield}
-                website={data.website}
             />
 
             {/* Remove Button (Floating absolute to not mess with card layout) */}
