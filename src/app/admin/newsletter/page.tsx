@@ -30,12 +30,6 @@ type Filter = 'all' | 'active' | 'inactive';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const CRON_SECRET = process.env.NEXT_PUBLIC_CRON_SECRET ?? '';
-
-function adminHeaders() {
-    return { 'Content-Type': 'application/json', 'x-cron-secret': CRON_SECRET };
-}
-
 function fmtDate(iso: string) {
     return new Date(iso).toLocaleDateString('en-IN', {
         day: '2-digit', month: 'short', year: 'numeric',
@@ -104,7 +98,7 @@ export default function NewsletterAdminPage() {
         if (!confirm(`Remove ${email} from subscribers?`)) return;
         await fetch('/api/admin/newsletter/subscribers', {
             method: 'DELETE',
-            headers: adminHeaders(),
+            headers: { 'Content-Type': 'application/json', 'x-cron-secret': cronSecret },
             body: JSON.stringify({ id }),
         });
         setSubscribers(prev => prev.filter(s => s.id !== id));
@@ -122,7 +116,7 @@ export default function NewsletterAdminPage() {
         try {
             const res = await fetch('/api/admin/newsletter/trigger-send', {
                 method: 'POST',
-                headers: adminHeaders(),
+                headers: { 'Content-Type': 'application/json', 'x-cron-secret': cronSecret },
                 body: JSON.stringify({ mode, testEmail: mode === 'test' ? testEmail : undefined }),
             });
             const data = await res.json();
