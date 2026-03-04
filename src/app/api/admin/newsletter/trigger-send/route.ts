@@ -3,9 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * POST /api/admin/newsletter/trigger-send
  * Body: { mode: 'test' | 'production', testEmail?: string }
- *
- * 'test'       → sends a single test email to testEmail
- * 'production' → fires the full weekly send to all subscribers
  */
 export async function POST(req: NextRequest) {
     const secret = req.headers.get('x-cron-secret');
@@ -14,26 +11,30 @@ export async function POST(req: NextRequest) {
     }
 
     const { mode, testEmail } = await req.json().catch(() => ({}));
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000';
+
+    // Derive the base URL from the incoming request so this works in
+    // local dev (localhost:3000) AND production (staqq.in) without config.
+    const origin = `${req.nextUrl.protocol}//${req.nextUrl.host}`;
 
     if (mode === 'test') {
-        if (!testEmail) return NextResponse.json({ error: 'testEmail required for test mode' }, { status: 400 });
-
-        const res = await fetch(`${appUrl}/api/newsletter/test-send`, {
+        if (!testEmail) {
+            return NextResponse.json({ error: 'testEmail required for test mode' }, { status: 400 });
+        }
+        const res = await fetch(`${origin}/api/newsletter/test-send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'x-cron-secret': secret },
             body: JSON.stringify({ email: testEmail }),
         });
-        const data = await res.json();
+        const data = await res.json().catch(() => ({ error: 'Invalid response from test-send' }));
         return NextResponse.json(data, { status: res.status });
     }
 
     if (mode === 'production') {
-        const res = await fetch(`${appUrl}/api/newsletter/send-weekly`, {
+        const res = await fetch(`${origin}/api/newsletter/send-weekly`, {
             method: 'POST',
-            headers: { 'x-cron-secret': secret },
+            headers: { 'Content-Type': 'application/json', 'x-cron-secret': secret },
         });
-        const data = await res.json();
+        const data = await res.json().catch(() => ({ error: 'Invalid response from send-weekly' }));
         return NextResponse.json(data, { status: res.status });
     }
 
