@@ -13,15 +13,23 @@
 
 import type { EmailProvider } from './types';
 import { MailDiverProvider } from './providers/maildiver';
+import { UniOneProvider } from './providers/unione';
+import { BrevoProvider } from './providers/brevo';
 
 let _instance: EmailProvider | null = null;
 
 export function getEmailProvider(): EmailProvider {
     if (_instance) return _instance;
 
-    const provider = process.env.EMAIL_PROVIDER ?? 'maildiver';
+    const provider = process.env.EMAIL_PROVIDER ?? 'brevo';
 
     switch (provider) {
+        case 'brevo':
+            _instance = new BrevoProvider(process.env.BREVO_API_KEY ?? '');
+            break;
+        case 'unione':
+            _instance = new UniOneProvider(process.env.UNIONE_API_KEY ?? '');
+            break;
         case 'maildiver':
             _instance = new MailDiverProvider(process.env.MAILDIVER_API_KEY ?? '');
             break;
