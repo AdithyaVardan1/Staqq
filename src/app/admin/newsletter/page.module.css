@@ -4,6 +4,7 @@
 
 .main {
     min-height: 100vh;
+    padding-top: 140px;
     background: #080808;
     color: #fff;
     font-family: 'DM Sans', system-ui, sans-serif;
