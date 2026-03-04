@@ -1,0 +1,639 @@
+/* ─────────────────────────────────────────────────────────────────
+   Newsletter Admin Dashboard  ·  src/app/admin/newsletter/page.module.css
+───────────────────────────────────────────────────────────────── */
+
+.main {
+    min-height: 100vh;
+    background: #080808;
+    color: #fff;
+    font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+/* ── Auth Gate ─────────────────────────────────────────────────── */
+
+.authGate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+}
+
+.authCard {
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 20px;
+    padding: 48px 40px;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.authIcon {
+    color: #ccff00;
+    margin-bottom: 8px;
+}
+
+.authTitle {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.authSub {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 8px;
+}
+
+.authInput {
+    width: 100%;
+    background: #0d0d0d;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.authInput:focus {
+    border-color: #ccff00;
+}
+
+.authError {
+    color: #ff4d4d;
+    font-size: 13px;
+    margin: 0;
+}
+
+.authBtn {
+    width: 100%;
+    background: #ccff00;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: opacity 0.2s;
+}
+
+.authBtn:hover {
+    opacity: 0.88;
+}
+
+/* ── Header ────────────────────────────────────────────────────── */
+
+.header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    gap: 16px;
+}
+
+.title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 6px;
+}
+
+.titleIcon {
+    color: #ccff00;
+}
+
+.subtitle {
+    color: #555;
+    font-size: 14px;
+    margin: 0;
+}
+
+.refreshBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #111;
+    border: 1px solid #222;
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+
+.refreshBtn:hover {
+    border-color: #444;
+    color: #ccc;
+}
+
+.refreshBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Stats grid ────────────────────────────────────────────────── */
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.statCard {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+}
+
+.statCard_brand {
+    border-left: 3px solid #ccff00;
+}
+
+.statCard_green {
+    border-left: 3px solid #22c55e;
+}
+
+.statCard_red {
+    border-left: 3px solid #ef4444;
+}
+
+.statIcon {
+    color: #555;
+    flex-shrink: 0;
+}
+
+.statCard_brand .statIcon {
+    color: #ccff00;
+}
+
+.statCard_green .statIcon {
+    color: #22c55e;
+}
+
+.statCard_red .statIcon {
+    color: #ef4444;
+}
+
+.statValue {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.statLabel {
+    font-size: 12px;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+/* ── Two-col layout ────────────────────────────────────────────── */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    align-items: start;
+}
+
+.rightCol {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Panel ─────────────────────────────────────────────────────── */
+
+.panel {
+    background: #0f0f0f;
+    border: 1px solid #1a1a1a;
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.panelHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.panelTitle {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 18px;
+    color: #e0e0e0;
+}
+
+.panelHeader .panelTitle {
+    margin: 0;
+}
+
+.badge {
+    background: #1e1e1e;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: #888;
+}
+
+/* ── Table controls ─────────────────────────────────────────────── */
+
+.tableControls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.searchWrap {
+    position: relative;
+    flex: 1;
+    min-width: 180px;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #444;
+    pointer-events: none;
+}
+
+.searchInput {
+    width: 100%;
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 9px 12px 9px 34px;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+    border-color: #ccff00;
+}
+
+.filters {
+    display: flex;
+    gap: 6px;
+}
+
+.filterBtn {
+    background: none;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 6px 14px;
+    color: #555;
+    font-size: 12px;
+    cursor: pointer;
+    text-transform: capitalize;
+    transition: all 0.15s;
+}
+
+.filterBtn:hover {
+    border-color: #444;
+    color: #aaa;
+}
+
+.filterActive {
+    background: #ccff00;
+    border-color: #ccff00;
+    color: #000;
+    font-weight: 700;
+}
+
+/* ── Table ─────────────────────────────────────────────────────── */
+
+.tableWrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid #1a1a1a;
+    max-height: 480px;
+    overflow-y: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #1a1a1a;
+    background: #0d0d0d;
+    position: sticky;
+    top: 0;
+}
+
+.row {
+    border-bottom: 1px solid #141414;
+    transition: background 0.1s;
+}
+
+.row:hover {
+    background: #131313;
+}
+
+.row:last-child {
+    border-bottom: none;
+}
+
+.table td {
+    padding: 11px 14px;
+    vertical-align: middle;
+}
+
+.emailCell {
+    font-size: 13px;
+    color: #ccc;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dateCell {
+    color: #555;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.statusPill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+}
+
+.inactive {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.deleteBtn:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.empty {
+    text-align: center;
+    color: #333;
+    padding: 40px 0;
+    font-size: 14px;
+}
+
+/* ── Send controls ──────────────────────────────────────────────── */
+
+.sendBlock {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sendLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #bbb;
+    margin: 0;
+}
+
+.sendRow {
+    display: flex;
+    gap: 8px;
+}
+
+.emailInput {
+    flex: 1;
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.emailInput:focus {
+    border-color: #ccff00;
+}
+
+.sendBtnTest {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #1a1a00;
+    border: 1px solid #ccff00;
+    color: #ccff00;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.sendBtnTest:hover:not(:disabled) {
+    background: #252500;
+}
+
+.sendBtnTest:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.divider {
+    height: 1px;
+    background: #1a1a1a;
+    margin: 4px 0;
+}
+
+.sendWarning {
+    font-size: 12px;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.sendBtnProd {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #1a0000;
+    border: 1px solid #ef4444;
+    color: #ef4444;
+    border-radius: 8px;
+    padding: 11px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    width: 100%;
+    justify-content: center;
+}
+
+.sendBtnProd:hover:not(:disabled) {
+    background: #220000;
+}
+
+.sendBtnProd:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* ── Send logs ──────────────────────────────────────────────────── */
+
+.logList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.logItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #0d0d0d;
+    border: 1px solid #1a1a1a;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.logStatus {
+    flex-shrink: 0;
+    padding-top: 1px;
+}
+
+.logSuccess {
+    color: #22c55e;
+}
+
+.logFail {
+    color: #ef4444;
+}
+
+.logContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.logMode {
+    font-size: 11px;
+    font-weight: 700;
+    color: #555;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.logResult {
+    font-size: 13px;
+    color: #ccc;
+}
+
+.logTime {
+    font-size: 11px;
+    color: #333;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Utility ────────────────────────────────────────────────────── */
+
+.spin {
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Responsive ─────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .statsGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .container {
+        padding: 24px 16px 60px;
+    }
+}
