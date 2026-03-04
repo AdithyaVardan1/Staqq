@@ -1,21 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { createClient } from '@supabase/supabase-js';
 import { getEmailProvider } from '@/lib/email';
 import { generateNewsletterContent } from '@/lib/newsletterGenerator';
 import { buildRobustNewsletter } from '@/lib/emailTemplates/buildRobustNewsletter';
 import { generateHeaderImage } from '@/lib/generateHeader';
-import fs from 'fs';
-import path from 'path';
 
 const FROM = process.env.EMAIL_FROM ?? 'The Stack by Staqq <newsletter@staqq.in>';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://staqq.in';
-
-function getWeekOfYear(date: Date): number {
-    const startOfYear = new Date(date.getFullYear(), 0, 1);
-    return Math.ceil(
-        ((date.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7
-    );
-}
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+const STORAGE_BUCKET = 'newsletter-assets';
+const HEADER_REMOTE_PATH = 'header/weekly.png'; // overwritten each week
 
 /** Injects an unsubscribe link into the newsletter HTML before the closing </body> */
 function injectUnsubscribeLink(html: string, unsubscribeUrl: string): string {
@@ -25,6 +20,43 @@ function injectUnsubscribeLink(html: string, unsubscribeUrl: string): string {
   <a href="${unsubscribeUrl}" style="color:#8b949e;text-decoration:underline;">Unsubscribe</a>
 </div>`;
     return html.replace(/<\/body>/i, `${link}</body>`);
+}
+
+function getWeekOfYear(date: Date): number {
+    const startOfYear = new Date(date.getFullYear(), 0, 1);
+    return Math.ceil(
+        ((date.getTime() - startOfYear.getTime()) / 86400000 + startOfYear.getDay() + 1) / 7
+    );
+}
+
+/**
+ * Generates a fresh header image with the current week's date/issue number,
+ * uploads it to Supabase Storage (overwrites previous week), and returns its public URL.
+ */
+async function generateAndUploadHeader(now: Date): Promise<string> {
+    const weekOfYear = getWeekOfYear(now);
+    const headerBuffer = await generateHeaderImage({ issueNumber: weekOfYear, date: now });
+
+    const storage = createClient(
+        SUPABASE_URL,
+        process.env.SUPABASE_SERVICE_ROLE_KEY ?? ''
+    ).storage;
+
+    const { error } = await storage.from(STORAGE_BUCKET).upload(HEADER_REMOTE_PATH, headerBuffer, {
+        contentType: 'image/png',
+        upsert: true, // overwrite last week's header
+    });
+
+    if (error) {
+        console.warn('[send-weekly] Header upload failed, using default:', error.message);
+        // Fall back to the static default header already in the bucket
+        return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/header/default.png`;
+    }
+
+    // Bust the CDN cache by appending a timestamp query param
+    const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${HEADER_REMOTE_PATH}?v=${now.getTime()}`;
+    console.log('[send-weekly] Header uploaded:', publicUrl);
+    return publicUrl;
 }
 
 export async function POST(req: NextRequest) {
@@ -49,18 +81,17 @@ export async function POST(req: NextRequest) {
 
         console.log(`[send-weekly] Sending to ${subscribers.length} subscribers...`);
 
-        // 2. Generate newsletter content once (shared for all)
-        const content = await generateNewsletterContent();
-        const baseHtml = buildRobustNewsletter(content);
-
-        // 3. Generate header image
         const now = new Date();
-        const weekOfYear = getWeekOfYear(now);
-        const headerBuffer = await generateHeaderImage({ issueNumber: weekOfYear, date: now });
-        const logoBuffer = fs.readFileSync(path.join(process.cwd(), 'public', 'finale.png'));
 
+        // 2. Generate + upload a fresh header image for this week's issue (runs in parallel with content)
+        const [content, weeklyHeaderUrl] = await Promise.all([
+            generateNewsletterContent(),
+            generateAndUploadHeader(now),
+        ]);
+
+        // 3. Build the newsletter HTML with the fresh weekly header URL
+        const baseHtml = buildRobustNewsletter(content, weeklyHeaderUrl);
         const subject = `The Stack by Staqq — ${content.issueDate}`;
-
         const emailProvider = getEmailProvider();
 
         // 4. Send to each subscriber with their personal unsubscribe link
@@ -73,26 +104,7 @@ export async function POST(req: NextRequest) {
                 const html = injectUnsubscribeLink(baseHtml, unsubscribeUrl);
 
                 try {
-                    await emailProvider.send({
-                        to: email,
-                        from: FROM,
-                        subject,
-                        html,
-                        attachments: [
-                            {
-                                filename: 'header.png',
-                                content: headerBuffer,
-                                contentType: 'image/png',
-                                contentId: 'newsletter-header',
-                            },
-                            {
-                                filename: 'finale.png',
-                                content: logoBuffer,
-                                contentType: 'image/png',
-                                contentId: 'newsletter-logo',
-                            },
-                        ],
-                    });
+                    await emailProvider.send({ to: email, from: FROM, subject, html });
                     sent++;
                 } catch (err: any) {
                     errors.push(`${email}: ${err.message}`);

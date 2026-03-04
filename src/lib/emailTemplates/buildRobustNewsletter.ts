@@ -20,7 +20,11 @@ function boldInText(body: string, boldPhrase: string, boldColor = '#ff4d4d'): st
     );
 }
 
-export function buildRobustNewsletter(content: NewsletterContent): string {
+const SUPABASE_CDN = 'https://ypwotjfqbbfndiqowqsv.supabase.co/storage/v1/object/public/newsletter-assets';
+const HEADER_URL = `${SUPABASE_CDN}/header/default.png`;
+const LOGO_URL = `${SUPABASE_CDN}/logo/finale.png`;
+
+export function buildRobustNewsletter(content: NewsletterContent, weeklyHeaderUrl?: string): string {
     const {
         issueDate,
         bigPictureSummary,
@@ -100,7 +104,7 @@ export function buildRobustNewsletter(content: NewsletterContent): string {
                 <!-- ══ HEADER IMAGE (CID inline) ══ -->
                 <tr>
                     <td style="padding: 0; line-height: 0; font-size: 0;">
-                        <img src="cid:newsletter-header"
+                        <img src="${weeklyHeaderUrl ?? HEADER_URL}"
                             alt="The Stack by Staqq"
                             width="800"
                             style="display: block; width: 100%; max-width: 800px; height: auto; border: 0; outline: none; text-decoration: none; border-radius: 16px 16px 0 0;" />
@@ -396,7 +400,7 @@ export function buildRobustNewsletter(content: NewsletterContent): string {
                                         <tr>
                                             <td style="padding-top: 40px; text-align: center;">
                                                 <div style="margin-bottom: 8px;">
-                                                    <img src="cid:newsletter-logo" alt="STAQQ" width="120" style="display: inline-block; border: 0; height: auto;" />
+                                                    <img src="${LOGO_URL}" alt="STAQQ" width="120" style="display: inline-block; border: 0; height: auto;" />
                                                 </div>
                                                 <div style="font-family: 'DM Sans', Helvetica, Arial, sans-serif; font-size: 11px; color: #666666; margin-bottom: 20px; letter-spacing: 0.5px;">
                                                     The financial stack for Gen Z · staqq.in
