@@ -1,0 +1,129 @@
+# Staqq — Complete Platform Guide
+
+> Staqq is India's smartest IPO intelligence and market signals platform. This document provides comprehensive information about all features, data sources, and capabilities.
+
+## Platform Overview
+
+Staqq provides alternative data intelligence for Indian stock market investors. Unlike traditional screeners (Screener.in, Moneycontrol), Staqq focuses on data signals that retail investors typically can't access easily: Grey Market Premium tracking, social sentiment aggregation, institutional flow analysis, and insider trade monitoring.
+
+### Target Audience
+- Retail investors looking to apply for IPOs in India
+- Traders monitoring institutional money flows (FII/DII)
+- Investors tracking insider buying/selling patterns
+- Anyone wanting social media sentiment on Indian stocks
+
+---
+
+## IPO Intelligence Hub
+
+### Live GMP Tracking
+Every IPO listed on Indian exchanges is tracked with:
+- **Grey Market Premium (GMP)**: The premium/discount in the unofficial market
+- **GMP Percentage**: GMP relative to issue price
+- **Estimated Listing Price**: Issue price + GMP
+- **Subscription Data**: Overall and category-wise subscription multiples
+- **Rating**: Community sentiment rating (0-5 scale)
+- **Category**: Mainboard IPO or SME IPO
+
+### GMP Sentiment Scoring
+Raw GMP percentages are converted to actionable sentiment:
+| GMP Range | Sentiment | Interpretation |
+|-----------|-----------|----------------|
+| ≥ 50% | Very Bullish | Strong listing expected |
+| 10% to 50% | Bullish | Positive listing expected |
+| -5% to 10% | Neutral | Listing near issue price |
+| -20% to -5% | Bearish | Below par listing possible |
+| < -20% | Very Bearish | Significant loss expected |
+
+### IPO Analytics Dashboard
+- GMP distribution analysis across all tracked IPOs
+- Top GMP gainers and losers rankings
+- Most subscribed IPO leaderboard
+- Mainboard vs SME performance comparison
+- Average subscription multiples by category
+
+### Allotment Probability Calculator
+Interactive tool to calculate allotment chances:
+- Input: Subscription multiple, number of applications, IPO category
+- Formula: Single application probability ≈ min(1, 1/subscription_multiple)
+- Multi-application: Combined probability = 1 - (1 - single_probability)^number_of_applications
+- Shows blocked amount per application and total capital required
+
+---
+
+## Market Signals
+
+### Social Sentiment Analysis
+Aggregates financial discussions from:
+- **Reddit**: r/IndianStockMarket, r/IndianStreetBets, r/DalalStreetTalks
+- **Twitter/X**: Indian financial Twitter (FinTwit India)
+
+Features:
+- Mention spike detection (unusual activity alerts)
+- Hot post identification
+- Ticker extraction from posts
+- Community-wise breakdown
+- ~150 posts aggregated per refresh cycle
+
+### FII/DII Institutional Flows
+Daily data from NSE showing:
+- FII/FPI (Foreign Portfolio Investor) buy and sell values in crores
+- DII (Domestic Institutional Investor) buy and sell values
+- Net values for each category
+- Combined net (FII + DII total)
+- Market sentiment indicator (Net Buying vs Net Selling)
+
+Data is available after market hours, typically 6-7 PM IST.
+
+### Insider Trading Disclosures
+From NSE's SAST/PIT filings:
+- Promoter and director transactions
+- Person name and category (Promoter, KMP, Director)
+- Transaction type (Market Purchase, Market Sale, Off Market)
+- Shares acquired/disposed
+- Shareholding before and after transaction
+- Last 14 days of disclosures
+
+### Bulk & Block Deals
+Large institutional transactions from NSE:
+- **Bulk Deals**: Transactions exceeding 0.5% of listed shares
+- **Block Deals**: Large deals executed in special trading window
+- Client name, quantity, price, and total value
+- Buy vs Sell direction
+
+---
+
+## Stock Screener
+
+Filter NSE and BSE listed stocks by:
+- Market capitalization (Large Cap, Mid Cap, Small Cap, Micro Cap)
+- P/E Ratio ranges
+- Sector classification
+- Price ranges
+
+Each stock page includes:
+- Current price and daily change
+- Fundamental data (P/E, P/B, Market Cap, ROE, Net Margin)
+- Shareholding pattern with visual breakdown
+- Historical price chart
+- Related news
+
+---
+
+## Technical Details
+
+- **Data Refresh**: IPO GMP data refreshes every 5 minutes, FII/DII data daily, insider trades every 15 minutes
+- **Data Sources**: NSE India (official APIs), InvestorGain (GMP data), Reddit API, Twitter
+- **Coverage**: All IPOs listed on NSE/BSE including mainboard and SME segment
+- **Access**: Free, no registration required for most features. Account needed for watchlist and alerts.
+
+---
+
+## API Endpoints (for reference)
+
+- `/api/og/ipo?name=...&gmpPct=...` — Dynamic IPO social card image
+- `/api/og/signals?type=fii-dii&...` — Dynamic signal social card image
+- `/api/daily-card` — Daily market summary with composed share text
+- `/api/signals/fii-dii` — FII/DII flow data JSON
+- `/api/signals/insider-trades` — Insider trade data JSON
+- `/api/signals/bulk-deals` — Bulk deal data JSON

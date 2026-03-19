@@ -1,0 +1,219 @@
+/* ─── Shareable Data Card ─────────────────────────────────────── */
+/* Cards designed to look great as screenshots on social media */
+
+.cardWrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.card {
+    position: relative;
+    width: 480px;
+    background: linear-gradient(135deg, #0c0c0c 0%, #141414 50%, #0c0c0c 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 32px;
+    overflow: hidden;
+    color: #fff;
+    font-family: var(--font-outfit), system-ui, sans-serif;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.02) 1px, transparent 0);
+    background-size: 24px 24px;
+    pointer-events: none;
+}
+
+.glow {
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Header */
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.brandMark {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.brandIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+}
+
+.brandName {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Content */
+.cardTitle {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin: 0 0 4px 0;
+    position: relative;
+}
+
+.cardSubtitle {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 0 0 20px 0;
+}
+
+.bigValue {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 4px;
+    position: relative;
+}
+
+.bigLabel {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+/* Stats row */
+.statsRow {
+    display: flex;
+    gap: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 20px;
+    margin-top: 20px;
+    position: relative;
+}
+
+.stat {
+    flex: 1;
+}
+
+.statLabel {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.statValue {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* Footer */
+.cardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+.footerUrl {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.25);
+}
+
+.footerDate {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* Share button overlay */
+.shareActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.shareBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shareBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+/* Direction variants */
+.positive { color: #22c55e; }
+.negative { color: #ef4444; }
+.neutral { color: #f59e0b; }
+
+@media (max-width: 540px) {
+    .card {
+        width: 100%;
+        padding: 24px;
+    }
+
+    .cardTitle {
+        font-size: 22px;
+    }
+
+    .bigValue {
+        font-size: 40px;
+    }
+
+    .statValue {
+        font-size: 16px;
+    }
+}
