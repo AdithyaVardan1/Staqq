@@ -1,0 +1,146 @@
+.wrap {
+    position: relative;
+}
+
+.bellBtn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    color: var(--text-primary);
+    transition: background 0.2s;
+}
+
+.bellBtn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background: var(--primary-brand);
+    color: #0A0A0A;
+    font-size: 9px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    line-height: 1;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 320px;
+    background: #111111;
+    border: 1px solid rgba(202, 255, 0, 0.15);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    z-index: 200;
+}
+
+.dropdownHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dropdownTitle {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.manageLink {
+    font-size: 11px;
+    color: var(--primary-brand);
+    text-decoration: none;
+}
+
+.manageLink:hover {
+    text-decoration: underline;
+}
+
+.list {
+    max-height: 360px;
+    overflow-y: auto;
+}
+
+.item {
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    transition: background 0.15s;
+}
+
+.item:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.unread {
+    background: rgba(202, 255, 0, 0.04);
+}
+
+.itemTicker {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--primary-brand);
+    margin-bottom: 4px;
+}
+
+.itemMsg {
+    font-size: 12px;
+    color: #A1A1AA;
+    line-height: 1.4;
+    margin-bottom: 4px;
+}
+
+.itemMeta {
+    font-size: 11px;
+    color: #52525B;
+}
+
+.itemLink {
+    color: var(--primary-brand);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.itemLink:hover {
+    text-decoration: underline;
+}
+
+.empty {
+    padding: 24px 20px;
+    font-size: 13px;
+    color: #52525B;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.dropdownFooter {
+    padding: 12px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+}
+
+.viewAll {
+    font-size: 12px;
+    color: var(--primary-brand);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.viewAll:hover {
+    text-decoration: underline;
+}
