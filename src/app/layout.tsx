@@ -6,17 +6,30 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "Staqq | Invest in the Future",
-  description: "Next-gen IPO and Stock analysis platform for Gen Z.",
+  title: "Staqq | IPO Intelligence & Market Signals",
+  description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.com'),
+  openGraph: {
+    title: "Staqq | IPO Intelligence & Market Signals",
+    description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",
+    type: 'website',
+    siteName: 'Staqq',
+    images: ['/api/og'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Staqq | IPO Intelligence & Market Signals",
+    description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",
+    images: ['/api/og'],
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
-import { ComparisonTray } from "@/components/stocks/ComparisonTray";
-import { StreamProvider } from "@/context/StreamContext";
-
-import AchievementsProvider from '@/components/providers/AchievementsProvider';
-import ProgressTracker from '@/components/providers/ProgressTracker';
 
 export default function RootLayout({
   children,
@@ -26,15 +39,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${outfit.variable}`}>
-        <StreamProvider>
-          <AchievementsProvider>
-            <ProgressTracker />
-            <Navbar />
-            {children}
-            <Footer />
-            <ComparisonTray />
-          </AchievementsProvider>
-        </StreamProvider>
+        <Navbar />
+        {children}
+        <Footer />
       </body>
     </html>
   );

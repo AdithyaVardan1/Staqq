@@ -1,23 +1,43 @@
 import { NextResponse } from 'next/server';
 import { angelOne } from '@/lib/angelone';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import path from 'path';
 import { stockCache } from '@/lib/stock-cache';
 import { getTrendingTickers } from '@/lib/social';
 
-const execPromise = promisify(exec);
-
 export const dynamic = 'force-dynamic';
 
-async function fetchBatchYFinanceData(tickers: string[]): Promise<any> {
+async function fetchBatchYFinanceData(tickers: string[]): Promise<Record<string, any>> {
     if (tickers.length === 0) return {};
     try {
-        const pythonScript = path.join(process.cwd(), 'src', 'scripts', 'ybatch.py');
-        // Use comma separated for simpler shell escaping
-        const pythonExecutable = path.join(process.cwd(), '.venv/bin/python3');
-        const { stdout } = await execPromise(`"${pythonExecutable}" "${pythonScript}" "${tickers.join(',')}"`);
-        return JSON.parse(stdout);
+        const yahooFinance: any = (await import('yahoo-finance2')).default;
+        const symbols = tickers.map(t => t.endsWith('.NS') ? t : `${t}.NS`);
+        const results: Record<string, any> = {};
+
+        // Fetch quotes in parallel (batches of 10 to avoid rate limits)
+        const batchSize = 10;
+        for (let i = 0; i < symbols.length; i += batchSize) {
+            const batch = symbols.slice(i, i + batchSize);
+            const quoteResults = await Promise.allSettled(
+                batch.map((sym: string) => yahooFinance.quote(sym))
+            );
+
+            for (let j = 0; j < batch.length; j++) {
+                const res = quoteResults[j];
+                const baseTicker = tickers[i + j];
+                if (res.status === 'fulfilled' && res.value) {
+                    const q = res.value;
+                    results[baseTicker] = {
+                        currentPrice: q.regularMarketPrice || 0,
+                        regularMarketChangePercent: q.regularMarketChangePercent || 0,
+                        regularMarketChange: q.regularMarketChange || 0,
+                        marketCap: q.marketCap || 0,
+                        peRatio: q.trailingPE || 0,
+                        sector: q.sector || 'Unknown',
+                    };
+                }
+            }
+        }
+
+        return results;
     } catch (error) {
         console.error(`[Screener] Batch fetch failed:`, error);
         return {};
@@ -29,7 +49,7 @@ export async function GET(request: Request) {
         const { searchParams } = new URL(request.url);
         const offset = parseInt(searchParams.get('offset') || '0');
         const limit = parseInt(searchParams.get('limit') || '10');
-        const sortBy = searchParams.get('sortBy'); // New param
+        const sortBy = searchParams.get('sortBy');
 
         // Filters
         const priceMin = parseFloat(searchParams.get('priceMin') || '0');
@@ -44,7 +64,7 @@ export async function GET(request: Request) {
 
         // 1. Get filtered NSE stocks universe (all eligible stocks)
         const universe: any[] = [];
-        for (const [key, instrument] of tokensMap.entries()) {
+        for (const [, instrument] of tokensMap.entries()) {
             if (instrument.exch_seg === 'NSE' && instrument.symbol.endsWith('-EQ')) {
                 const cleanSymbol = instrument.symbol.replace('-EQ', '');
                 if (/^\d{3}NSETEST$/i.test(cleanSymbol)) continue;
@@ -74,16 +94,12 @@ export async function GET(request: Request) {
         }
 
         // 2. Depth Search Logic
-        // Scan through the universe starting from offset until we find 'limit' matches OR hit MAX_SCAN
         const MAX_SCAN = 500;
         let currentIdx = offset;
         const matchedStocks: any[] = [];
         let finalNextOffset = offset;
 
-        // Loop until we have enough matches OR we've scanned MAX_SCAN stocks
-        // We try to find at least 1 match if they exist to avoid returning empty pages
         while (currentIdx < universe.length && (currentIdx - offset) < MAX_SCAN) {
-            // Take a chunk to process
             const chunkSize = 50;
             const batch = universe.slice(currentIdx, currentIdx + chunkSize);
             if (batch.length === 0) break;
@@ -101,7 +117,7 @@ export async function GET(request: Request) {
                 }
             }
 
-            // Batch fetch missing
+            // Batch fetch missing via yahoo-finance2
             if (tickersToFetch.length > 0) {
                 const batchResults = await fetchBatchYFinanceData(tickersToFetch);
                 for (const tSymbol of tickersToFetch) {
@@ -119,7 +135,7 @@ export async function GET(request: Request) {
                     await stockCache.set(tSymbol, enriched);
                 }
 
-                // Now rebuild localEnriched from batch to ensure correct data
+                // Rebuild localEnriched from batch
                 for (const stock of batch) {
                     if (localEnriched.find(s => s.ticker === stock.ticker)) continue;
                     const cached = await stockCache.get(stock.ticker);
@@ -135,23 +151,16 @@ export async function GET(request: Request) {
                 return matchesPrice && matchesPE && matchesSector;
             });
 
-            // Add to matched
             for (const s of filteredChunk) {
                 if (matchedStocks.length < limit) {
                     matchedStocks.push(s);
                 }
             }
 
-            // Advance index
             currentIdx += batch.length;
             finalNextOffset = currentIdx;
 
-            // Stop if we have enough matches
             if (matchedStocks.length >= limit) break;
-
-            // Optimization: If we have at least SOME matches and have scanned a decent amount,
-            // we can stop to return quickly, unless the user specifically needs the full limit.
-            // But for infinity scroll, returning even 2-3 items is better than scanning 500.
             if (matchedStocks.length > 0 && (currentIdx - offset) >= 200) break;
         }
 

@@ -1,30 +1,14 @@
-import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import path from 'path';
+import { NextRequest, NextResponse } from 'next/server';
 import { angelOne } from '@/lib/angelone';
 import { stockCache } from '@/lib/stock-cache';
 import { checkRateLimit } from '@/lib/rate-limiter';
-
-const execPromise = promisify(exec);
+import { yahoo } from '@/lib/yahoo';
+import { getUserFromRequest } from '@/utils/supabase/mobile-auth';
+import { checkAndIncrementUsage } from '@/lib/subscription';
 
 export const dynamic = 'force-dynamic';
 
-// Helper to calculate technical indicators
-async function fetchTechnicals(ticker: string): Promise<any> {
-    try {
-        const pythonScript = path.join(process.cwd(), 'src', 'scripts', 'calculate_technicals.py');
-        const pythonExecutable = path.join(process.cwd(), '.venv/bin/python3');
-        const { stdout } = await execPromise(`"${pythonExecutable}" "${pythonScript}" "${ticker}"`);
-        const result = JSON.parse(stdout);
-        return result.indicators || [];
-    } catch (error) {
-        console.error('[Fundamentals] Failed to calculate technicals:', error);
-        return [];
-    }
-}
-
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
     try {
         const { searchParams } = new URL(request.url);
         const ticker = searchParams.get('ticker');
@@ -32,6 +16,18 @@ export async function GET(request: Request) {
 
         if (!ticker) {
             return NextResponse.json({ error: 'Ticker is required' }, { status: 400 });
+        }
+
+        // Free-tier rate limiting (5 lookups/day)
+        const user = await getUserFromRequest(request);
+        if (user) {
+            const { allowed, current, limit } = await checkAndIncrementUsage(user.id, 'stock_lookups');
+            if (!allowed) {
+                return NextResponse.json(
+                    { error: 'Daily lookup limit reached', upgrade: true, current, limit },
+                    { status: 429 }
+                );
+            }
         }
 
         // Apply Rate Limit (30 req/min for fundamentals)
@@ -53,32 +49,17 @@ export async function GET(request: Request) {
 
         console.log(`[Fundamentals API] Fetching data for: ${ticker}`);
 
-        // ... rest of the existing fetching logic ...
-        const [yfinanceResult, technicalsResult] = await Promise.allSettled([
-            (async () => {
-                const pythonScript = path.join(process.cwd(), 'src', 'scripts', 'yinfo.py');
-                const pythonExecutable = path.join(process.cwd(), '.venv/bin/python3');
-                const { stdout } = await execPromise(`"${pythonExecutable}" "${pythonScript}" "${ticker}"`);
-                return JSON.parse(stdout);
-            })(),
-            fetchTechnicals(ticker)
-        ]);
+        // Fetch fundamentals using yahoo-finance2 (Node.js, no Python needed)
+        const result: any = await yahoo.getFundamentals(ticker);
 
-        if (yfinanceResult.status !== 'fulfilled' || !yfinanceResult.value || yfinanceResult.value.error) {
-            const errorMsg = yfinanceResult.status === 'fulfilled' ? yfinanceResult.value?.error : 'Failed to fetch yfinance data';
-            throw new Error(errorMsg || 'Failed to fetch yfinance data');
+        if (!result) {
+            throw new Error(`Failed to fetch fundamentals for ${ticker}`);
         }
 
-        const result = yfinanceResult.value;
-
-        if (technicalsResult.status === 'fulfilled' && technicalsResult.value && technicalsResult.value.length > 0) {
-            result.technicals = technicalsResult.value;
-        }
-
+        // Enrich with Angel One real-time data
         try {
             const instrument = await angelOne.findInstrument(ticker);
             if (instrument) {
-                // Fetch fundamentals and LTP in parallel
                 const [angelRes, quoteRes] = await Promise.all([
                     angelOne.getFundamentalData(instrument.exchange, String(instrument.token)),
                     angelOne.getFullQuote(instrument.exchange, instrument.symbol, String(instrument.token))
@@ -116,15 +97,16 @@ export async function GET(request: Request) {
                         if (f.ROE) result.roe = parseFloat(f.ROE) / 100;
                         if (f.DividendYield) {
                             const rawDiv = parseFloat(f.DividendYield);
-                            result.divYield = rawDiv / 1000000; // Divide by 1,000,000 (Basis points correction)
+                            result.divYield = rawDiv / 1000000;
                         }
                     }
                 }
             }
         } catch (e) {
-            console.error(`[Fundamentals API] Angel One extraction failed for ${ticker}:`, e);
+            console.error(`[Fundamentals API] Angel One enrichment failed for ${ticker}:`, e);
         }
 
+        // Default shareholding if not available
         if (!result.shareholding || result.shareholding.length === 0) {
             result.shareholding = [
                 { name: 'Promoters', value: 0, color: '#22C55E' },
@@ -134,12 +116,17 @@ export async function GET(request: Request) {
             ];
         }
 
+        // Default technicals placeholder
+        if (!result.technicals) {
+            result.technicals = [];
+        }
+
         // Cache the final result
         await stockCache.set(cacheKey, result);
 
         return NextResponse.json({
             fundamentals: result,
-            source: 'yfinance-python'
+            source: 'yahoo-finance2'
         });
 
     } catch (error: any) {

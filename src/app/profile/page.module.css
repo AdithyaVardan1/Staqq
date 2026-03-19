@@ -147,3 +147,118 @@
     background: rgba(239, 68, 68, 0.1);
     border-color: rgba(239, 68, 68, 0.2);
 }
+
+/* Upgrade success banner */
+.upgradeBanner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border-radius: var(--radius-sm);
+    background: rgba(202, 255, 0, 0.08);
+    border: 1px solid rgba(202, 255, 0, 0.2);
+    color: #CAFF00;
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+}
+
+/* Subscription card */
+.subscriptionCard {
+    padding: 24px;
+}
+
+.subscriptionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.subscriptionTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.subscriptionTitle h3 {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.subscriptionBody {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.planRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.planLabel {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.planValue {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.cancelNote {
+    color: #F59E0B;
+    font-size: 0.85rem;
+    margin: 4px 0 0;
+}
+
+.cancelBtn {
+    background: none;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+}
+
+.cancelBtn:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.cancelBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.freePlanText {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+.upgradeBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 9999px;
+    background: #CAFF00;
+    color: #0A0A0A;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: transform 0.2s;
+    width: fit-content;
+}
+
+.upgradeBtn:hover {
+    transform: scale(1.03);
+}

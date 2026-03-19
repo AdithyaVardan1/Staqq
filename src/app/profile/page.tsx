@@ -1,28 +1,37 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { User, Award, Settings, LogOut, Loader2 } from 'lucide-react';
+import { PremiumBadge } from '@/components/premium/PremiumBadge';
+import { useSubscription } from '@/hooks/useSubscription';
+import { User, Settings, LogOut, Loader2, Crown, CreditCard } from 'lucide-react';
+import Link from 'next/link';
 import styles from './page.module.css';
 import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
-import AchievementsList from '@/components/achievements/AchievementsList';
-import { useAchievementsStore } from '@/store/useAchievementsStore';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function ProfilePage() {
+    return (
+        <Suspense fallback={
+            <div className="flex items-center justify-center min-h-screen bg-[#0A0A0A]">
+                <Loader2 className="w-8 h-8 animate-spin text-brand" />
+            </div>
+        }>
+            <ProfileContent />
+        </Suspense>
+    );
+}
+
+function ProfileContent() {
     const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState<any>(null);
+    const [cancelLoading, setCancelLoading] = useState(false);
     const supabase = createClient();
     const router = useRouter();
-    const { unlockedIds, achievements } = useAchievementsStore();
-
-    const xp = React.useMemo(() => {
-        return Array.from(unlockedIds).reduce((total, id) => {
-            const ach = achievements.find(a => a.id === id);
-            return total + (ach?.points || 0);
-        }, 0);
-    }, [unlockedIds, achievements]);
+    const searchParams = useSearchParams();
+    const upgraded = searchParams.get('upgraded') === 'true';
+    const { isPro, planId, periodEnd, cancelAtPeriodEnd, refresh: refreshSub } = useSubscription();
 
     useEffect(() => {
         const getProfile = async () => {
@@ -47,7 +56,6 @@ export default function ProfilePage() {
                 if (data) {
                     setProfile(data);
                 } else {
-                    // Fallback if trigger didn't fire or legacy user
                     setProfile({
                         username: user.email?.split('@')[0],
                         full_name: user.user_metadata?.full_name || 'Trader',
@@ -62,6 +70,21 @@ export default function ProfilePage() {
 
         getProfile();
     }, [supabase, router]);
+
+    const handleCancel = async () => {
+        if (!confirm('Cancel your Pro subscription? You\'ll keep access until the end of your billing period.')) return;
+        setCancelLoading(true);
+        try {
+            const res = await fetch('/api/billing/cancel', { method: 'POST' });
+            if (res.ok) {
+                await refreshSub();
+            }
+        } catch (err) {
+            console.error('Cancel error:', err);
+        } finally {
+            setCancelLoading(false);
+        }
+    };
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
@@ -86,12 +109,19 @@ export default function ProfilePage() {
                     </div>
                     <div className={styles.userInfo}>
                         <h1 className={styles.userName}>{profile?.full_name || 'Staqq Member'}</h1>
-                        <p className={styles.userHandle}>@{profile?.username || 'member'} • Pro Member</p>
+                        <p className={styles.userHandle}>@{profile?.username || 'member'}</p>
                     </div>
                     <div className={styles.headerActions}>
                         <Button variant="outline" size="sm">Edit Profile</Button>
                     </div>
                 </div>
+
+                {upgraded && (
+                    <div className={styles.upgradeBanner}>
+                        <Crown size={18} />
+                        <span>Welcome to Staqq Pro! Your subscription is now active.</span>
+                    </div>
+                )}
 
                 <div className={styles.grid}>
                     {/* Stats */}
@@ -103,22 +133,67 @@ export default function ProfilePage() {
                                 <span className={styles.statLabel}>Watchlist</span>
                             </div>
                             <div className={styles.statItem}>
-                                <span className={styles.statValue}>5</span>
-                                <span className={styles.statLabel}>Modules</span>
-                            </div>
-                            <div className={styles.statItem}>
-                                <span className={styles.statValue}>{xp}</span>
-                                <span className={styles.statLabel}>XP</span>
+                                <span className={styles.statValue}>0</span>
+                                <span className={styles.statLabel}>Alerts</span>
                             </div>
                         </div>
                     </Card>
 
-                    {/* Badges/Achievements */}
-                    <Card className={styles.achievementsCard}>
-                        <div className="p-6">
-                            {/* Full List */}
-                            <AchievementsList />
+                    {/* Subscription & Billing */}
+                    <Card className={styles.subscriptionCard}>
+                        <div className={styles.subscriptionHeader}>
+                            <div className={styles.subscriptionTitle}>
+                                <CreditCard size={20} className="text-brand" />
+                                <h3>Subscription</h3>
+                            </div>
+                            {isPro && <PremiumBadge size="sm" />}
                         </div>
+
+                        {isPro ? (
+                            <div className={styles.subscriptionBody}>
+                                <div className={styles.planRow}>
+                                    <span className={styles.planLabel}>Plan</span>
+                                    <span className={styles.planValue}>
+                                        {planId?.includes('yearly') ? 'Pro Yearly' : 'Pro Monthly'}
+                                    </span>
+                                </div>
+                                {periodEnd && (
+                                    <div className={styles.planRow}>
+                                        <span className={styles.planLabel}>
+                                            {cancelAtPeriodEnd ? 'Access until' : 'Next billing'}
+                                        </span>
+                                        <span className={styles.planValue}>
+                                            {new Date(periodEnd).toLocaleDateString('en-IN', {
+                                                day: 'numeric', month: 'short', year: 'numeric',
+                                            })}
+                                        </span>
+                                    </div>
+                                )}
+                                {cancelAtPeriodEnd ? (
+                                    <p className={styles.cancelNote}>
+                                        Your subscription will not renew.
+                                    </p>
+                                ) : (
+                                    <button
+                                        className={styles.cancelBtn}
+                                        onClick={handleCancel}
+                                        disabled={cancelLoading}
+                                    >
+                                        {cancelLoading ? 'Cancelling…' : 'Cancel subscription'}
+                                    </button>
+                                )}
+                            </div>
+                        ) : (
+                            <div className={styles.subscriptionBody}>
+                                <p className={styles.freePlanText}>
+                                    You&apos;re on the <strong>Free</strong> plan.
+                                </p>
+                                <Link href="/pricing" className={styles.upgradeBtn}>
+                                    <Crown size={16} />
+                                    Upgrade to Pro
+                                </Link>
+                            </div>
+                        )}
                     </Card>
 
                     {/* Settings Menu */}

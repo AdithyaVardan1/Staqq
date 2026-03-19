@@ -12,8 +12,6 @@ import { StockCardSkeleton } from '@/components/stocks/StockCardSkeleton';
 import { BackToTop } from '@/components/ui/BackToTop';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useAchievementsStore } from '@/store/useAchievementsStore';
-import { ACHIEVEMENT_IDS } from '@/lib/achievements';
 import { Filter, Info, LayoutGrid, List, ArrowUpDown, X, Loader2, AlertCircle, Activity } from 'lucide-react';
 import clsx from 'clsx';
 import styles from './page.module.css';
@@ -42,7 +40,7 @@ const INITIAL_FILTERS = {
     sector: 'all',
     performance: 'today',
     divYield: 0,
-    peRatio: 50,
+    peRatio: 100,
     debt: 'all'
 };
 
@@ -85,7 +83,6 @@ const RecentlyViewedSection = () => {
 
 export default function StockScreener() {
     const [filters, setFilters] = useState(INITIAL_FILTERS);
-    const { unlock } = useAchievementsStore();
     const debouncedFilters = useDebounce(filters, 300);
     const [viewMode, setViewMode] = useState<'card' | 'table'>('card');
     const [sortBy, setSortBy] = useState('marketCap');
@@ -119,15 +116,12 @@ export default function StockScreener() {
         let activeCount = 0;
         if (filters.marketCaps.length > 0) activeCount++;
         if (filters.sector !== 'all') activeCount++;
-        if (filters.peRatio < 50) activeCount++; // Initial is 50? No, initial is 50 in code but UI max 100?
+        if (filters.peRatio < 100) activeCount++;
         if (filters.divYield > 0) activeCount++;
         if (filters.debt !== 'all') activeCount++;
         if (filters.priceRange < 10000) activeCount++;
 
-        if (activeCount >= 3) {
-            unlock(ACHIEVEMENT_IDS.SCREENER_PRO);
-        }
-    }, [filters, unlock]);
+    }, [filters]);
 
     const fetchStocks = useCallback(async (offset: number) => {
         // If sorting by a trending category, use the special endpoint
@@ -237,10 +231,6 @@ export default function StockScreener() {
         setFilters({
             ...INITIAL_FILTERS,
             marketCaps: [],
-            peRatio: 100,
-            performance: 'today',
-            sector: 'all',
-            debt: 'all'
         });
     };
 

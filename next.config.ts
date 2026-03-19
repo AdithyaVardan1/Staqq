@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
-import createMDX from "@next/mdx";
+import withPWAInit from "@ducanh2912/next-pwa";
+
+const withPWA = withPWAInit({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development",
+});
 
 const nextConfig: NextConfig = {
-  // Friend's change (needed for Learn section)
-  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
-
-  // Your change (needed for Stocks section)
   serverExternalPackages: ['smartapi-javascript', 'yahoo-finance2'],
-  // @ts-ignore
   turbopack: {
     resolveAlias: {
       electron: 'false',
@@ -17,11 +17,28 @@ const nextConfig: NextConfig = {
     config.externals.push('electron');
     return config;
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'X-DNS-Prefetch-Control', value: 'on' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+        ],
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      { source: '/learn/:path*', destination: '/', permanent: true },
+      { source: '/tools/:path*', destination: '/', permanent: true },
+      { source: '/admin/:path*', destination: '/', permanent: true },
+      { source: '/pulse', destination: '/signals', permanent: true },
+    ];
+  },
 };
 
-const withMDX = createMDX({
-  // remark-gfm not compatible with Turbopack
-  // Using react-markdown for table rendering instead
-});
-
-export default withMDX(nextConfig);
+export default withPWA(nextConfig);

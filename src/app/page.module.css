@@ -1,182 +1,435 @@
 .main {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    min-height: 100vh;
 }
 
+/* ─── Hero ─── */
 .hero {
-  padding: 120px 0 30px;
-  /* Reduced from 80px to 30px */
-  text-align: center;
+    padding: 120px 0 40px;
+    text-align: center;
+}
+
+.heroContent {
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .heroTitle {
-  font-size: 5.5rem;
-  font-weight: 800;
-  line-height: 1.05;
-  margin-bottom: var(--spacing-lg);
-  background: linear-gradient(180deg, #fff 0%, #ccc 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: -0.03em;
+    font-size: 4.5rem;
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: var(--spacing-lg);
+    background: linear-gradient(180deg, #fff 0%, #ccc 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.03em;
 }
 
 .heroTitle span {
-  background: none;
-  -webkit-text-fill-color: var(--primary-brand);
+    background: none;
+    -webkit-text-fill-color: var(--primary-brand);
 }
 
 .heroSubtitle {
-  font-size: 1.5rem;
-  color: var(--text-secondary);
-  max-width: 600px;
-  margin: 0 auto var(--spacing-2xl);
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    max-width: 620px;
+    margin: 0 auto var(--spacing-xl);
+    line-height: 1.6;
 }
 
 .heroActions {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-bottom: 2rem;
 }
 
+.primaryBtn {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 28px;
+    border-radius: 10px;
+    background: var(--primary-brand);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.primaryBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(var(--primary-brand-rgb), 0.3);
+}
+
+.outlineBtn {
+    display: inline-flex;
+    align-items: center;
+    padding: 14px 28px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.outlineBtn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Trending ─── */
 .trendingContainer {
-  margin-top: 2rem;
-  margin-bottom: 3rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  animation: fadeIn 0.8s ease-out 0.5s both;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .trendingLabel {
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .trendingList {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  justify-content: center;
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .trendingItem {
-  background: var(--bg-surface);
-  border: 1px solid var(--glass-border);
-  padding: 0.5rem 1.25rem;
-  border-radius: 100px;
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: var(--bg-surface);
+    border: 1px solid var(--glass-border);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.82rem;
+    transition: all 0.2s;
 }
 
 .trendingItem:hover {
-  transform: scale(1.1);
-  background: var(--primary-brand);
-  color: #000;
-  border-color: var(--primary-brand);
-  box-shadow: 0 0 20px rgba(var(--primary-brand-rgb), 0.4);
+    background: var(--primary-brand);
+    color: #000;
+    border-color: var(--primary-brand);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* ─── Pulse Section (Live Data) ─── */
+.pulseSection {
+    padding: 0 0 48px;
 }
 
+.pulseGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.pulseCard {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.pulseHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #888;
+    margin-bottom: 16px;
+}
+
+.pulseIcon {
+    color: var(--primary-brand);
+}
+
+.pulseStats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.pulseStat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.pulseNum {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+    font-family: var(--font-outfit);
+}
+
+.pulseLabel {
+    font-size: 0.72rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.pulseLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: var(--primary-brand);
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: auto;
+}
+
+.pulseLink:hover {
+    text-decoration: underline;
+}
+
+.pulseEmpty {
+    color: #555;
+    font-size: 0.85rem;
+    margin: 8px 0;
+}
+
+/* ─── Top IPOs Section ─── */
+.topSection {
+    padding: 0 0 56px;
+}
+
+.sectionHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.sectionHead h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.seeAll {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--primary-brand);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.ipoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.ipoCard {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ipoCard:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-2px);
+}
+
+.ipoCardTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.ipoName {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.ipoBadge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.ipoGmp {
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: var(--font-outfit);
+    letter-spacing: -0.02em;
+}
+
+.ipoMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.72rem;
+    color: #666;
+}
+
+.ipoMeta span {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* ─── Features ─── */
 .features {
-  padding: 30px 0 80px;
-  /* Reduced top padding from 80px to 30px */
+    padding: 56px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.featuresTitle {
+    font-size: 1.8rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 40px;
+    letter-spacing: -0.02em;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
 }
 
 .cardLink {
-  text-decoration: none;
-  transition: transform 0.2s ease;
+    text-decoration: none;
+    transition: transform 0.2s ease;
 }
 
 .cardLink:hover {
-  transform: translateY(-5px);
+    transform: translateY(-3px);
 }
 
 .featureCard {
-  height: 100%;
-  padding: var(--spacing-xl);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.featureCard::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--primary-brand), transparent);
-  opacity: 0;
-  transition: opacity 0.3s ease;
+    height: 100%;
+    padding: 28px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s;
 }
 
 .featureCard:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(202, 255, 0, 0.3);
-  box-shadow: 0 0 30px rgba(202, 255, 0, 0.1);
-  transform: translateY(-5px);
-}
-
-.featureCard:hover::before {
-  opacity: 1;
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .iconWrapper {
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background: rgba(var(--primary-brand-h), var(--primary-brand-s), var(--primary-brand-l), 0.1);
-  border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--primary-brand-rgb), 0.1);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    color: var(--primary-brand);
 }
 
 .featureCard h3 {
-  font-size: 1.5rem;
-  margin-bottom: var(--spacing-md);
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
 }
 
 .featureCard p {
-  color: var(--text-secondary);
-  line-height: 1.6;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.6;
 }
 
+/* ─── SEO Content ─── */
+.seoSection {
+    padding: 56px 0 80px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.seoSection h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 32px;
+    letter-spacing: -0.02em;
+}
+
+.seoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+}
+
+.seoGrid h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.seoGrid p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* ─── Responsive ─── */
 @media (max-width: 768px) {
-  .heroTitle {
-    font-size: 3rem;
-  }
+    .heroTitle {
+        font-size: 2.8rem;
+    }
+
+    .heroSubtitle {
+        font-size: 1rem;
+    }
+
+    .heroActions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .pulseGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .ipoGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
 }

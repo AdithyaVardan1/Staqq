@@ -13,7 +13,6 @@ import {
     TrendingDown,
     Plus,
     Share2,
-    Info,
     ExternalLink,
     Briefcase,
     Search,
@@ -24,261 +23,10 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { use } from 'react';
 import { useWatchlist } from '@/hooks/useWatchlist';
-import { useComparisonStore } from '@/store/useComparisonStore';
 import { StockLogo } from '@/components/stocks/StockLogo';
+import { AlertSubscribeButton } from '@/components/alerts/AlertSubscribeButton';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, LabelList } from 'recharts';
 import styles from './page.module.css';
-
-// Comprehensive Mock Data
-const STOCK_DATA: any = {
-    RELIANCE: {
-        ticker: 'RELIANCE',
-        fullTicker: 'RELIANCE.NS',
-        name: 'Reliance Industries Ltd',
-        price: 2450.50,
-        change: 29.40,
-        changePercent: 1.2,
-        about: "Reliance Industries Limited is an Indian multinational conglomerate, headquartered in Mumbai. Its businesses include energy, petrochemicals, natural gas, retail, telecommunications, mass media, and textiles. Reliance is the largest public company in India by market capitalization and revenue.",
-        sector: 'Energy',
-        industry: 'Oil & Gas',
-        founded: '1966',
-        website: 'www.ril.com',
-        history: {
-            '1D': [
-                { date: '10:00', value: 2420 },
-                { date: '11:00', value: 2435 },
-                { date: '12:00', value: 2428 },
-                { date: '13:00', value: 2442 },
-                { date: '14:00', value: 2445 },
-                { date: '15:00', value: 2450.50 },
-            ],
-            '1W': [
-                { date: 'Mon', value: 2380 },
-                { date: 'Tue', value: 2410 },
-                { date: 'Wed', value: 2405 },
-                { date: 'Thu', value: 2430 },
-                { date: 'Fri', value: 2450.50 },
-            ],
-            '1M': [
-                { date: 'Week 1', value: 2350 },
-                { date: 'Week 2', value: 2390 },
-                { date: 'Week 3', value: 2415 },
-                { date: 'Week 4', value: 2450.50 },
-            ],
-        },
-        stats: [
-            { label: 'Market Cap', value: '₹16.5T' },
-            { label: '52-Week High', value: '₹2,630.00' },
-            { label: '52-Week Low', value: '₹2,145.00' },
-            { label: 'P/E Ratio', value: '24.5' },
-            { label: 'Div Yield', value: '0.85%' },
-            { label: 'Beta', value: '1.15' },
-            { label: 'Volume', value: '8.4M' },
-        ],
-        metrics: {
-            valuation: [
-                { name: 'P/E Ratio', value: 24.5, industry: 21.2, info: 'Price to Earnings: How much investors pay for $1 of profit.' },
-                { name: 'P/B Ratio', value: 2.1, industry: 1.8, info: 'Price to Book Value: Compares market value to accounting value.' },
-                { name: 'PEG Ratio', value: 1.4, industry: 1.2, info: 'Price/Earnings to Growth: PE adjusted for earnings growth.' },
-            ],
-            profitability: [
-                { name: 'Net Margin', value: '12.4%', industry: '10.5%', info: 'Percentage of revenue left as profit.' },
-                { name: 'Return on Equity', value: '14.2%', industry: '12.8%', info: 'Profit generated with shareholders money.' },
-                { name: 'Return on Assets', value: '8.5%', industry: '7.1%', info: 'How efficiently company uses its assets.' },
-            ],
-            leverage: [
-                { name: 'Debt/Equity', value: 0.42, industry: 0.65, info: 'Total debt relative to shareholder equity.' },
-                { name: 'Interest Coverage', value: 12.5, industry: 8.4, info: 'Ability to pay interest on loans from profits.' },
-            ]
-        },
-        financials: {
-            quarterly: [
-                { period: 'Dec 2024', revenue: 234500, profit: 18500, eps: 27.4 },
-                { period: 'Sep 2024', revenue: 228000, profit: 17800, eps: 26.3 },
-                { period: 'Jun 2024', revenue: 221000, profit: 16900, eps: 25.1 },
-                { period: 'Mar 2024', revenue: 215000, profit: 16500, eps: 24.5 },
-            ],
-            annual: [
-                { year: 'FY 2024', revenue: 912000, profit: 69500, eps: 102.7 },
-                { year: 'FY 2023', revenue: 875000, profit: 66700, eps: 98.4 },
-                { year: 'FY 2022', revenue: 792000, profit: 60700, eps: 89.6 },
-                { year: 'FY 2021', revenue: 754000, profit: 57200, eps: 84.5 }
-            ]
-        },
-        technicals: [
-            { name: 'RSI', value: 72, interpretation: 'Currently 72 - Overbought territory. Price might correct soon.', status: 'Danger' },
-            { name: 'Moving Averages', value: 'Bullish', interpretation: 'Trading above 50-day MA (bullish) but below 200-day MA.', status: 'Warning' },
-            { name: 'MACD', value: 'Buy Signal', interpretation: 'Bullish crossover on MACD line suggests momentum.', status: 'Success' },
-        ],
-        shareholding: [
-            { name: 'Promoters', value: 50.4, color: '#CCFF00' },
-            { name: 'FII', value: 23.2, color: '#22C55E' },
-            { name: 'DII', value: 14.5, color: '#3B82F6' },
-            { name: 'Public', value: 11.9, color: '#A1A1AA' },
-        ],
-        news: [
-            { id: 1, title: 'Reliance Jio announces new 5G expansion plans', date: '2h ago', source: 'Economic Times' },
-            { id: 2, title: 'Retail segment shows 20% growth in quarterly revenue', date: 'Yesterday', source: 'MoneyControl' },
-            { id: 3, title: 'Reliance to invest in green energy logistics', date: '2 days ago', source: 'Reuters' },
-        ],
-        events: [
-            { id: 1, name: 'Upcoming Earnings Call', date: 'Feb 24, 2026' },
-            { id: 2, name: 'Dividend Payout Date', date: 'Mar 15, 2026' },
-        ]
-    },
-    TCS: {
-        ticker: 'TCS',
-        fullTicker: 'TCS.NS',
-        name: 'Tata Consultancy Services',
-        price: 3400.00,
-        change: -17.10,
-        changePercent: -0.5,
-        about: "Tata Consultancy Services (TCS) is an Indian multinational information technology (IT) services and consulting company. It is a subsidiary of the Tata Group and operates in 149 locations across 46 countries.",
-        sector: 'Technology',
-        industry: 'IT Services',
-        founded: '1968',
-        website: 'www.tcs.com',
-        history: { '1D': [{ date: '10:00', value: 3450 }, { date: '15:00', value: 3400.00 }], '1W': [], '1M': [] },
-        stats: [{ label: 'Market Cap', value: '₹12.4T' }, { label: 'P/E Ratio', value: '29.1' }, { label: '52-Week High', value: '₹3,600.00' }, { label: '52-Week Low', value: '₹3,100.00' }],
-        metrics: {
-            valuation: [{ name: 'P/E Ratio', value: 29.1, industry: 24.5, info: 'Price to Earnings ratio.' }],
-            profitability: [{ name: 'Net Margin', value: '18.2%', industry: '15.5%', info: 'Percentage of revenue left as profit.' }],
-            leverage: [{ name: 'Debt/Equity', value: 0.05, industry: 0.15, info: 'Total debt relative to shareholder equity.' }]
-        },
-        financials: {
-            quarterly: [
-                { period: 'Dec 2024', revenue: 60500, profit: 11000, eps: 30.2 },
-                { period: 'Sep 2024', revenue: 58200, profit: 10500, eps: 28.9 },
-                { period: 'Jun 2024', revenue: 56800, profit: 10200, eps: 28.1 },
-                { period: 'Mar 2024', revenue: 55400, profit: 9800, eps: 27.0 }
-            ],
-            annual: [
-                { year: 'FY 2024', revenue: 230900, profit: 41300, eps: 113.3 },
-                { year: 'FY 2023', revenue: 225400, profit: 40200, eps: 110.1 },
-                { year: 'FY 2022', revenue: 218200, profit: 38900, eps: 106.8 },
-                { year: 'FY 2021', revenue: 212000, profit: 37500, eps: 103.2 }
-            ]
-        },
-        technicals: [{ name: 'RSI', value: 58, interpretation: 'Neutral', status: 'Warning' }],
-        shareholding: [{ name: 'Promoters', value: 72.3, color: '#CCFF00' }, { name: 'Public', value: 27.7, color: '#A1A1AA' }],
-        news: [{ id: 1, title: 'TCS wins large contract', date: '3h ago', source: 'MoneyControl' }],
-        events: [{ id: 1, name: 'Board Meeting', date: 'Feb 15, 2026' }]
-    },
-    HDFCBANK: {
-        ticker: 'HDFCBANK',
-        fullTicker: 'HDFCBANK.NS',
-        name: 'HDFC Bank Ltd',
-        price: 1650.75,
-        change: 13.20,
-        changePercent: 0.8,
-        about: "HDFC Bank Limited is an Indian banking and financial services company headquartered in Mumbai. It is India's largest private sector bank by assets and the world's tenth largest bank by market capitalization.",
-        sector: 'Financial Services',
-        industry: 'Banking',
-        founded: '1994',
-        website: 'www.hdfcbank.com',
-        history: { '1D': [{ date: '10:00', value: 1620 }, { date: '15:00', value: 1650.75 }], '1W': [], '1M': [] },
-        stats: [{ label: 'Market Cap', value: '₹9.2T' }, { label: 'P/E Ratio', value: '18.4' }, { label: '52-Week High', value: '₹1,750.00' }, { label: '52-Week Low', value: '₹1,450.00' }],
-        metrics: {
-            valuation: [{ name: 'P/E Ratio', value: 18.4, industry: 16.2, info: 'Price to Earnings ratio.' }],
-            profitability: [{ name: 'NIM', value: '4.1%', industry: '3.8%', info: 'Net Interest Margin.' }],
-            leverage: [{ name: 'CAR', value: '18.5%', industry: '16.5%', info: 'Capital Adequacy Ratio.' }]
-        },
-        financials: {
-            quarterly: [
-                { period: 'Dec 2024', revenue: 78000, profit: 16000, eps: 21.4 },
-                { period: 'Sep 2024', revenue: 75500, profit: 15200, eps: 20.8 },
-                { period: 'Jun 2024', revenue: 73200, profit: 14800, eps: 20.2 },
-                { period: 'Mar 2024', revenue: 71000, profit: 14200, eps: 19.5 }
-            ],
-            annual: [
-                { year: 'FY 2024', revenue: 297700, profit: 60300, eps: 82.7 },
-                { year: 'FY 2023', revenue: 285200, profit: 57800, eps: 79.4 },
-                { year: 'FY 2022', revenue: 272500, profit: 55100, eps: 75.8 },
-                { year: 'FY 2021', revenue: 258900, profit: 52200, eps: 71.9 }
-            ]
-        },
-        technicals: [{ name: 'RSI', value: 45, interpretation: 'Bearish', status: 'Warning' }],
-        shareholding: [{ name: 'Promoters', value: 0.0, color: '#CCFF00' }, { name: 'FII', value: 52.4, color: '#22C55E' }, { name: 'DII', value: 27.5, color: '#3B82F6' }, { name: 'Public', value: 20.1, color: '#A1A1AA' }],
-        news: [{ id: 1, title: 'HDFC Bank merger synergies begin', date: '1d ago', source: 'Reuters' }],
-        events: [{ id: 1, name: 'AGM', date: 'Aug 10, 2026' }]
-    },
-    INFY: {
-        ticker: 'INFY',
-        fullTicker: 'INFY.NS',
-        name: 'Infosys Ltd',
-        price: 1450.20,
-        change: -17.50,
-        changePercent: -1.2,
-        about: "Infosys Limited is an Indian multinational information technology company that provides business consulting, information technology and outsourcing services.",
-        sector: 'Technology',
-        industry: 'IT Services',
-        founded: '1981',
-        website: 'www.infosys.com',
-        history: { '1D': [{ date: '10:00', value: 1480 }, { date: '15:00', value: 1450.20 }], '1W': [], '1M': [] },
-        stats: [{ label: 'Market Cap', value: '₹6.1T' }, { label: 'P/E Ratio', value: '22.8' }, { label: '52-Week High', value: '₹1,650.00' }, { label: '52-Week Low', value: '₹1,380.00' }],
-        metrics: {
-            valuation: [{ name: 'P/E Ratio', value: 22.8, industry: 24.5, info: 'Price to Earnings ratio.' }],
-            profitability: [{ name: 'ROE', value: '31.2%', industry: '25.5%', info: 'Return on Equity.' }],
-            leverage: [{ name: 'Debt/Equity', value: 0.0, industry: 0.15, info: 'Total debt relative to shareholder equity.' }]
-        },
-        financials: {
-            quarterly: [
-                { period: 'Dec 2024', revenue: 38000, profit: 6000, eps: 14.5 },
-                { period: 'Sep 2024', revenue: 36800, profit: 5800, eps: 14.1 },
-                { period: 'Jun 2024', revenue: 35500, profit: 5600, eps: 13.8 },
-                { period: 'Mar 2024', revenue: 34200, profit: 5400, eps: 13.2 }
-            ],
-            annual: [
-                { year: 'FY 2024', revenue: 144500, profit: 23000, eps: 55.6 },
-                { year: 'FY 2023', revenue: 138900, profit: 22100, eps: 53.4 },
-                { year: 'FY 2022', revenue: 132800, profit: 21200, eps: 51.2 },
-                { year: 'FY 2021', revenue: 127500, profit: 20100, eps: 48.6 }
-            ]
-        },
-        technicals: [{ name: 'RSI', value: 52, interpretation: 'Neutral', status: 'Warning' }],
-        shareholding: [{ name: 'Promoters', value: 13.1, color: '#CCFF00' }, { name: 'FII', value: 34.2, color: '#22C55E' }, { name: 'Public', value: 52.7, color: '#A1A1AA' }],
-        news: [{ id: 1, title: 'Infosys expands AI platform', date: '4h ago', source: 'Business Standard' }],
-        events: [{ id: 1, name: 'Earnings Call', date: 'Jan 15, 2026' }]
-    },
-    ITC: {
-        ticker: 'ITC',
-        fullTicker: 'ITC.NS',
-        name: 'ITC Limited',
-        price: 450.00,
-        change: 10.90,
-        changePercent: 2.5,
-        about: "ITC Limited is an Indian multinational conglomerate company headquartered in Kolkata. It has a diversified presence across industries such as FMCG, hotels, software, packaging, paperboards, specialty papers and agribusiness.",
-        sector: 'Consumer Goods',
-        industry: 'FMCG',
-        founded: '1910',
-        website: 'www.itcportal.com',
-        history: { '1D': [{ date: '10:00', value: 430 }, { date: '15:00', value: 450.00 }], '1W': [], '1M': [] },
-        stats: [{ label: 'Market Cap', value: '₹5.6T' }, { label: 'P/E Ratio', value: '26.5' }, { label: '52-Week High', value: '₹499.00' }, { label: '52-Week Low', value: '₹390.00' }],
-        metrics: {
-            valuation: [{ name: 'P/E Ratio', value: 26.5, industry: 45.2, info: 'Price to Earnings ratio.' }],
-            profitability: [{ name: 'Net Margin', value: '28.4%', industry: '12.5%', info: 'Percentage of revenue left as profit.' }],
-            leverage: [{ name: 'Debt/Equity', value: 0.01, industry: 0.25, info: 'Total debt relative to shareholder equity.' }]
-        },
-        financials: {
-            quarterly: [
-                { period: 'Dec 2024', revenue: 19000, profit: 5400, eps: 4.3 },
-                { period: 'Sep 2024', revenue: 18200, profit: 5100, eps: 4.1 },
-                { period: 'Jun 2024', revenue: 17800, profit: 4900, eps: 3.9 },
-                { period: 'Mar 2024', revenue: 17200, profit: 4700, eps: 3.8 }
-            ],
-            annual: [
-                { year: 'FY 2024', revenue: 72200, profit: 20100, eps: 16.1 },
-                { year: 'FY 2023', revenue: 69800, profit: 19400, eps: 15.6 },
-                { year: 'FY 2022', revenue: 67100, profit: 18700, eps: 15.0 },
-                { year: 'FY 2021', revenue: 64500, profit: 17900, eps: 14.4 }
-            ]
-        },
-        technicals: [{ name: 'RSI', value: 68, interpretation: 'Bullish', status: 'Success' }],
-        shareholding: [{ name: 'Promoters', value: 0.0, color: '#CCFF00' }, { name: 'FII', value: 42.1, color: '#22C55E' }, { name: 'Public', value: 57.9, color: '#A1A1AA' }],
-        news: [{ id: 1, title: 'ITC hotel demerger update', date: 'Yesterday', source: 'Financial Express' }],
-        events: [{ id: 1, name: 'AGM', date: 'Jul 20, 2026' }]
-    }
-};
 
 import { useLiveMarketData } from '@/hooks/useLiveMarketData';
 
@@ -306,14 +54,12 @@ interface FundamentalData {
             period: string;
             revenue: number;
             profit: number;
-            networth: number;
             eps: number;
         }[];
         annual: {
             year: string;
             revenue: number;
             profit: number;
-            networth: number;
             eps: number;
         }[];
     };
@@ -369,30 +115,11 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
     const [dataSource, setDataSource] = useState<'yfinance' | 'yfinance-python' | 'mock-fallback' | null>(null);
 
     // Financial chart state
-    const [activeMetric, setActiveMetric] = useState<'revenue' | 'profit' | 'networth'>('revenue');
+    const [activeMetric, setActiveMetric] = useState<'revenue' | 'profit'>('revenue');
     const [activePeriod, setActivePeriod] = useState<'quarterly' | 'yearly'>('quarterly');
-    const [activeHeaderTab, setActiveHeaderTab] = useState('Overview');
     const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
     const isWatched = isInWatchlist(data.ticker);
 
-    // Comparison Logic
-    const { selectedTickers, addTicker, removeTicker, setTriggerSearch } = useComparisonStore();
-    const isInComparison = selectedTickers.includes(data.ticker);
-
-    const toggleStock = () => {
-        if (isInComparison) {
-            removeTicker(data.ticker);
-        } else {
-            if (selectedTickers.length >= 3) {
-                // If this is the 4th stock, add it and go directly to comparison
-                addTicker(data.ticker);
-                router.push('/stocks/compare');
-            } else {
-                addTicker(data.ticker);
-                setTriggerSearch(true);
-            }
-        }
-    };
     const [showDetails, setShowDetails] = useState(false);
 
     const handleWatchlistToggle = () => {
@@ -577,7 +304,6 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
             return [...sourceData].reverse().map(item => ({
                 ...item,
                 period: 'period' in item ? item.period : (item as any).year,
-                networth: item.revenue ? Math.round(item.revenue * 0.4) : 0 // Synthetic placeholder for UI
             }));
         }
 
@@ -599,13 +325,6 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                 color: '#3B82F6',
                 unit: 'Cr',
                 formatter: (value: number) => `₹${value.toLocaleString('en-IN')} Cr`
-            },
-            networth: {
-                dataKey: 'networth',
-                name: 'Net Worth',
-                color: '#8B5CF6',
-                unit: 'Cr',
-                formatter: (value: number) => `₹${value.toLocaleString('en-IN')} Cr`
             }
         };
         return configs[activeMetric];
@@ -625,15 +344,6 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                     <div className={styles.actions}>
                         <Button variant="ghost" size="icon"><Share2 size={20} /></Button>
                         <Button
-                            variant={isInComparison ? "primary" : "outline"}
-                            size="sm"
-                            className={styles.watchlistBtn}
-                            onClick={toggleStock}
-                        >
-                            <Activity size={18} />
-                            {isInComparison ? 'Added to Compare' : 'Compare'}
-                        </Button>
-                        <Button
                             variant={isWatched ? "primary" : "outline"}
                             size="sm"
                             className={styles.watchlistBtn}
@@ -642,6 +352,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                             <Bookmark size={18} fill={isWatched ? "currentColor" : "none"} />
                             {isWatched ? 'In Watchlist' : 'Watchlist'}
                         </Button>
+                        <AlertSubscribeButton ticker={data.ticker} />
                     </div>
                 </div>
 
@@ -664,11 +375,15 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                             </div>
                         </div>
                         <div className={styles.priceRow}>
-                            <div className={styles.price}>₹{(displayPrice ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</div>
-                            <div className={styles.change} style={{ color: isPositive ? 'var(--status-success)' : 'var(--status-danger)' }}>
-                                {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
-                                {isPositive ? '+' : ''}{currentChangeAmount.toFixed(2)} ({currentChangePercent.toFixed(2)}%)
+                            <div className={styles.price}>
+                                {displayPrice ? `₹${displayPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '₹ —'}
                             </div>
+                            {displayPrice ? (
+                                <div className={styles.change} style={{ color: isPositive ? 'var(--status-success)' : 'var(--status-danger)' }}>
+                                    {isPositive ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+                                    {isPositive ? '+' : ''}{currentChangeAmount.toFixed(2)} ({currentChangePercent.toFixed(2)}%)
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                 </section>
@@ -786,12 +501,6 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                 >
                                                     <span>Profit</span>
                                                 </button>
-                                                <button
-                                                    className={`${styles.tabButton} ${activeMetric === 'networth' ? styles.active : ''}`}
-                                                    onClick={() => setActiveMetric('networth')}
-                                                >
-                                                    <span>Net Worth</span>
-                                                </button>
                                             </div>
                                         </div>
                                         <div className={styles.chartContainer}>
@@ -829,10 +538,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                             fontSize: 12,
                                                             fontWeight: 400
                                                         }}
-                                                        tickFormatter={(value) => {
-                                                            if (activeMetric === 'networth') return `${(value / 1000).toFixed(0)}K`;
-                                                            return `${(value / 1000).toFixed(0)}K`;
-                                                        }}
+                                                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
                                                         width={60}
                                                     />
                                                     <Tooltip
@@ -918,7 +624,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                                 </button>
                                             </div>
                                             <div className={styles.detailsContent}>
-                                                <div className={styles.detailsGrid}>
+                                                <div className={styles.detailsPanelGrid}>
                                                     {chartData.map((item: any, index: number) => (
                                                         <div key={index} className={styles.detailItem}>
                                                             <div className={styles.detailPeriod}>{item.period}</div>
@@ -1066,9 +772,6 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                     </Card>
                                 ))}
                             </div>
-                            <Link href="/learn" className={styles.learnLink}>
-                                What are these indicators? <ArrowLeft size={14} style={{ transform: 'rotate(180deg)', marginLeft: 4 }} />
-                            </Link>
                         </section>
                     </div>
 
@@ -1165,65 +868,3 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
     );
 }
 
-// Sub-component for Metric Rows
-function MetricRow({ metric }: { metric: any }) {
-    const isPercentage = typeof metric.value === 'string' && metric.value.includes('%');
-    const isNumeric = typeof metric.value === 'number';
-
-    // Calculate comparison for visual bar
-    const getComparisonPercentage = () => {
-        if (isPercentage) {
-            const companyVal = parseFloat(metric.value.replace('%', ''));
-            const industryVal = parseFloat(metric.industry.replace('%', ''));
-            if (industryVal === 0) return 50;
-            return Math.min(Math.max((companyVal / industryVal) * 50, 10), 90);
-        } else if (isNumeric) {
-            const companyVal = metric.value;
-            const industryVal = metric.industry;
-            if (industryVal === 0) return 50;
-            return Math.min(Math.max((companyVal / industryVal) * 50, 10), 90);
-        }
-        return 50;
-    };
-
-    const comparisonPercentage = getComparisonPercentage();
-    const isAboveIndustry = comparisonPercentage > 50;
-
-    return (
-        <div className={styles.metricRow}>
-            <div className={styles.mInfo}>
-                <div className={styles.mName}>
-                    {metric.name}
-                    <span className={styles.mTooltipIcon}>
-                        <Info size={12} />
-                        <span className={styles.mTooltipText}>{metric.info}</span>
-                    </span>
-                </div>
-                <div className={styles.mComparison}>
-                    Company: <span className={styles.mHighlight} style={{ color: isAboveIndustry ? 'var(--status-success)' : 'var(--status-warning)' }}>
-                        {isNumeric ? metric.value.toFixed(2) : metric.value}
-                    </span> |
-                    Ind. Avg: <span className={styles.mSecondary}>
-                        {isNumeric ? metric.industry.toFixed(2) : metric.industry}
-                    </span>
-                </div>
-            </div>
-            <div className={styles.mVisual}>
-                <div className={styles.mBarTrack}>
-                    <div
-                        className={styles.mBarFill}
-                        style={{
-                            width: `${comparisonPercentage}%`,
-                            backgroundColor: isAboveIndustry ? 'var(--status-success)' : 'var(--status-warning)'
-                        }}
-                    ></div>
-                    <div
-                        className={styles.mBarAvg}
-                        style={{ left: '50%' }}
-                        title="Industry Average"
-                    ></div>
-                </div>
-            </div>
-        </div>
-    );
-}
