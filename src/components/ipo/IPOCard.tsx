@@ -4,15 +4,18 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { ArrowUpRight, TrendingUp, TrendingDown, Calendar, Flame } from 'lucide-react';
+import { ArrowUpRight, TrendingUp, TrendingDown, Calendar, Flame, Lock } from 'lucide-react';
 import type { IPOData } from '@/lib/ipo';
+import { calculateIPOScore, getScoreGradient } from '@/lib/ipoScore';
 import styles from './IPOCard.module.css';
 
 interface IPOCardProps {
     ipo: IPOData;
+    showScore?: boolean; // Pro users see score, free users see lock
 }
 
-export const IPOCard: React.FC<IPOCardProps> = ({ ipo }) => {
+export const IPOCard: React.FC<IPOCardProps> = ({ ipo, showScore = false }) => {
+    const score = calculateIPOScore(ipo);
     const isLive = ipo.status === 'Live';
     const isUpcoming = ipo.status === 'Upcoming';
 
@@ -61,6 +64,19 @@ export const IPOCard: React.FC<IPOCardProps> = ({ ipo }) => {
                             <Badge variant="outline" size="sm">
                                 {ipo.category}
                             </Badge>
+                            {showScore ? (
+                                <div
+                                    className={styles.scoreBadge}
+                                    style={{ background: getScoreGradient(score.overall) }}
+                                    title={`${score.label} — ${score.confidence} confidence`}
+                                >
+                                    {score.overall}
+                                </div>
+                            ) : (
+                                <div className={styles.scoreLocked} title="Upgrade to Pro for IPO Score">
+                                    <Lock size={10} />
+                                </div>
+                            )}
                         </div>
                     </div>
 

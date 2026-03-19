@@ -1,14 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { TrendingUp, TrendingDown, ChevronRight, Activity, Plus, Trash2 } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronRight, Activity } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { StockLogo } from './StockLogo';
 import { useLiveMarketData } from '@/hooks/useLiveMarketData';
-import { useComparisonStore } from '@/store/useComparisonStore';
 import styles from './StockCard.module.css';
 
 interface StockCardProps {
@@ -39,25 +37,6 @@ export const StockCard: React.FC<StockCardProps> = ({
     metricLabel,
 }) => {
     const { price, change, changePercent, status } = useLiveMarketData(ticker, initialPrice, initialChangeAmount, initialChange);
-    const { selectedTickers, addTicker, removeTicker } = useComparisonStore();
-
-    const router = useRouter();
-    const isSelected = selectedTickers.includes(ticker);
-
-    const toggleCompare = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        if (isSelected) {
-            removeTicker(ticker);
-        } else {
-            if (selectedTickers.length >= 3) {
-                addTicker(ticker);
-                router.push('/stocks/compare');
-            } else {
-                addTicker(ticker);
-            }
-        }
-    };
 
     // Live calculations
     const displayPrice = price ?? initialPrice;
@@ -92,16 +71,6 @@ export const StockCard: React.FC<StockCardProps> = ({
                                         <Activity size={10} /> LIVE
                                     </span>
                                 )}
-                                <button
-                                    className={clsx(styles.compareBtn, isSelected && styles.selected)}
-                                    // Stop propagation to prevent hologram click interference if any
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCompare(e); }}
-                                    title={isSelected ? "Remove from comparison" : "Add to comparison"}
-                                    style={{ zIndex: 20, position: 'relative' }} // Ensure accessible above hologram
-                                >
-                                    {isSelected ? <Trash2 size={12} /> : <Plus size={12} />}
-                                    {isSelected ? 'Remove' : 'Compare'}
-                                </button>
                             </div>
                         </div>
                         <div className={styles.name}>{name}</div>

@@ -13,7 +13,7 @@ export const Footer = () => {
                     <div className={styles.brandCol}>
                         <Link href="/" className={styles.logo}>STAQQ</Link>
                         <p className={styles.tagline}>
-                            The financial stack for Gen Z. Simplify your investment journey today.
+                            IPO Intelligence & Market Signals for Indian Investors.
                         </p>
                     </div>
 
@@ -21,9 +21,9 @@ export const Footer = () => {
                     <div className={styles.linksCol}>
                         <h4>Platform</h4>
                         <Link href="/ipo">IPO Hub</Link>
+                        <Link href="/signals">Signals</Link>
                         <Link href="/stocks/screener">Stocks</Link>
-                        <Link href="/learn">Learn</Link>
-                        <Link href="/tools">Tools</Link>
+                        <Link href="/alerts">Alerts</Link>
                     </div>
 
                     <div className={styles.linksCol}>

@@ -91,7 +91,8 @@ function isRelevantNews(title: string): boolean {
     return true;
 }
 
-import { summarizeArticle } from './groqSummarizer';
+// Summarizer removed during cleanup — use raw content for now
+const summarizeArticle = async (_title: string, content: string) => content;
 
 async function searchNews(query: string, maxResults = 5): Promise<TavilySearchResult> {
     try {

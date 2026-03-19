@@ -59,7 +59,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     }
 
     // Protected routes pattern
-    const protectedRoutes = ['/profile', '/watchlist'];
+    const protectedRoutes = ['/profile', '/watchlist', '/alerts'];
     const isProtectedRoute = protectedRoutes.some((route) =>
         request.nextUrl.pathname.startsWith(route)
     );

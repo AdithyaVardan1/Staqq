@@ -1,29 +1,13 @@
-import { useEffect } from 'react';
-import { useStream } from '@/context/StreamContext';
-
 /**
- * Hook for fetching and subscribing to live market data from our Unified Stream.
+ * Hook for live market data.
+ * Returns initial values as-is (streaming removed during cleanup).
+ * TODO: Re-implement with direct WebSocket in Phase 2.
  */
 export function useLiveMarketData(ticker: string, initialPrice?: number, initialChange?: number, initialChangePercent?: number) {
-    const { subscribe, unsubscribe, getMarketData, status } = useStream();
-
-    useEffect(() => {
-        if (ticker) {
-            subscribe(ticker, {
-                price: initialPrice,
-                change: initialChange,
-                changePercent: initialChangePercent
-            });
-            return () => unsubscribe(ticker);
-        }
-    }, [ticker, initialPrice, initialChange, initialChangePercent, subscribe, unsubscribe]);
-
-    const liveData = getMarketData(ticker);
-
     return {
-        price: liveData?.price !== undefined ? liveData.price : initialPrice,
-        change: liveData?.change,
-        changePercent: liveData?.changePercent,
-        status
+        price: initialPrice,
+        change: initialChange,
+        changePercent: initialChangePercent,
+        status: 'idle' as string
     };
 }

@@ -29,8 +29,7 @@ class RedisService {
                 });
 
                 this.client.on('error', (err) => {
-                    // Silently handle - Redis is optional for development
-                    // Errors are already caught in the call() method
+                    console.error('[Redis] Connection error:', err.message);
                 });
 
                 this.client.on('connect', () => {
@@ -51,7 +50,7 @@ class RedisService {
             if (client.status === 'end') return null;
             return await fn(client);
         } catch (error: any) {
-            // Silently handle Redis errors - it's optional for development
+            console.error('[Redis] Operation failed:', error.message);
             return null;
         }
     }

@@ -10,15 +10,16 @@ import { Button } from '@/components/ui/Button';
 import Logo from '@/components/ui/Logo';
 import { createClient } from '@/utils/supabase/client';
 import { SearchModal } from './SearchModal';
-import { useComparisonStore } from '@/store/useComparisonStore';
+import { NotificationBell } from '@/components/alerts/NotificationBell';
+import { PremiumBadge } from '@/components/premium/PremiumBadge';
+import { useSubscription } from '@/hooks/useSubscription';
 import styles from './Navbar.module.css';
 
 const navLinks = [
     { name: 'IPO Hub', href: '/ipo' },
+    { name: 'Signals', href: '/signals' },
     { name: 'Stocks', href: '/stocks/screener' },
-    { name: 'Pulse', href: '/pulse' },
-    { name: 'Learn', href: '/learn' },
-    { name: 'Tools', href: '/tools' },
+    { name: 'Alerts', href: '/alerts' },
 ];
 
 export const Navbar = () => {
@@ -31,14 +32,6 @@ export const Navbar = () => {
 
     // Search state
     const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const { triggerSearch, setTriggerSearch } = useComparisonStore();
-
-    useEffect(() => {
-        if (triggerSearch) {
-            setIsSearchOpen(true);
-            setTriggerSearch(false);
-        }
-    }, [triggerSearch, setTriggerSearch]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -138,6 +131,8 @@ export const Navbar = () => {
                                 <Search size={20} />
                             </button>
 
+                            <NotificationBell isLoggedIn={!!user} />
+
                             {pathname !== '/' && (
                                 <Link href="/watchlist" className={styles.watchlistLink}>
                                     <Button variant="ghost" size="sm" className="hidden md:flex">Watchlist</Button>
@@ -147,8 +142,9 @@ export const Navbar = () => {
                             <div className={styles.desktopAuth}>
                                 {user ? (
                                     <div className="flex items-center gap-3">
+                                        <SubscriptionCTA />
                                         <Link href="/profile" aria-label="Profile">
-                                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-white/10 hover:border-brand/50 transition-colors">
+                                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center border border-white/10 hover:border-brand/50 transition-colors relative">
                                                 <User size={16} className="text-white" />
                                             </div>
                                         </Link>
@@ -201,6 +197,7 @@ export const Navbar = () => {
                         )}
                         {user ? (
                             <>
+                                <MobileSubscriptionCTA onClose={() => setIsMobileMenuOpen(false)} />
                                 <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button variant="primary" fullWidth>My Profile</Button>
                                 </Link>
@@ -230,3 +227,37 @@ export const Navbar = () => {
         </>
     );
 };
+
+/** Small inline component to show Upgrade CTA or PRO badge */
+function SubscriptionCTA() {
+    const { isPro, loading } = useSubscription();
+
+    if (loading) return null;
+
+    if (isPro) {
+        return <PremiumBadge size="sm" />;
+    }
+
+    return (
+        <Link href="/pricing">
+            <Button variant="outline" size="sm" style={{ fontSize: '0.75rem', padding: '4px 12px' }}>
+                Upgrade
+            </Button>
+        </Link>
+    );
+}
+
+/** Mobile menu upgrade CTA */
+function MobileSubscriptionCTA({ onClose }: { onClose: () => void }) {
+    const { isPro, loading } = useSubscription();
+
+    if (loading || isPro) return null;
+
+    return (
+        <Link href="/pricing" onClick={onClose}>
+            <Button variant="outline" fullWidth style={{ borderColor: 'rgba(202,255,0,0.3)', color: '#CAFF00' }}>
+                Upgrade to Pro
+            </Button>
+        </Link>
+    );
+}
