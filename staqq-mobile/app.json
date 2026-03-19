@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "Staqq",
+    "slug": "staqq-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A0A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "in.staqq.app"
+    },
+    "android": {
+      "package": "in.staqq.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0A0A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "scheme": "staqqmobile",
+    "extra": {
+      "supabaseUrl": "https://ypwotjfqbbfndiqowqsv.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlwd290amZxYmJmbmRpcW93cXN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA4MzE0NDksImV4cCI6MjA4NjQwNzQ0OX0.3j7-UCP1PclIbbMHzVooHlLRWpHSCcT-zDH1Bhf9UVs"
+    },
+    "plugins": ["expo-router"]
+  }
+}
