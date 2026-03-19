@@ -1,0 +1,214 @@
+.main {
+    padding-top: 100px;
+    padding-bottom: 80px;
+    min-height: 100vh;
+}
+
+.backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 24px;
+    transition: color 0.2s;
+}
+
+.backLink:hover {
+    color: var(--text-primary);
+}
+
+.header {
+    margin-bottom: 48px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 12px;
+}
+
+.subtitle {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+}
+
+.section {
+    margin-bottom: 48px;
+}
+
+.sectionTitle {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Stat Grid */
+.statGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.statCard {
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.statLabel {
+    font-size: 0.78rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+}
+
+.statValue {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: var(--font-outfit);
+    color: var(--text-primary);
+}
+
+.statSub {
+    font-size: 0.78rem;
+    color: #666;
+    margin-top: 4px;
+}
+
+/* Distribution Chart */
+.distributionGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.distRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.distLabel {
+    width: 120px;
+    font-size: 0.82rem;
+    color: #999;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.distBarWrapper {
+    flex: 1;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.distBar {
+    height: 100%;
+    background: linear-gradient(90deg, rgba(202, 255, 0, 0.3), rgba(202, 255, 0, 0.6));
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.distCount {
+    width: 40px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-outfit);
+}
+
+/* Two Column */
+.twoCol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+}
+
+@media (max-width: 768px) {
+    .twoCol {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Rank List */
+.rankList {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.rankItem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: border-color 0.2s;
+}
+
+.rankItem:hover {
+    border-color: rgba(202, 255, 0, 0.2);
+}
+
+.rank {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #666;
+    width: 28px;
+    flex-shrink: 0;
+}
+
+.rankName {
+    flex: 1;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rankCategory {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #888;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.rankGmp {
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: var(--font-outfit);
+    flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+    .title {
+        font-size: 2rem;
+    }
+
+    .statGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .distLabel {
+        width: 80px;
+        font-size: 0.72rem;
+    }
+}
