@@ -50,3 +50,9 @@ angelone_tokens.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE/AI config
+.claude/
+
+# screenshots in root
+Screenshot*
