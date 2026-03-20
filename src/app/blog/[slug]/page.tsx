@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { createClient } from '@supabase/supabase-js';
 import { ArrowLeft, Calendar, RefreshCw } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -90,7 +91,7 @@ export default async function BlogPostPage({ params }: Props) {
                     </header>
 
                     <div className={styles.content}>
-                        <ReactMarkdown>{post.content}</ReactMarkdown>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content}</ReactMarkdown>
                     </div>
 
                     {post.ipo_slug && (
