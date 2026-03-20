@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { createAdminClient } from '@/utils/supabase/admin';
+import { createClient } from '@supabase/supabase-js';
 import { ArrowRight, Calendar, TrendingUp } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -12,7 +12,10 @@ export const metadata = {
 
 async function getBlogPosts() {
     try {
-        const supabase = createAdminClient();
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
         const { data, error } = await supabase
             .from('blog_posts')
             .select('slug, title, description, category, published_at, updated_at, views')

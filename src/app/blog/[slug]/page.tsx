@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import ReactMarkdown from 'react-markdown';
-import { createAdminClient } from '@/utils/supabase/admin';
+import { createClient } from '@supabase/supabase-js';
 import { ArrowLeft, Calendar, RefreshCw } from 'lucide-react';
 import type { Metadata } from 'next';
 import styles from './page.module.css';
@@ -14,7 +14,10 @@ interface Props {
 
 async function getPost(slug: string) {
     try {
-        const supabase = createAdminClient();
+        const supabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
         const { data, error } = await supabase
             .from('blog_posts')
             .select('*')
