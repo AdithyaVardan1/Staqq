@@ -4,7 +4,7 @@ import { getCategoryStats } from '@/lib/ipoAnalytics';
 import { getGmpSentiment } from '@/lib/ipoAnalytics';
 import { fetchFiiDiiToday } from '@/lib/fiiDii';
 import { getAllPosts } from '@/lib/social';
-import { Layers, BarChart3, TrendingUp, Activity, Zap, ArrowRight, Users, Building2 } from 'lucide-react';
+import { Layers, BarChart3, TrendingUp, Activity, Zap, ArrowRight, Users, Building2, Crown, Bell, LineChart, Mail } from 'lucide-react';
 import styles from './page.module.css';
 
 export const revalidate = 300;
@@ -52,16 +52,16 @@ export default async function HomePage() {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: 'Staqq',
-        url: 'https://staqq.com',
+        url: 'https://staqq.in',
         description: 'India\'s smartest IPO intelligence platform with live GMP tracking, market signals, and alternative data for Indian stock markets.',
         publisher: {
             '@type': 'Organization',
             name: 'Staqq',
-            url: 'https://staqq.com',
+            url: 'https://staqq.in',
         },
         potentialAction: {
             '@type': 'SearchAction',
-            target: 'https://staqq.com/stocks/{search_term}',
+            target: 'https://staqq.in/stocks/{search_term}',
             'query-input': 'required name=search_term',
         },
     };
@@ -318,6 +318,59 @@ export default async function HomePage() {
                                 <p>Calculate your IPO allotment probability based on subscription multiples. Optimize multi-application strategies to maximize chances.</p>
                             </div>
                         </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* Pro CTA Section */}
+            <section className={styles.proSection}>
+                <div className="container">
+                    <div className={styles.proContent}>
+                        <div className={styles.proBadge}>
+                            <Crown size={14} /> Staqq Pro
+                        </div>
+                        <h2 className={styles.proTitle}>
+                            Get the edge serious investors need
+                        </h2>
+                        <p className={styles.proSubtitle}>
+                            Unlock real-time signals, composite IPO scores, custom alert rules, and daily morning briefs — starting at just ₹499/mo.
+                        </p>
+                        <div className={styles.proFeatures}>
+                            <div className={styles.proFeature}>
+                                <LineChart size={20} />
+                                <div>
+                                    <strong>Composite IPO Score</strong>
+                                    <span>One number (1-10) combining GMP, subscription, quality, and size</span>
+                                </div>
+                            </div>
+                            <div className={styles.proFeature}>
+                                <Bell size={20} />
+                                <div>
+                                    <strong>Custom Alert Rules</strong>
+                                    <span>Set conditions like &quot;FII sells &gt; ₹5,000 Cr&quot; and get notified instantly</span>
+                                </div>
+                            </div>
+                            <div className={styles.proFeature}>
+                                <Mail size={20} />
+                                <div>
+                                    <strong>Morning Market Brief</strong>
+                                    <span>Daily email with overnight GMP changes, top signals, and FII/DII summary</span>
+                                </div>
+                            </div>
+                            <div className={styles.proFeature}>
+                                <Zap size={20} />
+                                <div>
+                                    <strong>Real-Time Signals</strong>
+                                    <span>Zero delay on social spikes, insider trades, and bulk deals</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={styles.proActions}>
+                            <Link href="/pricing" className={styles.primaryBtn}>
+                                View Pricing
+                            </Link>
+                            <span className={styles.proNote}>Cancel anytime. UPI, cards, netbanking accepted.</span>
+                        </div>
                     </div>
                 </div>
             </section>
