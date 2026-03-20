@@ -53,7 +53,7 @@ export default async function HomePage() {
         '@type': 'WebSite',
         name: 'Staqq',
         url: 'https://staqq.in',
-        description: 'India\'s smartest IPO intelligence platform with live GMP tracking, market signals, and alternative data for Indian stock markets.',
+        description: 'Every edge, one dashboard. IPO GMP tracking, FII/DII flows, social sentiment, insider trades, and smart screeners for Indian investors.',
         publisher: {
             '@type': 'Organization',
             name: 'Staqq',
@@ -107,17 +107,17 @@ export default async function HomePage() {
                 <div className="container">
                     <div className={styles.heroContent}>
                         <h1 className={styles.heroTitle}>
-                            India&apos;s Smartest <span className="text-brand">IPO Intelligence</span> Platform
+                            Every <span className="text-brand">Edge.</span> One Dashboard.
                         </h1>
                         <p className={styles.heroSubtitle}>
-                            Live GMP tracking, alternative data signals, FII/DII flows, and insider trade monitoring — data Indian investors can&apos;t find anywhere else.
+                            From IPO GMP and allotment odds to FII/DII flows, social sentiment, and insider trades — Staqq gives Indian investors the full picture before the market opens.
                         </p>
                         <div className={styles.heroActions}>
                             <Link href="/ipo" className={styles.primaryBtn}>
-                                Explore IPO Hub
+                                Explore the Dashboard
                             </Link>
-                            <Link href="/signals" className={styles.outlineBtn}>
-                                View Market Signals
+                            <Link href="/pricing" className={styles.outlineBtn}>
+                                Get Pro Access
                             </Link>
                         </div>
 

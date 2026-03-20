@@ -6,20 +6,20 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "Staqq | IPO Intelligence & Market Signals",
-  description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",
+  title: "Staqq | Every Edge, One Dashboard",
+  description: "Every edge, one dashboard. IPO GMP tracking, FII/DII flows, social sentiment, insider trades, and smart screeners for Indian investors.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in'),
   openGraph: {
-    title: "Staqq | IPO Intelligence & Market Signals",
-    description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",
+    title: "Staqq | Every Edge, One Dashboard",
+    description: "Every edge, one dashboard. IPO GMP tracking, FII/DII flows, social sentiment, insider trades, and smart screeners for Indian investors.",
     type: 'website',
     siteName: 'Staqq',
     images: ['/api/og'],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Staqq | IPO Intelligence & Market Signals",
-    description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",
+    title: "Staqq | Every Edge, One Dashboard",
+    description: "Every edge, one dashboard. IPO GMP tracking, FII/DII flows, social sentiment, insider trades, and smart screeners for Indian investors.",
     images: ['/api/og'],
   },
   icons: {
