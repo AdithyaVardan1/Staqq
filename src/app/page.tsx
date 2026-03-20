@@ -5,6 +5,7 @@ import { getGmpSentiment } from '@/lib/ipoAnalytics';
 import { fetchFiiDiiToday } from '@/lib/fiiDii';
 import { getAllPosts } from '@/lib/social';
 import { Layers, BarChart3, TrendingUp, Activity, Zap, ArrowRight, Users, Building2, Crown, Bell, LineChart, Mail } from 'lucide-react';
+import { EmailCapture } from '@/components/marketing/EmailCapture';
 import styles from './page.module.css';
 
 export const revalidate = 300;
@@ -116,8 +117,8 @@ export default async function HomePage() {
                             <Link href="/ipo" className={styles.primaryBtn}>
                                 Explore the Dashboard
                             </Link>
-                            <Link href="/pricing" className={styles.outlineBtn}>
-                                Get Pro Access
+                            <Link href="/signals" className={styles.outlineBtn}>
+                                View Market Signals
                             </Link>
                         </div>
 
@@ -372,6 +373,13 @@ export default async function HomePage() {
                             <span className={styles.proNote}>Cancel anytime. UPI, cards, netbanking accepted.</span>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            {/* Email Capture */}
+            <section className={styles.emailSection}>
+                <div className="container">
+                    <EmailCapture />
                 </div>
             </section>
 

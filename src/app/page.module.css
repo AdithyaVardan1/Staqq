@@ -470,6 +470,12 @@
     color: #555;
 }
 
+/* ─── Email Capture ─── */
+.emailSection {
+    padding: 48px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
 /* ─── SEO Content ─── */
 .seoSection {
     padding: 56px 0 80px;

@@ -112,6 +112,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
     const [fundamentals, setFundamentals] = useState<any | null>(null);
     const [isLoadingFundamentals, setIsLoadingFundamentals] = useState(true);
     const [fundamentalsError, setFundamentalsError] = useState<string | null>(null);
+    const [lookupLimitHit, setLookupLimitHit] = useState(false);
     const [dataSource, setDataSource] = useState<'yfinance' | 'yfinance-python' | 'mock-fallback' | null>(null);
 
     // Financial chart state
@@ -162,6 +163,11 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                 const res = await fetch(`/api/stocks/fundamentals?ticker=${ticker}`);
 
                 if (!res.ok) {
+                    if (res.status === 429) {
+                        setLookupLimitHit(true);
+                        setIsLoadingFundamentals(false);
+                        return;
+                    }
                     const errorText = await res.text();
                     console.error(`[StockDetail] API Error (${res.status}):`, errorText);
                     throw new Error(`API returned ${res.status}: ${errorText}`);
@@ -355,6 +361,31 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                         <AlertSubscribeButton ticker={data.ticker} />
                     </div>
                 </div>
+
+                {/* Lookup limit banner */}
+                {lookupLimitHit && (
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '10px',
+                        padding: '14px 20px',
+                        borderRadius: '12px',
+                        background: 'rgba(245, 158, 11, 0.08)',
+                        border: '1px solid rgba(245, 158, 11, 0.2)',
+                        fontSize: '0.9rem',
+                        color: '#F59E0B',
+                        marginBottom: '20px',
+                    }}>
+                        <span>You have used all 5 free stock lookups for today.</span>
+                        <Link
+                            href="/signup"
+                            style={{ color: '#CAFF00', fontWeight: 600, textDecoration: 'none' }}
+                        >
+                            Sign up free for more
+                        </Link>
+                    </div>
+                )}
 
                 {/* Stock Header Section */}
                 <section className={styles.headerSection}>

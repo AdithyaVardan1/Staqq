@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { ProgressBar } from '@/components/ui/ProgressBar';
-import { ArrowUpRight, TrendingUp, TrendingDown, Calendar, Flame, Lock } from 'lucide-react';
+import { ArrowUpRight, TrendingUp, TrendingDown, Calendar, Flame, Crown } from 'lucide-react';
 import type { IPOData } from '@/lib/ipo';
 import { calculateIPOScore, getScoreGradient } from '@/lib/ipoScore';
 import styles from './IPOCard.module.css';
@@ -68,13 +68,14 @@ export const IPOCard: React.FC<IPOCardProps> = ({ ipo, showScore = false }) => {
                                 <div
                                     className={styles.scoreBadge}
                                     style={{ background: getScoreGradient(score.overall) }}
-                                    title={`${score.label} — ${score.confidence} confidence`}
+                                    title={`${score.label} - ${score.confidence} confidence`}
                                 >
                                     {score.overall}
                                 </div>
                             ) : (
-                                <div className={styles.scoreLocked} title="Upgrade to Pro for IPO Score">
-                                    <Lock size={10} />
+                                <div className={styles.scoreTeaser} title="Upgrade to Pro for IPO Score">
+                                    <span className={styles.scoreTeaserNum}>{score.overall}</span>
+                                    <Crown size={8} className={styles.scoreTeaserIcon} />
                                 </div>
                             )}
                         </div>
