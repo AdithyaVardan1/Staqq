@@ -1,10 +1,14 @@
 import type { MetadataRoute } from 'next';
 import { getAllIPOs } from '@/lib/ipo';
+import { createAdminClient } from '@/utils/supabase/admin';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
 
-    const allIPOs = await getAllIPOs();
+    const [allIPOs, blogPosts] = await Promise.all([
+        getAllIPOs(),
+        getBlogSlugs(),
+    ]);
 
     const staticPages: MetadataRoute.Sitemap = [
         { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
@@ -16,6 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         { url: `${baseUrl}/signals/insider-trades`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
         { url: `${baseUrl}/signals/bulk-deals`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
         { url: `${baseUrl}/stocks/screener`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.7 },
+        { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
         { url: `${baseUrl}/disclaimer`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
         { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'yearly', priority: 0.2 },
     ];
@@ -27,5 +32,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: ipo.status === 'Live' ? 0.8 : 0.5,
     }));
 
-    return [...staticPages, ...ipoPages];
+    const blogPages: MetadataRoute.Sitemap = blogPosts.map((post) => ({
+        url: `${baseUrl}/blog/${post.slug}`,
+        lastModified: new Date(post.updated_at),
+        changeFrequency: 'daily' as const,
+        priority: 0.7,
+    }));
+
+    return [...staticPages, ...ipoPages, ...blogPages];
+}
+
+async function getBlogSlugs(): Promise<{ slug: string; updated_at: string }[]> {
+    try {
+        const supabase = createAdminClient();
+        const { data } = await supabase
+            .from('blog_posts')
+            .select('slug, updated_at');
+        return data || [];
+    } catch {
+        return [];
+    }
 }

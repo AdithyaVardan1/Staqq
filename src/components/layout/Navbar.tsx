@@ -19,6 +19,7 @@ const navLinks = [
     { name: 'IPO Hub', href: '/ipo' },
     { name: 'Signals', href: '/signals' },
     { name: 'Stocks', href: '/stocks/screener' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Alerts', href: '/alerts' },
 ];
 
