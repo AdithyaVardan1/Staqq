@@ -261,7 +261,7 @@ export async function GET(req: NextRequest) {
 
                 {/* Footer */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', position: 'relative' }}>
-                    <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.2)' }}>staqq.com</span>
+                    <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.2)' }}>staqq.in</span>
                     <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.15)' }}>IPO Intelligence & Market Signals</span>
                 </div>
             </div>

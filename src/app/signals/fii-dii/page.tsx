@@ -31,7 +31,7 @@ export default async function FiiDiiPage() {
         name: `FII/DII Flows — ${data.date}`,
         description: `Foreign Institutional Investor net: ₹${data.fii.net.toLocaleString('en-IN')} Cr. Domestic Institutional Investor net: ₹${data.dii.net.toLocaleString('en-IN')} Cr. Combined net: ₹${data.totalNet.toLocaleString('en-IN')} Cr.`,
         temporalCoverage: data.date,
-        creator: { '@type': 'Organization', name: 'Staqq', url: 'https://staqq.com' },
+        creator: { '@type': 'Organization', name: 'Staqq', url: 'https://staqq.in' },
     } : null;
 
     return (

@@ -120,7 +120,7 @@ export default function ShareableCard({
 
                 {/* Footer */}
                 <div className={styles.cardFooter}>
-                    <span className={styles.footerUrl}>staqq.com</span>
+                    <span className={styles.footerUrl}>staqq.in</span>
                     <span className={styles.footerDate}>{today}</span>
                 </div>
             </div>

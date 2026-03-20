@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
         }
 
         shareLines.push('');
-        shareLines.push('👉 staqq.com');
+        shareLines.push('👉 staqq.in');
 
         return NextResponse.json({
             date: today,

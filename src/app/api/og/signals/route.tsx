@@ -182,7 +182,7 @@ export async function GET(req: NextRequest) {
 
                 {/* Footer */}
                 <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '16px' }}>
-                    <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.25)' }}>staqq.com</span>
+                    <span style={{ fontSize: '14px', color: 'rgba(255,255,255,0.25)' }}>staqq.in</span>
                 </div>
             </div>
         ),

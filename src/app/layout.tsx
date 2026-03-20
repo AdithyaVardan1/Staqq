@@ -8,7 +8,7 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 export const metadata: Metadata = {
   title: "Staqq | IPO Intelligence & Market Signals",
   description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in'),
   openGraph: {
     title: "Staqq | IPO Intelligence & Market Signals",
     description: "India's smartest IPO tracker with GMP accuracy scoring, alternative data signals, and real-time market intelligence.",

@@ -166,7 +166,7 @@ export async function GET(req: NextRequest) {
                     }}
                 >
                     <span style={{ fontSize: '16px', color: 'rgba(255,255,255,0.3)' }}>
-                        staqq.com
+                        staqq.in
                     </span>
                 </div>
             </div>

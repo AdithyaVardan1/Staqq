@@ -4,14 +4,14 @@
 
 ## Core Features
 
-- [IPO Hub](https://staqq.com/ipo): Live IPO dashboard with GMP tracking, subscription data, and performance analytics for all current Indian IPOs (mainboard and SME)
-- [IPO Analytics](https://staqq.com/ipo/analytics): GMP distribution analysis, top gainers/losers, subscription leaderboards, and category breakdowns
-- [Allotment Calculator](https://staqq.com/ipo/allotment-calculator): Calculate IPO allotment probability based on subscription multiples with multi-application strategy optimizer
-- [Market Signals](https://staqq.com/signals): Social media sentiment aggregated from Reddit (r/IndianStockMarket, r/IndianStreetBets) and Twitter/X financial discussions
-- [FII/DII Flows](https://staqq.com/signals/fii-dii): Daily Foreign and Domestic Institutional Investor buy/sell data from NSE
-- [Insider Trades](https://staqq.com/signals/insider-trades): Promoter and insider trading disclosures (PIT) from NSE corporate filings
-- [Bulk Deals](https://staqq.com/signals/bulk-deals): Large institutional bulk and block deal transactions from NSE
-- [Stock Screener](https://staqq.com/stocks/screener): Filter NSE/BSE stocks by market cap, P/E ratio, sector, and fundamentals
+- [IPO Hub](https://staqq.in/ipo): Live IPO dashboard with GMP tracking, subscription data, and performance analytics for all current Indian IPOs (mainboard and SME)
+- [IPO Analytics](https://staqq.in/ipo/analytics): GMP distribution analysis, top gainers/losers, subscription leaderboards, and category breakdowns
+- [Allotment Calculator](https://staqq.in/ipo/allotment-calculator): Calculate IPO allotment probability based on subscription multiples with multi-application strategy optimizer
+- [Market Signals](https://staqq.in/signals): Social media sentiment aggregated from Reddit (r/IndianStockMarket, r/IndianStreetBets) and Twitter/X financial discussions
+- [FII/DII Flows](https://staqq.in/signals/fii-dii): Daily Foreign and Domestic Institutional Investor buy/sell data from NSE
+- [Insider Trades](https://staqq.in/signals/insider-trades): Promoter and insider trading disclosures (PIT) from NSE corporate filings
+- [Bulk Deals](https://staqq.in/signals/bulk-deals): Large institutional bulk and block deal transactions from NSE
+- [Stock Screener](https://staqq.in/stocks/screener): Filter NSE/BSE stocks by market cap, P/E ratio, sector, and fundamentals
 
 ## Key Data Points
 

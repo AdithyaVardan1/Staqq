@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { getAllIPOs } from '@/lib/ipo';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.com';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
 
     const allIPOs = await getAllIPOs();
 
