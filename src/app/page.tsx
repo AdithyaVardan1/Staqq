@@ -110,7 +110,7 @@ export default async function HomePage() {
                             Every <span className="text-brand">Edge.</span> One Dashboard.
                         </h1>
                         <p className={styles.heroSubtitle}>
-                            From IPO GMP and allotment odds to FII/DII flows, social sentiment, and insider trades — Staqq gives Indian investors the full picture before the market opens.
+                            From IPO GMP and allotment odds to FII/DII flows, social sentiment, and insider trades. Staqq gives Indian investors the full picture before the market opens.
                         </p>
                         <div className={styles.heroActions}>
                             <Link href="/ipo" className={styles.primaryBtn}>
@@ -333,7 +333,7 @@ export default async function HomePage() {
                             Get the edge serious investors need
                         </h2>
                         <p className={styles.proSubtitle}>
-                            Unlock real-time signals, composite IPO scores, custom alert rules, and daily morning briefs — starting at just ₹499/mo.
+                            Unlock real-time signals, composite IPO scores, custom alert rules, and daily morning briefs. Starting at just ₹499/mo.
                         </p>
                         <div className={styles.proFeatures}>
                             <div className={styles.proFeature}>
@@ -384,7 +384,7 @@ export default async function HomePage() {
                             <h3>Real-Time IPO GMP Tracking</h3>
                             <p>
                                 Staqq tracks Grey Market Premium for every upcoming, live, and recently listed IPO in India.
-                                Unlike other platforms, we provide GMP sentiment scoring — translating raw numbers into
+                                Unlike other platforms, we provide GMP sentiment scoring that translates raw numbers into
                                 actionable signals like &quot;Very Bullish&quot; or &quot;Bearish&quot; so you know exactly where market
                                 sentiment stands.
                             </p>
@@ -394,14 +394,14 @@ export default async function HomePage() {
                             <p>
                                 Go beyond price charts. Staqq aggregates social media discussions from r/IndianStockMarket,
                                 r/IndianStreetBets, and FinTwit, detects mention spikes, and overlays institutional data
-                                like FII/DII flows and insider trades — giving you signals that most retail investors miss.
+                                like FII/DII flows and insider trades, giving you signals that most retail investors miss.
                             </p>
                         </div>
                         <div>
                             <h3>Built for Indian Markets</h3>
                             <p>
                                 Every feature is built specifically for NSE and BSE. From IPO subscription data to
-                                SEBI insider disclosures, from bulk deal tracking to SME IPO analysis — this is the
+                                SEBI insider disclosures, from bulk deal tracking to SME IPO analysis. This is the
                                 intelligence platform Indian investors have been waiting for.
                             </p>
                         </div>

@@ -46,7 +46,7 @@ const FAQ = [
     },
     {
         q: 'What payment methods are accepted?',
-        a: 'We accept UPI, credit/debit cards, netbanking, and wallets through Razorpay — India\'s most trusted payment gateway.',
+        a: 'We accept UPI, credit/debit cards, netbanking, and wallets through Razorpay, India\'s most trusted payment gateway.',
     },
     {
         q: 'Can I cancel anytime?',
@@ -154,7 +154,7 @@ export default function PricingPage() {
                     </h1>
                     <p className={styles.heroSubtitle}>
                         Get real-time alternative data signals, composite IPO scores,
-                        custom alert rules, and a daily morning brief — everything serious
+                        custom alert rules, and a daily morning brief. Everything serious
                         investors need.
                     </p>
 
