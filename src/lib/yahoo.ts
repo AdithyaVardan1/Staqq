@@ -1,6 +1,3 @@
-// Remove the static import since we'll use dynamic import
-// import yahooFinance from 'yahoo-finance2';
-
 export interface FundamentalData {
     ticker: string;
     description: string;
@@ -40,16 +37,23 @@ export interface FundamentalData {
 
 export class YahooFinanceService {
     private static instance: YahooFinanceService;
+    private yf: any = null;
 
-    private constructor() {
-        // Dynamic import will be used in getFundamentals method
-    }
+    private constructor() {}
 
     public static getInstance(): YahooFinanceService {
         if (!YahooFinanceService.instance) {
             YahooFinanceService.instance = new YahooFinanceService();
         }
         return YahooFinanceService.instance;
+    }
+
+    private async getClient(): Promise<any> {
+        if (!this.yf) {
+            const YFClass = (await import('yahoo-finance2')).default;
+            this.yf = new (YFClass as any)({ suppressNotices: ['yahooSurvey'] });
+        }
+        return this.yf;
     }
 
     public async getFundamentals(ticker: string): Promise<FundamentalData | null> {
@@ -60,16 +64,15 @@ export class YahooFinanceService {
             const symbol = ticker.endsWith('.NS') || ticker.endsWith('.BO') ? ticker : `${ticker}.NS`;
             console.log(`[Yahoo] Using symbol: ${symbol}`);
 
-            // Import yahoo-finance2 dynamically to avoid potential SSR issues
-            const yahooFinance = (await import('yahoo-finance2')).default;
+            const yf = await this.getClient();
 
             console.log(`[Yahoo] Calling quoteSummary for: ${symbol}`);
-            const quote: any = await yahooFinance.quoteSummary(symbol, {
+            const quote: any = await yf.quoteSummary(symbol, {
                 modules: [
-                    'summaryDetail', // Market Cap, Beta, Div Yield, 52W High/Low
-                    'defaultKeyStatistics', // P/E, PEG, P/B, Margins
-                    'financialData', // ROE, ROA, Debt/Equity, Revenue, Target Price
-                    'assetProfile', // Description, Sector, Industry, Website
+                    'summaryDetail',
+                    'defaultKeyStatistics',
+                    'financialData',
+                    'assetProfile',
                     'incomeStatementHistory',
                     'incomeStatementHistoryQuarterly',
                     'balanceSheetHistory',
@@ -84,32 +87,28 @@ export class YahooFinanceService {
             const financials = quote.financialData;
             const profile = quote.assetProfile;
 
-            const result = {
+            const result: FundamentalData = {
                 ticker: symbol,
                 description: profile?.longBusinessSummary || '',
                 sector: profile?.sector || 'Unknown',
                 industry: profile?.industry || 'Unknown',
                 website: profile?.website || '',
 
-                // Valuation
                 marketCap: summary?.marketCap || 0,
                 peRatio: summary?.trailingPE || stats?.forwardPE || 0,
                 pegRatio: stats?.pegRatio || 0,
                 pbRatio: stats?.priceToBook || 0,
 
-                // Stats
                 beta: summary?.beta || 0,
                 divYield: summary?.dividendYield || 0,
                 high52: summary?.fiftyTwoWeekHigh || 0,
                 low52: summary?.fiftyTwoWeekLow || 0,
 
-                // Profitability
                 netMargin: financials?.profitMargins || 0,
                 roe: financials?.returnOnEquity || 0,
                 roa: financials?.returnOnAssets || 0,
                 eps: stats?.trailingEps || 0,
 
-                // Leverage
                 debtToEquity: financials?.debtToEquity || 0,
 
                 financials: {
@@ -142,11 +141,58 @@ export class YahooFinanceService {
         } catch (error: any) {
             console.error(`[Yahoo] Error fetching fundamentals for ${ticker}:`, {
                 message: error.message,
-                stack: error.stack,
                 name: error.name
             });
             return null;
         }
+    }
+
+    public async search(query: string): Promise<any[]> {
+        try {
+            const yf = await this.getClient();
+            const result = await yf.search(query, { region: 'IN', lang: 'en-IN' });
+            return result?.quotes || [];
+        } catch (error: any) {
+            console.error(`[Yahoo] Search error:`, error.message);
+            return [];
+        }
+    }
+
+    public async getQuote(symbol: string): Promise<any | null> {
+        try {
+            const yf = await this.getClient();
+            return await yf.quote(symbol);
+        } catch (error: any) {
+            console.error(`[Yahoo] Quote error for ${symbol}:`, error.message);
+            return null;
+        }
+    }
+
+    public async getBatchQuotes(tickers: string[]): Promise<Record<string, any>> {
+        const results: Record<string, any> = {};
+        const symbols = tickers.map(t => t.endsWith('.NS') ? t : `${t}.NS`);
+        const yf = await this.getClient();
+
+        const batchSize = 10;
+        for (let i = 0; i < symbols.length; i += batchSize) {
+            const batch = symbols.slice(i, i + batchSize);
+            const settled = await Promise.allSettled(batch.map((sym: string) => yf.quote(sym)));
+            for (let j = 0; j < batch.length; j++) {
+                const res = settled[j];
+                if (res.status === 'fulfilled' && res.value) {
+                    const q = res.value;
+                    results[tickers[i + j]] = {
+                        currentPrice: q.regularMarketPrice || 0,
+                        regularMarketChangePercent: q.regularMarketChangePercent || 0,
+                        regularMarketChange: q.regularMarketChange || 0,
+                        marketCap: q.marketCap || 0,
+                        peRatio: q.trailingPE || 0,
+                        sector: q.sector || 'Unknown',
+                    };
+                }
+            }
+        }
+        return results;
     }
 }
 

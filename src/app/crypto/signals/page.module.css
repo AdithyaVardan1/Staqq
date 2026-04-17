@@ -1,0 +1,461 @@
+.page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+}
+
+/* Hero */
+.hero {
+    text-align: center;
+    padding: 2.5rem 0 2rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+.accent { color: #a78bfa; }
+
+.subtitle {
+    font-size: 1rem;
+    color: #94a3b8;
+    max-width: 500px;
+    margin: 0 auto 1.25rem;
+    line-height: 1.6;
+}
+
+.heroBadges {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.heroBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+}
+
+.lockedBadge {
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #fca5a5;
+    background: rgba(239, 68, 68, 0.08);
+}
+
+/* Pro banner */
+.proBanner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.proBannerLeft {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.88rem;
+    color: #c4b5fd;
+}
+
+.proBannerLeft strong { color: #fff; }
+.proBannerLeft span { color: #94a3b8; }
+.proBannerIcon { color: #a78bfa; flex-shrink: 0; }
+
+.proBannerCta {
+    padding: 0.5rem 1.25rem;
+    background: #7c3aed;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.proBannerCta:hover { background: #6d28d9; }
+
+/* Filters */
+.filters {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.filterBtn {
+    padding: 0.4rem 1rem;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 8px;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.filterBtn:hover { border-color: #a78bfa; color: #e2e8f0; }
+
+.filterActive {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: #a78bfa;
+    color: #a78bfa;
+}
+
+.refreshBtn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    padding: 0.4rem;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 8px;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.refreshBtn:hover { color: #a78bfa; border-color: #a78bfa; }
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Grid */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.loadingGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.skeletonCard {
+    height: 200px;
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* Signal Card */
+.signalCard {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    transition: border-color 0.15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.signalCard:hover {
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Locked card */
+.lockedCard {
+    border-color: rgba(239, 68, 68, 0.15);
+}
+
+.lockedOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 20, 0.88);
+    backdrop-filter: blur(4px);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #94a3b8;
+    border-radius: 14px;
+}
+
+.lockedText {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.unlockBtn {
+    margin-top: 0.25rem;
+    padding: 0.45rem 1.1rem;
+    background: #7c3aed;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.unlockBtn:hover { background: #6d28d9; }
+
+.lockedBlur {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* Card internals */
+.cardTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.tokenInfo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.tokenSymbol {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.01em;
+}
+
+.tokenName {
+    font-size: 0.78rem;
+    color: #64748b;
+}
+
+.chainBadge {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 6px;
+    color: #64748b;
+}
+
+.scoreBadge {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.signalTypeBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border: 1px solid;
+    border-radius: 6px;
+    padding: 0.2rem 0.55rem;
+    align-self: flex-start;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Stats */
+.cardStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.statLabel {
+    font-size: 0.68rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.statVal {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.up { color: #22c55e; }
+.down { color: #ef4444; }
+
+/* Top post */
+.topPost {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: 0.6rem 0.75rem;
+    background: #1a1a2e;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.topPost:hover { background: #1e1e2e; }
+
+.topPostTitle {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.topPostIcon {
+    color: #475569;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Footer */
+.cardFooter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 0.25rem;
+    border-top: 1px solid #1e1e2e;
+}
+
+.detectedAt {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    color: #475569;
+    flex: 1;
+}
+
+.dexLink, .rugLink {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.72rem;
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.dexLink:hover { color: #a78bfa; }
+.rugLink:hover { color: #22c55e; }
+
+/* Empty */
+.empty {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #475569;
+}
+
+.emptyIcon {
+    margin-bottom: 1rem;
+    opacity: 0.4;
+}
+
+.empty h3 {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin: 0 0 0.5rem;
+}
+
+.empty p {
+    font-size: 0.88rem;
+    margin: 0;
+}
+
+/* How it works */
+.howSection {
+    border-top: 1px solid #1e1e2e;
+    padding-top: 2.5rem;
+}
+
+.howTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0 0 1.25rem;
+    text-align: center;
+}
+
+.howGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 640px) {
+    .howGrid { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
+    .title { font-size: 1.8rem; }
+    .cardStats { grid-template-columns: repeat(2, 1fr); }
+}
+
+.howCard {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.howIcon { font-size: 1.5rem; }
+
+.howCard strong {
+    font-size: 0.88rem;
+    color: #e2e8f0;
+}
+
+.howCard p {
+    font-size: 0.78rem;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+}

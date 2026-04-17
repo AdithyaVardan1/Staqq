@@ -1,0 +1,228 @@
+.main {
+    padding: 2rem 0 5rem;
+    min-height: 100vh;
+}
+
+.hero {
+    text-align: center;
+    padding: 3rem 0 2.5rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.heroBadge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #CAFF00;
+    background: rgba(202,255,0,0.08);
+    border: 1px solid rgba(202,255,0,0.2);
+    border-radius: 999px;
+    padding: 4px 14px;
+    margin-bottom: 1.25rem;
+}
+
+.heroTitle {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin: 0 0 1rem;
+}
+
+.accent { color: #CAFF00; }
+
+.heroSubtitle {
+    font-size: 1rem;
+    color: #a1a1aa;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    text-decoration: none;
+    transition: all 0.15s;
+    position: relative;
+}
+
+.card:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.14);
+    transform: translateY(-1px);
+}
+
+.cardIcon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.cardBody { flex: 1; min-width: 0; }
+
+.cardTitleRow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+
+.cardTitle {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+}
+
+.newBadge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #f97316;
+    background: rgba(249,115,22,0.12);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 4px;
+    padding: 1px 6px;
+}
+
+.cardDesc {
+    font-size: 0.85rem;
+    color: #a1a1aa;
+    margin: 0 0 0.5rem;
+    line-height: 1.5;
+}
+
+.cardPro {
+    font-size: 0.72rem;
+    color: #52525b;
+    margin: 0;
+}
+
+.cardArrow {
+    color: #52525b;
+    flex-shrink: 0;
+    align-self: center;
+    transition: transform 0.15s, color 0.15s;
+}
+
+.card:hover .cardArrow {
+    transform: translateX(4px);
+    color: #a1a1aa;
+}
+
+.pricingTeaser {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.pricingCard {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+
+.pricingCardPro {
+    border-color: rgba(202,255,0,0.2);
+    background: rgba(202,255,0,0.03);
+    position: relative;
+}
+
+.proTag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #CAFF00;
+    background: rgba(202,255,0,0.1);
+    border: 1px solid rgba(202,255,0,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: 0.75rem;
+}
+
+.pricingTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1rem;
+}
+
+.featureList {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.featureItem {
+    font-size: 0.85rem;
+    color: #a1a1aa;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.checkFree { color: #52525b; font-weight: 700; }
+.checkPro { color: #CAFF00; font-weight: 700; }
+
+.ctaFree, .ctaPro {
+    display: block;
+    text-align: center;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.ctaFree {
+    background: rgba(255,255,255,0.06);
+    color: #e4e4e7;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.ctaFree:hover { background: rgba(255,255,255,0.1); }
+
+.ctaPro {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: #CAFF00;
+    color: #000;
+    border: 1px solid #CAFF00;
+}
+.ctaPro:hover { background: #d4ff26; }
+
+@media (max-width: 768px) {
+    .heroTitle { font-size: 1.75rem; }
+    .grid { grid-template-columns: 1fr; }
+    .pricingTeaser { grid-template-columns: 1fr; }
+}

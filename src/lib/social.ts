@@ -169,7 +169,7 @@ async function fetchRedditPosts(): Promise<SocialPost[]> {
     const posts: SocialPost[] = [];
     const seenIds = new Set<string>();
     const headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': 'Staqq/1.0 (Indian stock market intelligence; contact@staqq.com)',
     };
 
     // Fetch both hot and new for each subreddit to maximize coverage

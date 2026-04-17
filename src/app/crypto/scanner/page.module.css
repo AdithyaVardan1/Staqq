@@ -1,0 +1,590 @@
+.page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+}
+
+/* Hero */
+.hero {
+    text-align: center;
+    padding: 3rem 0 2rem;
+}
+
+.heroIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 20px;
+    color: #a78bfa;
+    margin-bottom: 1.25rem;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0 0 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+.accent {
+    color: #a78bfa;
+}
+
+.subtitle {
+    font-size: 1.05rem;
+    color: #94a3b8;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Input Section */
+.inputSection {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chainSelector {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.chainBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.chainBtn:hover {
+    border-color: #a78bfa;
+    color: #e2e8f0;
+}
+
+.chainActive {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: #a78bfa;
+    color: #a78bfa;
+}
+
+.inputRow {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.input {
+    flex: 1;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    font-family: monospace;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.input:focus {
+    border-color: #a78bfa;
+}
+
+.input::placeholder {
+    color: #475569;
+    font-family: inherit;
+}
+
+.checkBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    background: #7c3aed;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+
+.checkBtn:hover:not(:disabled) {
+    background: #6d28d9;
+}
+
+.checkBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.exampleBtn {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.82rem;
+    cursor: pointer;
+    margin-top: 0.75rem;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.exampleBtn:hover {
+    color: #94a3b8;
+}
+
+/* Error */
+.errorBox {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    color: #fca5a5;
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Results */
+.results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.tokenHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+}
+
+.tokenMeta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.tokenName {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.tokenSymbol {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.tokenFullName {
+    font-size: 0.95rem;
+    color: #94a3b8;
+}
+
+.tokenChain {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 20px;
+    color: #a78bfa;
+}
+
+.tokenAddress {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #475569;
+    font-size: 0.82rem;
+}
+
+.tokenAddress code {
+    font-family: monospace;
+    color: #64748b;
+}
+
+.tokenActions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.shareBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: #1a1a2e;
+    border: 1px solid #2a2a3e;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.shareBtn:hover {
+    border-color: #a78bfa;
+    color: #a78bfa;
+}
+
+.extLink {
+    color: #475569;
+    transition: color 0.15s;
+    display: inline-flex;
+}
+
+.extLink:hover {
+    color: #a78bfa;
+}
+
+/* Result grid */
+.resultGrid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 1.25rem;
+}
+
+@media (max-width: 640px) {
+    .resultGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Score meter */
+.scoreCard {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+}
+
+.scoreMeter {
+    display: flex;
+    justify-content: center;
+}
+
+.scoreCircle {
+    position: relative;
+    width: 140px;
+    height: 140px;
+}
+
+.scoreRing {
+    width: 140px;
+    height: 140px;
+    transform: rotate(-90deg);
+}
+
+.scoreTrack {
+    fill: none;
+    stroke: #1e1e2e;
+    stroke-width: 10;
+}
+
+.scoreFill {
+    fill: none;
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dashoffset: 0;
+    transition: stroke-dasharray 0.8s ease;
+}
+
+.scoreInner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.scoreNum {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.scoreLabel {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+.scoreDesc {
+    font-size: 0.82rem;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* Stats grid */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    align-content: start;
+}
+
+@media (max-width: 480px) {
+    .statsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.statBox {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.statLabel {
+    font-size: 0.72rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.statVal {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.statDanger {
+    color: #ef4444;
+}
+
+/* Flags */
+.flagsSection {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+
+.flagsTitle {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0 0 1rem;
+}
+
+.flagGroup {
+    margin-bottom: 1.25rem;
+}
+
+.flagGroup:last-child {
+    margin-bottom: 0;
+}
+
+.flagGroupLabel {
+    font-size: 0.75rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.flagRow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.35rem;
+    font-size: 0.88rem;
+}
+
+.flag_critical {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.flag_high {
+    background: rgba(249, 115, 22, 0.08);
+    border: 1px solid rgba(249, 115, 22, 0.2);
+}
+
+.flag_medium {
+    background: rgba(234, 179, 8, 0.08);
+    border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.flagSafe {
+    background: rgba(34, 197, 94, 0.05);
+    border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.flagLabel {
+    flex: 1;
+    color: #e2e8f0;
+}
+
+.flagValue {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-family: monospace;
+}
+
+.flagOk {
+    font-size: 0.75rem;
+    color: #22c55e;
+    font-weight: 600;
+}
+
+.iconCritical { color: #ef4444; flex-shrink: 0; }
+.iconHigh { color: #f97316; flex-shrink: 0; }
+.iconMedium { color: #eab308; flex-shrink: 0; }
+.iconSafe { color: #22c55e; flex-shrink: 0; }
+
+/* DEX section */
+.dexSection {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 14px;
+    padding: 1.5rem;
+}
+
+.dexList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.dexRow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: #1a1a2e;
+    border-radius: 8px;
+    font-size: 0.88rem;
+}
+
+.dexName {
+    flex: 1;
+    color: #e2e8f0;
+    font-weight: 500;
+}
+
+.dexLiq {
+    color: #94a3b8;
+    font-family: monospace;
+    font-size: 0.82rem;
+}
+
+/* Disclaimer */
+.disclaimer {
+    font-size: 0.78rem;
+    color: #334155;
+    text-align: center;
+    margin: 0;
+}
+
+/* How it works */
+.howItWorks {
+    margin-top: 3rem;
+}
+
+.howTitle {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin: 0 0 1.25rem;
+    text-align: center;
+}
+
+.checkGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .checkGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .checkGrid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.checkCard {
+    background: #0f0f14;
+    border: 1px solid #1e1e2e;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.checkIcon {
+    font-size: 1.5rem;
+}
+
+.checkTitle {
+    font-size: 0.82rem;
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+.checkDesc {
+    font-size: 0.75rem;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0;
+}

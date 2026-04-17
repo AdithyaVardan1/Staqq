@@ -18,6 +18,7 @@ import styles from './Navbar.module.css';
 const navLinks = [
     { name: 'IPO Hub', href: '/ipo' },
     { name: 'Signals', href: '/signals' },
+    { name: 'Crypto', href: '/crypto' },
     { name: 'Stocks', href: '/stocks/screener' },
     { name: 'Blog', href: '/blog' },
     { name: 'Alerts', href: '/alerts' },
