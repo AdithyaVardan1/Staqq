@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Shield, AlertTriangle, CheckCircle, XCircle, Search, ExternalLink, Copy, Check } from 'lucide-react';
 import type { RugpullResult, SupportedChain } from '@/lib/goplus';
@@ -72,7 +72,7 @@ function FlagRow({ flag }: { flag: RugpullResult['flags'][0] }) {
     );
 }
 
-export default function RugpullChecker() {
+function RugpullChecker() {
     const searchParams = useSearchParams();
     const [address, setAddress] = useState(searchParams.get('address') || '');
     const [chain, setChain] = useState<SupportedChain>((searchParams.get('chain') as SupportedChain) || 'eth');
@@ -350,5 +350,13 @@ export default function RugpullChecker() {
                 </section>
             )}
         </main>
+    );
+}
+
+export default function ScannerPage() {
+    return (
+        <Suspense fallback={<div style={{ padding: '4rem', textAlign: 'center', color: '#71717a' }}>Loading scanner...</div>}>
+            <RugpullChecker />
+        </Suspense>
     );
 }
