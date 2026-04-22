@@ -1,0 +1,53 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.container.sm {
+    gap: 0.35rem;
+}
+
+.barWrapper {
+    width: 100%;
+}
+
+.barBackground {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.sm .barBackground {
+    height: 6px;
+}
+
+.md .barBackground {
+    height: 8px;
+}
+
+.lg .barBackground {
+    height: 12px;
+}
+
+.barFill {
+    height: 100%;
+    background: #b6ff00;
+    border-radius: 100px;
+    transition: width 0.5s ease;
+    min-width: 0;
+}
+
+.label {
+    font-size: 0.8rem;
+    color: #9a9a9a;
+}
+
+.sm .label {
+    font-size: 0.75rem;
+}
+
+.lg .label {
+    font-size: 0.9rem;
+}

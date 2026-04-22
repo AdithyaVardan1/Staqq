@@ -1,0 +1,30 @@
+.card {
+    display: block;
+    border: 1px solid #1a1a1a;
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    background: #000000;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.card:hover {
+    border-color: #333;
+    transform: translateX(4px);
+    background: #0A0A0A;
+    box-shadow: 0 4px 20px rgba(182, 255, 0, 0.05);
+}
+
+.title {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+    color: #fff;
+    font-weight: 700;
+}
+
+.description {
+    color: #9a9a9a;
+    font-size: 0.95rem;
+    margin: 0;
+}

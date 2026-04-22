@@ -1,12 +1,19 @@
 import type { NextConfig } from "next";
 import withPWAInit from "@ducanh2912/next-pwa";
+import createMDX from "@next/mdx";
 
 const withPWA = withPWAInit({
   dest: "public",
   disable: process.env.NODE_ENV === "development",
 });
 
+const withMDX = createMDX({
+  // remark-gfm not compatible with Turbopack
+  // Using react-markdown for table rendering instead
+});
+
 const nextConfig: NextConfig = {
+  pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   serverExternalPackages: ['smartapi-javascript', 'yahoo-finance2'],
   turbopack: {
     resolveAlias: {
@@ -33,7 +40,6 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: '/learn/:path*', destination: '/', permanent: true },
       { source: '/tools/:path*', destination: '/', permanent: true },
       { source: '/admin/:path*', destination: '/', permanent: true },
       { source: '/pulse', destination: '/signals', permanent: true },
@@ -41,4 +47,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPWA(nextConfig);
+export default withPWA(withMDX(nextConfig));

@@ -20,6 +20,7 @@ const navLinks = [
     { name: 'Signals', href: '/signals' },
     { name: 'Crypto', href: '/crypto' },
     { name: 'Stocks', href: '/stocks/screener' },
+    { name: 'Learn', href: '/learn' },
     { name: 'Blog', href: '/blog' },
     { name: 'Alerts', href: '/alerts' },
 ];
