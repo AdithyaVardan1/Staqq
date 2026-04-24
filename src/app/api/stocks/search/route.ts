@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
                     const baseSymbol = r.symbol.split('.')[0];
                     const exchange = r.symbol.endsWith('.NS') ? 'NSE' : 'BSE';
 
-                    const token = await angelOne.findToken(baseSymbol, exchange);
+                    const token = await angelOne.findToken(baseSymbol);
                     if (token) {
                         return {
                             symbol: baseSymbol,

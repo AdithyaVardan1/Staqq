@@ -1,87 +1,137 @@
 import { NextResponse } from 'next/server';
 import { angelOne } from '@/lib/angelone';
-import { stockCache } from '@/lib/stock-cache';
+import { redis } from '@/lib/redis';
 import { getTrendingTickers } from '@/lib/social';
 
 export const dynamic = 'force-dynamic';
 
-async function fetchBatchYFinanceData(tickers: string[]): Promise<Record<string, any>> {
-    if (tickers.length === 0) return {};
+// ── Fundamentals cache (P/E, market cap, sector) ─────────────────────
+// These don't change real-time — cache 24 hours in Redis.
+const FUNDAMENTALS_TTL = 86400; // 24h
+const PRICE_TTL = 300;          // 5 minutes for real-time prices
+
+async function getFundamentals(ticker: string): Promise<{
+    marketCap: number; peRatio: number; sector: string; return1Y: number;
+} | null> {
+    const key = `screener:fundamentals:${ticker}`;
+    const cached = await redis.get(key);
+    if (cached) {
+        try { return JSON.parse(cached); } catch { /* fall through */ }
+    }
+
     try {
         const yahooFinance: any = (await import('yahoo-finance2')).default;
-        const symbols = tickers.map(t => t.endsWith('.NS') ? t : `${t}.NS`);
-        const results: Record<string, any> = {};
-
-        // Fetch quotes in parallel (batches of 10 to avoid rate limits)
-        const batchSize = 10;
-        for (let i = 0; i < symbols.length; i += batchSize) {
-            const batch = symbols.slice(i, i + batchSize);
-            const quoteResults = await Promise.allSettled(
-                batch.map((sym: string) => yahooFinance.quote(sym))
-            );
-
-            for (let j = 0; j < batch.length; j++) {
-                const res = quoteResults[j];
-                const baseTicker = tickers[i + j];
-                if (res.status === 'fulfilled' && res.value) {
-                    const q = res.value;
-                    results[baseTicker] = {
-                        currentPrice: q.regularMarketPrice || 0,
-                        regularMarketChangePercent: q.regularMarketChangePercent || 0,
-                        regularMarketChange: q.regularMarketChange || 0,
-                        marketCap: q.marketCap || 0,
-                        peRatio: q.trailingPE || 0,
-                        sector: q.sector || 'Unknown',
-                    };
-                }
-            }
-        }
-
-        return results;
-    } catch (error) {
-        console.error(`[Screener] Batch fetch failed:`, error);
-        return {};
+        const q = await yahooFinance.quote(`${ticker}.NS`);
+        if (!q) return null;
+        const data = {
+            marketCap: q.marketCap || 0,
+            peRatio: q.trailingPE || 0,
+            sector: q.sector || 'Unknown',
+            return1Y: q.fiftyTwoWeekChangePercent ? q.fiftyTwoWeekChangePercent * 100 : 0,
+        };
+        await redis.set(key, JSON.stringify(data), FUNDAMENTALS_TTL);
+        return data;
+    } catch {
+        return null;
     }
 }
+
+// ── Angel One real-time price cache ──────────────────────────────────
+// Cached per-ticker in Redis for PRICE_TTL seconds.
+
+async function getPriceCached(ticker: string): Promise<{
+    price: number; change: number; changeAmount: number;
+} | null> {
+    const key = `screener:price:${ticker}`;
+    const cached = await redis.get(key);
+    if (cached) {
+        try { return JSON.parse(cached); } catch { /* fall through */ }
+    }
+    return null; // caller will batch-fetch misses
+}
+
+async function storePriceCache(ticker: string, data: { price: number; change: number; changeAmount: number }) {
+    await redis.set(`screener:price:${ticker}`, JSON.stringify(data), PRICE_TTL);
+}
+
+// ── Batch fetch prices from Angel One ────────────────────────────────
+// Resolves instrument tokens, calls marketData FULL in batches of 50.
+
+async function fetchAngelOnePrices(
+    tickers: string[],
+    tokensMap: Map<string, any>
+): Promise<Record<string, { price: number; change: number; changeAmount: number }>> {
+    if (tickers.length === 0) return {};
+
+    const nseTokens: string[] = [];
+    const tokenToTicker: Record<string, string> = {};
+
+    for (const ticker of tickers) {
+        const instrument = tokensMap.get(`NSE:${ticker}-EQ`);
+        if (instrument) {
+            nseTokens.push(String(instrument.token));
+            tokenToTicker[String(instrument.token)] = ticker;
+        }
+    }
+
+    if (nseTokens.length === 0) return {};
+
+    const quotes = await angelOne.batchMarketData(nseTokens, tokenToTicker);
+    const results: Record<string, { price: number; change: number; changeAmount: number }> = {};
+
+    for (const [ticker, q] of Object.entries(quotes)) {
+        if (q.ltp > 0) {
+            results[ticker] = {
+                price: q.ltp,
+                change: q.percentChange,
+                changeAmount: q.netChange,
+            };
+        }
+    }
+
+    return results;
+}
+
+// ── Route handler ─────────────────────────────────────────────────────
 
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
         const offset = parseInt(searchParams.get('offset') || '0');
         const limit = parseInt(searchParams.get('limit') || '10');
-        const sortBy = searchParams.get('sortBy');
+        const sortBy = searchParams.get('sortBy') || 'marketCap';
 
-        // Filters
         const priceMin = parseFloat(searchParams.get('priceMin') || '0');
         const priceMax = parseFloat(searchParams.get('priceMax') || '1000000');
         const sector = searchParams.get('sector');
         const peMax = parseFloat(searchParams.get('peMax') || '1000');
 
-        console.log(`[Screener API] Fetching offset=${offset} limit=${limit} sort=${sortBy}`);
-
+        // Load instrument master (cached in /tmp + memory, 24h TTL)
         const tokensMap = await angelOne.getInstrumentTokens();
-        if (!tokensMap) throw new Error('Failed to load instrument tokens');
+        if (!tokensMap || tokensMap.size === 0) {
+            return NextResponse.json({ error: 'Instrument list unavailable' }, { status: 503 });
+        }
 
-        // 1. Get filtered NSE stocks universe (all eligible stocks)
-        const universe: any[] = [];
+        // Build NSE equity universe
+        const universe: { ticker: string; name: string }[] = [];
         for (const [, instrument] of tokensMap.entries()) {
-            if (instrument.exch_seg === 'NSE' && instrument.symbol.endsWith('-EQ')) {
-                const cleanSymbol = instrument.symbol.replace('-EQ', '');
-                if (/^\d{3}NSETEST$/i.test(cleanSymbol)) continue;
-                if (cleanSymbol.toUpperCase().includes('TEST') || (instrument.name && instrument.name.toUpperCase().includes('TEST'))) continue;
+            if (
+                instrument.exch_seg === 'NSE' &&
+                instrument.symbol.endsWith('-EQ') &&
+                !/TEST/i.test(instrument.symbol) &&
+                !/TEST/i.test(instrument.name || '')
+            ) {
                 universe.push({
-                    ticker: cleanSymbol,
-                    symbol: `${cleanSymbol}.NS`,
-                    name: instrument.name || cleanSymbol
+                    ticker: instrument.symbol.replace('-EQ', ''),
+                    name: instrument.name || instrument.symbol.replace('-EQ', ''),
                 });
             }
         }
 
-        // Sorting Logic
+        // Sort universe
         if (sortBy === 'trending') {
             const trendingTickers = await getTrendingTickers();
             const trendingSet = new Set(trendingTickers);
-
             universe.sort((a, b) => {
                 const aT = trendingSet.has(a.ticker);
                 const bT = trendingSet.has(b.ticker);
@@ -93,88 +143,91 @@ export async function GET(request: Request) {
             universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
         }
 
-        // 2. Depth Search Logic
+        // Depth-search: scan up to MAX_SCAN stocks starting at offset
         const MAX_SCAN = 500;
-        let currentIdx = offset;
         const matchedStocks: any[] = [];
-        let finalNextOffset = offset;
+        let currentIdx = offset;
 
-        while (currentIdx < universe.length && (currentIdx - offset) < MAX_SCAN) {
+        while (currentIdx < universe.length && currentIdx - offset < MAX_SCAN) {
             const chunkSize = 50;
-            const batch = universe.slice(currentIdx, currentIdx + chunkSize);
-            if (batch.length === 0) break;
+            const chunk = universe.slice(currentIdx, currentIdx + chunkSize);
+            if (chunk.length === 0) break;
 
-            const tickersToFetch: string[] = [];
-            const localEnriched: any[] = [];
+            // 1. Check per-ticker price cache
+            const priceMisses: string[] = [];
+            const priceHits: Record<string, { price: number; change: number; changeAmount: number }> = {};
 
-            // Check cache
-            for (const stock of batch) {
-                const cached = await stockCache.get(stock.ticker);
-                if (cached) {
-                    localEnriched.push({ ...stock, ...cached });
-                } else {
-                    tickersToFetch.push(stock.ticker);
+            for (const stock of chunk) {
+                const hit = await getPriceCached(stock.ticker);
+                if (hit) priceHits[stock.ticker] = hit;
+                else priceMisses.push(stock.ticker);
+            }
+
+            // 2. Batch-fetch price misses from Angel One
+            if (priceMisses.length > 0) {
+                const fresh = await fetchAngelOnePrices(priceMisses, tokensMap);
+                for (const [ticker, data] of Object.entries(fresh)) {
+                    priceHits[ticker] = data;
+                    await storePriceCache(ticker, data);
                 }
             }
 
-            // Batch fetch missing via yahoo-finance2
-            if (tickersToFetch.length > 0) {
-                const batchResults = await fetchBatchYFinanceData(tickersToFetch);
-                for (const tSymbol of tickersToFetch) {
-                    const bData = batchResults[tSymbol];
-                    const enriched = {
-                        price: bData?.currentPrice || 0,
-                        change: bData?.regularMarketChangePercent || 0,
-                        changeAmount: bData?.regularMarketChange || 0,
-                        marketCap: bData?.marketCap || 0,
-                        peRatio: bData?.peRatio || 0,
-                        sector: bData?.sector || 'Unknown',
-                        return1Y: bData?.return1Y || 0,
-                        sparklineData: []
-                    };
-                    await stockCache.set(tSymbol, enriched);
-                }
+            // 3. Fetch fundamentals for each stock (24h cache, parallel)
+            const fundamentalsArr = await Promise.allSettled(
+                chunk.map(s => getFundamentals(s.ticker))
+            );
 
-                // Rebuild localEnriched from batch
-                for (const stock of batch) {
-                    if (localEnriched.find(s => s.ticker === stock.ticker)) continue;
-                    const cached = await stockCache.get(stock.ticker);
-                    localEnriched.push({ ...stock, ...(cached || {}) });
-                }
-            }
+            // 4. Build enriched stocks and apply filters
+            for (let j = 0; j < chunk.length; j++) {
+                const stock = chunk[j];
+                const priceData = priceHits[stock.ticker];
+                const fundamentalsResult = fundamentalsArr[j];
+                const fundamentals = fundamentalsResult.status === 'fulfilled' ? fundamentalsResult.value : null;
 
-            // Filter the enriched chunk
-            const filteredChunk = localEnriched.filter(s => {
-                const matchesPrice = s.price >= priceMin && s.price <= priceMax;
-                const matchesPE = peMax >= 1000 || (s.peRatio > 0 && s.peRatio <= peMax);
-                const matchesSector = !sector || sector === 'all' || s.sector === sector;
-                return matchesPrice && matchesPE && matchesSector;
-            });
+                if (!priceData || priceData.price <= 0) continue;
 
-            for (const s of filteredChunk) {
+                const price = priceData.price;
+                const marketCap = fundamentals?.marketCap || 0;
+                const peRatio = fundamentals?.peRatio || 0;
+                const stockSector = fundamentals?.sector || 'Unknown';
+                const return1Y = fundamentals?.return1Y || 0;
+
+                // Apply filters
+                if (price < priceMin || price > priceMax) continue;
+                if (peMax < 1000 && (peRatio <= 0 || peRatio > peMax)) continue;
+                if (sector && sector !== 'all' && stockSector !== sector) continue;
+
                 if (matchedStocks.length < limit) {
-                    matchedStocks.push(s);
+                    matchedStocks.push({
+                        ticker: stock.ticker,
+                        name: stock.name,
+                        price,
+                        change: priceData.change,
+                        changeAmount: priceData.changeAmount,
+                        marketCap,
+                        peRatio,
+                        sector: stockSector,
+                        return1Y,
+                        sparklineData: [],
+                    });
                 }
             }
 
-            currentIdx += batch.length;
-            finalNextOffset = currentIdx;
-
+            currentIdx += chunk.length;
             if (matchedStocks.length >= limit) break;
-            if (matchedStocks.length > 0 && (currentIdx - offset) >= 200) break;
+            // If we have some results and scanned 200+, stop early to keep response fast
+            if (matchedStocks.length > 0 && currentIdx - offset >= 200) break;
         }
-
-        const hasMore = finalNextOffset < universe.length;
 
         return NextResponse.json({
             stocks: matchedStocks,
-            nextOffset: finalNextOffset,
-            hasMore,
-            total: universe.length
+            nextOffset: currentIdx,
+            hasMore: currentIdx < universe.length,
+            total: universe.length,
         });
 
-    } catch (error: any) {
-        console.error('[Screener API] Error:', error);
-        return NextResponse.json({ error: 'Failed' }, { status: 500 });
+    } catch (err: any) {
+        console.error('[Screener] Error:', err);
+        return NextResponse.json({ error: 'Screener unavailable' }, { status: 500 });
     }
 }

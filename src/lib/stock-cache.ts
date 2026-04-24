@@ -2,7 +2,9 @@ import { redis } from './redis';
 import fs from 'fs';
 import path from 'path';
 
-const CACHE_FILE = path.join(process.cwd(), 'data', 'stock_cache.json');
+// /tmp is writable on Vercel; process.cwd() is read-only there
+const CACHE_DIR = process.env.VERCEL ? '/tmp' : path.join(process.cwd(), 'data');
+const CACHE_FILE = path.join(CACHE_DIR, 'stock_cache.json');
 
 class StockCache {
     private TTL = 600; // 10 minutes (Redis only)
