@@ -1,5 +1,6 @@
 .main {
-    padding: 2rem 0 4rem;
+    padding-top: 96px;
+    padding-bottom: 80px;
     min-height: 100vh;
 }
 
@@ -19,19 +20,35 @@
     margin-bottom: 0.5rem;
 }
 
-.titleIcon { color: #CAFF00; }
+.eyebrow {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #CAFF00;
+    background: rgba(202, 255, 0, 0.08);
+    border: 1px solid rgba(202, 255, 0, 0.2);
+    border-radius: 999px;
+    padding: 3px 10px;
+    margin-bottom: 8px;
+}
 
 .title {
-    font-size: 1.75rem;
-    font-weight: 700;
+    font-size: 2rem;
+    font-weight: 800;
     color: #fff;
-    margin: 0;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
 }
+
+.accent { color: #CAFF00; }
 
 .subtitle {
     color: #a1a1aa;
     font-size: 0.9rem;
     margin: 0;
+    max-width: 520px;
 }
 
 .headerRight {

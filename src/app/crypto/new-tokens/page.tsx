@@ -7,6 +7,7 @@ import {
     ExternalLink, RefreshCw, TrendingUp, TrendingDown,
     Clock, Zap, Search
 } from 'lucide-react';
+import { CryptoNav } from '@/components/crypto/CryptoNav';
 import styles from './page.module.css';
 
 interface TokenFlag {
@@ -213,12 +214,14 @@ export default function NewTokensPage() {
     return (
         <main className={styles.main}>
             <div className="container">
+                <CryptoNav />
+
                 <div className={styles.header}>
                     <div className={styles.headerLeft}>
-                        <div className={styles.titleRow}>
-                            <Rocket size={24} className={styles.titleIcon} />
-                            <h1 className={styles.title}>New Token Launches</h1>
-                        </div>
+                        <div className={styles.eyebrow}>NEW LAUNCHES</div>
+                        <h1 className={styles.title}>
+                            New Token <span className={styles.accent}>Launches</span>
+                        </h1>
                         <p className={styles.subtitle}>
                             Latest token launches, auto-scanned for rugpull risk before you ape in.
                         </p>

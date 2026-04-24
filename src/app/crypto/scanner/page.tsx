@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Shield, AlertTriangle, CheckCircle, XCircle, Search, ExternalLink, Copy, Check } from 'lucide-react';
 import type { RugpullResult, SupportedChain } from '@/lib/goplus';
 import { CHAIN_LABELS } from '@/lib/goplus';
+import { CryptoNav } from '@/components/crypto/CryptoNav';
 import styles from './page.module.css';
 
 const CHAINS: SupportedChain[] = ['eth', 'bsc', 'base', 'solana', 'polygon', 'arbitrum'];
@@ -126,6 +127,7 @@ function RugpullChecker() {
 
     return (
         <main className={styles.page}>
+            <CryptoNav />
             {/* Hero */}
             <section className={styles.hero}>
                 <div className={styles.heroIcon}>

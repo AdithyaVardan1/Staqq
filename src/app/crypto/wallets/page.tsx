@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import type { WalletBuy } from '@/lib/wallet-tracker';
 import { createBrowserClient } from '@supabase/ssr';
+import { CryptoNav } from '@/components/crypto/CryptoNav';
 import styles from './page.module.css';
 
 const supabase = createBrowserClient(
@@ -309,6 +310,7 @@ export default function WalletTrackerPage() {
 
     return (
         <main className={styles.page}>
+            <CryptoNav />
             <section className={styles.hero}>
                 <div className={styles.heroIcon}><Wallet size={32} /></div>
                 <h1 className={styles.title}>Wallet <span className={styles.accent}>Tracker</span></h1>

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import type { CryptoSignal } from '@/lib/crypto-signals';
 import { useSubscription } from '@/hooks/useSubscription';
+import { CryptoNav } from '@/components/crypto/CryptoNav';
 import styles from './page.module.css';
 
 const SIGNAL_TYPE_LABELS: Record<string, string> = {
@@ -190,7 +191,7 @@ function SignalCard({ signal }: { signal: CryptoSignal }) {
                         DexScreener <ArrowUpRight size={11} />
                     </a>
                 )}
-                <Link href={`/rugpull?address=${signal.contractAddress || ''}&chain=${signal.chain}`} className={styles.rugLink}>
+                <Link href={`/crypto/scanner?address=${signal.contractAddress || ''}&chain=${signal.chain}`} className={styles.rugLink}>
                     <Shield size={11} /> Rug Check
                 </Link>
             </div>
@@ -203,8 +204,7 @@ export default function CryptoSignalsPage() {
     const [loading, setLoading] = useState(true);
     const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
     const [filter, setFilter] = useState<'all' | 'combined' | 'social_surge' | 'volume_spike'>('all');
-    const { isPro: _isPro } = useSubscription();
-    const isPro = true; // DEMO: remove this line before production
+    const { isPro } = useSubscription();
 
     const DELAY_HOURS = 6;
 
@@ -243,6 +243,7 @@ export default function CryptoSignalsPage() {
 
     return (
         <main className={styles.page}>
+            <CryptoNav />
             {/* Hero */}
             <section className={styles.hero}>
                 <h1 className={styles.title}>
