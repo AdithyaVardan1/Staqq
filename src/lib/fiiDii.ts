@@ -32,6 +32,47 @@ function parseValue(val: string): number {
     return isNaN(num) ? 0 : num;
 }
 
+function formatNseDate(d: Date): string {
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    return `${dd}-${mm}-${d.getFullYear()}`;
+}
+
+export async function fetchFiiDiiHistory(days = 10): Promise<FiiDiiDaily[]> {
+    try {
+        const to = new Date();
+        const from = new Date();
+        from.setDate(from.getDate() - days);
+
+        const data = await nseGet<NseFiiDiiResponse[]>(
+            `/api/fiidiiTradeReact?from_date=${formatNseDate(from)}&to_date=${formatNseDate(to)}`
+        );
+
+        if (!data || !Array.isArray(data) || data.length === 0) return [];
+
+        // Group by date
+        const byDate: Record<string, { fii?: NseFiiDiiResponse; dii?: NseFiiDiiResponse }> = {};
+        for (const row of data) {
+            const key = row.date || '';
+            if (!key) continue;
+            if (!byDate[key]) byDate[key] = {};
+            if (row.category?.includes('FII') || row.category?.includes('FPI')) byDate[key].fii = row;
+            if (row.category?.includes('DII')) byDate[key].dii = row;
+        }
+
+        return Object.entries(byDate)
+            .map(([date, { fii, dii }]) => {
+                const f = { buy: fii ? parseValue(fii.buyValue) : 0, sell: fii ? parseValue(fii.sellValue) : 0, net: fii ? parseValue(fii.netValue) : 0 };
+                const d = { buy: dii ? parseValue(dii.buyValue) : 0, sell: dii ? parseValue(dii.sellValue) : 0, net: dii ? parseValue(dii.netValue) : 0 };
+                return { date, fii: f, dii: d, totalNet: f.net + d.net };
+            })
+            .sort((a, b) => a.date.localeCompare(b.date))
+            .slice(-days);
+    } catch {
+        return [];
+    }
+}
+
 export async function fetchFiiDiiToday(): Promise<FiiDiiDaily | null> {
     try {
         const data = await nseGet<NseFiiDiiResponse[]>('/api/fiidiiTradeReact');
