@@ -22,13 +22,13 @@ interface NsePitResponse {
         symbol: string;
         company: string;
         personCategory: string;
-        personName: string;
-        noSharesAcq: string;
-        befAcqSharesPerc: string;
-        aftAcqSharesPerc: string;
+        acqName: string;        // person name
+        secAcq: string;         // shares acquired
+        befAcqSharesPer: string;
+        afterAcqSharesPer: string;
         acqMode: string;
-        date: string;
-        intimDate: string;
+        acqfromDt: string;      // transaction date
+        intimDt: string;
     }>;
 }
 
@@ -58,14 +58,14 @@ export async function fetchInsiderTrades(days = 7): Promise<InsiderTrade[]> {
             .map(item => ({
                 symbol: item.symbol || '',
                 company: item.company || '',
-                personName: item.personName || '',
+                personName: item.acqName || '',
                 personCategory: item.personCategory || '',
-                sharesAcquired: parseInt(item.noSharesAcq?.replace(/,/g, '') || '0', 10),
+                sharesAcquired: parseInt(item.secAcq?.replace(/,/g, '') || '0', 10),
                 acquireMode: item.acqMode || '',
-                beforePercent: item.befAcqSharesPerc || '',
-                afterPercent: item.aftAcqSharesPerc || '',
-                transactionDate: item.date || '',
-                intimationDate: item.intimDate || '',
+                beforePercent: item.befAcqSharesPer || '0',
+                afterPercent: item.afterAcqSharesPer || '0',
+                transactionDate: item.acqfromDt || '',
+                intimationDate: item.intimDt || '',
             }))
             .filter(t => t.symbol && t.personName)
             .slice(0, 100); // Limit to latest 100
