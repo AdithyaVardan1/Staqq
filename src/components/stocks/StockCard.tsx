@@ -66,7 +66,7 @@ export const StockCard: React.FC<StockCardProps> = ({
                                         {q}
                                     </span>
                                 ))}
-                                {status === 'connected' && (
+                                {status === 'live' && (
                                     <span className={styles.liveIndicator} title="Live Data Stream">
                                         <Activity size={10} /> LIVE
                                     </span>

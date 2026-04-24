@@ -397,7 +397,7 @@ export default function StockDetailPage({ params }: { params: Promise<{ ticker: 
                                 <div className={styles.tickerRow}>
                                     <Badge variant="neutral" className={styles.tickerBadge}>{data.fullTicker}</Badge>
                                     <span className="text-secondary text-sm font-medium">{companyInfo.sector} • {companyInfo.industry}</span>
-                                    {status === 'connected' && (
+                                    {status === 'live' && (
                                         <span className={styles.liveIndicator}>
                                             <Activity size={12} /> LIVE
                                         </span>

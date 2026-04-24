@@ -9,6 +9,42 @@ export const dynamic = 'force-dynamic';
 // These don't change real-time — cache 24 hours in Redis.
 const FUNDAMENTALS_TTL = 86400; // 24h
 const PRICE_TTL = 300;          // 5 minutes for real-time prices
+const FETCH_LOCK_TTL = 15;      // seconds — lock held while fetching a batch
+
+// ── Redis lock helper ─────────────────────────────────────────────────
+// Prevents multiple concurrent cold-cache fetches for the same batch.
+// Returns true if lock was acquired, false if someone else already holds it.
+async function acquireLock(key: string): Promise<boolean> {
+    const client = redis.getClient();
+    if (!client) return true; // Redis down → allow fetch (no protection, but works)
+    try {
+        const result = await client.set(`lock:${key}`, '1', 'EX', FETCH_LOCK_TTL, 'NX');
+        return result === 'OK';
+    } catch {
+        return true; // fail open
+    }
+}
+
+async function releaseLock(key: string) {
+    await redis.del(`lock:${key}`);
+}
+
+// Wait up to 12 seconds for a lock to release (polls every 300ms)
+async function waitForLock(key: string): Promise<void> {
+    const maxWait = 12000;
+    const poll = 300;
+    let waited = 0;
+    while (waited < maxWait) {
+        const client = redis.getClient();
+        if (!client) return;
+        try {
+            const held = await client.exists(`lock:${key}`);
+            if (!held) return;
+        } catch { return; }
+        await new Promise(r => setTimeout(r, poll));
+        waited += poll;
+    }
+}
 
 async function getFundamentals(ticker: string): Promise<{
     marketCap: number; peRatio: number; sector: string; return1Y: number;
@@ -55,7 +91,9 @@ async function storePriceCache(ticker: string, data: { price: number; change: nu
 }
 
 // ── Batch fetch prices from Angel One ────────────────────────────────
-// Resolves instrument tokens, calls marketData FULL in batches of 50.
+// Uses a Redis lock so concurrent requests don't all slam Angel One.
+// The first request acquires the lock, fetches, stores in cache.
+// Concurrent requests wait for the lock, then read from cache.
 
 async function fetchAngelOnePrices(
     tickers: string[],
@@ -63,33 +101,48 @@ async function fetchAngelOnePrices(
 ): Promise<Record<string, { price: number; change: number; changeAmount: number }>> {
     if (tickers.length === 0) return {};
 
-    const nseTokens: string[] = [];
-    const tokenToTicker: Record<string, string> = {};
+    // Build a stable lock key from the sorted ticker list
+    const lockKey = `screener:batch:${tickers.slice().sort().join(',')}`;
+    const acquired = await acquireLock(lockKey);
 
-    for (const ticker of tickers) {
-        const instrument = tokensMap.get(`NSE:${ticker}-EQ`);
-        if (instrument) {
-            nseTokens.push(String(instrument.token));
-            tokenToTicker[String(instrument.token)] = ticker;
+    if (!acquired) {
+        // Another request is already fetching this batch — wait, then read from cache
+        await waitForLock(lockKey);
+        const fromCache: Record<string, { price: number; change: number; changeAmount: number }> = {};
+        for (const ticker of tickers) {
+            const hit = await getPriceCached(ticker);
+            if (hit) fromCache[ticker] = hit;
         }
+        return fromCache;
     }
 
-    if (nseTokens.length === 0) return {};
+    try {
+        const nseTokens: string[] = [];
+        const tokenToTicker: Record<string, string> = {};
 
-    const quotes = await angelOne.batchMarketData(nseTokens, tokenToTicker);
-    const results: Record<string, { price: number; change: number; changeAmount: number }> = {};
-
-    for (const [ticker, q] of Object.entries(quotes)) {
-        if (q.ltp > 0) {
-            results[ticker] = {
-                price: q.ltp,
-                change: q.percentChange,
-                changeAmount: q.netChange,
-            };
+        for (const ticker of tickers) {
+            const instrument = tokensMap.get(`NSE:${ticker}-EQ`);
+            if (instrument) {
+                nseTokens.push(String(instrument.token));
+                tokenToTicker[String(instrument.token)] = ticker;
+            }
         }
-    }
 
-    return results;
+        if (nseTokens.length === 0) return {};
+
+        const quotes = await angelOne.batchMarketData(nseTokens, tokenToTicker);
+        const results: Record<string, { price: number; change: number; changeAmount: number }> = {};
+
+        for (const [ticker, q] of Object.entries(quotes)) {
+            if (q.ltp > 0) {
+                results[ticker] = { price: q.ltp, change: q.percentChange, changeAmount: q.netChange };
+            }
+        }
+
+        return results;
+    } finally {
+        await releaseLock(lockKey);
+    }
 }
 
 // ── Route handler ─────────────────────────────────────────────────────
