@@ -1,47 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { angelOne } from '@/lib/angelone';
 import { redis } from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
 
+// Angel One limits: 3 req/sec, 180/min, 5,000/hour for getCandleData
+// These TTLs ensure we never hit rate limits even with many concurrent users.
+// Each unique ticker+range is one Angel One call per TTL window.
 const CACHE_TTL: Record<string, number> = {
-    '1D': 300,
-    '1W': 900,
-    '1M': 3600,
-    '3M': 3600,
-    '6M': 86400,
-    '1Y': 86400,
-    '5Y': 86400,
-    'ALL': 86400,
+    '1D':  5 * 60,          // 5 min  — intraday refreshes matter
+    '1W':  15 * 60,         // 15 min
+    '1M':  60 * 60,         // 1 hour
+    '3M':  60 * 60,
+    '6M':  6 * 60 * 60,     // 6 hours
+    '1Y':  24 * 60 * 60,    // 1 day
+    '5Y':  24 * 60 * 60,
+    'ALL': 24 * 60 * 60,
 };
 
-function getPeriod1(range: string): Date {
-    const d = new Date();
-    switch (range) {
-        case '1D':  d.setDate(d.getDate() - 1);   break;
-        case '1W':  d.setDate(d.getDate() - 7);   break;
-        case '1M':  d.setMonth(d.getMonth() - 1); break;
-        case '3M':  d.setMonth(d.getMonth() - 3); break;
-        case '6M':  d.setMonth(d.getMonth() - 6); break;
-        case '1Y':  d.setFullYear(d.getFullYear() - 1); break;
-        case '5Y':  d.setFullYear(d.getFullYear() - 5); break;
-        case 'ALL': d.setFullYear(d.getFullYear() - 20); break;
-        default:    d.setMonth(d.getMonth() - 1);
-    }
-    return d;
-}
+// Angel One interval + date range per chart range
+const RANGE_CONFIG: Record<string, { interval: string; daysBack: number }> = {
+    '1D':  { interval: 'ONE_MINUTE',    daysBack: 1   },
+    '1W':  { interval: 'FIVE_MINUTE',   daysBack: 7   },
+    '1M':  { interval: 'FIFTEEN_MINUTE',daysBack: 30  },
+    '3M':  { interval: 'ONE_DAY',       daysBack: 90  },
+    '6M':  { interval: 'ONE_DAY',       daysBack: 180 },
+    '1Y':  { interval: 'ONE_DAY',       daysBack: 365 },
+    '5Y':  { interval: 'ONE_DAY',       daysBack: 1825},
+    'ALL': { interval: 'ONE_DAY',       daysBack: 3650},
+};
 
-function getInterval(range: string): string {
-    switch (range) {
-        case '1D': return '5m';
-        case '1W': return '30m';
-        case '1M': return '1d';
-        case '3M': return '1d';
-        case '6M': return '1d';
-        case '1Y': return '1wk';
-        case '5Y': return '1mo';
-        case 'ALL': return '3mo';
-        default: return '1d';
-    }
+function formatAngelDate(d: Date): string {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function formatLabel(d: Date, range: string): string {
@@ -49,6 +40,10 @@ function formatLabel(d: Date, range: string): string {
     if (range === '1W') return d.toLocaleDateString('en-IN', { weekday: 'short', hour: 'numeric' });
     return d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
 }
+
+// In-process lock: if two requests for the same ticker+range arrive concurrently,
+// only one hits Angel One; the other waits and reads from cache.
+const inflightRequests = new Map<string, Promise<any>>();
 
 export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
@@ -58,36 +53,72 @@ export async function GET(req: NextRequest) {
     if (!ticker) return NextResponse.json({ error: 'Ticker required' }, { status: 400 });
 
     const cacheKey = `history:${ticker}:${range}`;
+
+    // L1/L2 cache check — most requests end here
     const cached = await redis.get(cacheKey);
     if (cached) {
         try { return NextResponse.json(JSON.parse(cached)); } catch { /* fall through */ }
     }
 
-    try {
-        const YahooFinance: any = (await import('yahoo-finance2')).default;
-        const yf = new YahooFinance();
-
-        const result = await yf.chart(`${ticker}.NS`, {
-            period1: getPeriod1(range),
-            interval: getInterval(range),
-        });
-
-        const quotes: any[] = result?.quotes || [];
-        const history = quotes
-            .filter((q: any) => q.close != null)
-            .map((q: any) => ({
-                date: formatLabel(new Date(q.date), range),
-                value: parseFloat(q.close.toFixed(2)),
-            }));
-
-        if (history.length === 0) {
-            return NextResponse.json({ error: 'No data' }, { status: 404 });
+    // Deduplicate concurrent requests for the same ticker+range
+    if (inflightRequests.has(cacheKey)) {
+        try {
+            const result = await inflightRequests.get(cacheKey);
+            return NextResponse.json(result);
+        } catch {
+            return NextResponse.json({ error: 'History unavailable' }, { status: 500 });
         }
+    }
+
+    const fetchPromise = (async () => {
+        const config = RANGE_CONFIG[range] || RANGE_CONFIG['1M'];
+        const now = new Date();
+        const fromDate = new Date();
+        fromDate.setDate(now.getDate() - config.daysBack);
+
+        // For 1D, start from market open
+        if (range === '1D') {
+            fromDate.setHours(9, 15, 0, 0);
+            // If before market open today, go back to yesterday
+            if (now.getHours() < 9) fromDate.setDate(fromDate.getDate() - 1);
+        }
+
+        const instrument = await angelOne.findInstrument(ticker);
+        if (!instrument) throw new Error(`Instrument not found: ${ticker}`);
+
+        const response = await angelOne.getCandleData(
+            instrument.exchange,
+            instrument.token,
+            config.interval,
+            formatAngelDate(fromDate),
+            formatAngelDate(now),
+        );
+
+        if (!response?.status || !response.data?.length) {
+            throw new Error('No candle data returned');
+        }
+
+        // Angel One candle format: [timestamp, open, high, low, close, volume]
+        const history = response.data.map((candle: any[]) => ({
+            date: formatLabel(new Date(candle[0]), range),
+            value: candle[4], // close price
+            open: candle[1],
+            high: candle[2],
+            low: candle[3],
+            volume: candle[5],
+        }));
 
         const payload = { ticker, range, history };
         await redis.set(cacheKey, JSON.stringify(payload), CACHE_TTL[range] ?? 3600);
-        return NextResponse.json(payload);
+        return payload;
+    })();
 
+    inflightRequests.set(cacheKey, fetchPromise);
+    fetchPromise.finally(() => inflightRequests.delete(cacheKey));
+
+    try {
+        const result = await fetchPromise;
+        return NextResponse.json(result);
     } catch (error: any) {
         console.error('[History]', ticker, range, error.message);
         return NextResponse.json({ error: 'History unavailable' }, { status: 500 });
