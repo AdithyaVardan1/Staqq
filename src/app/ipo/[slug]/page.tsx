@@ -10,9 +10,10 @@ import { estimateAllotmentProbability, getGmpSentiment } from '@/lib/ipoAnalytic
 import { GmpSentimentBadge } from '@/components/ipo/GmpSentimentBadge';
 import styles from './page.module.css';
 
+import { StructuredData, BreadcrumbStructuredData } from '@/components/StructuredData';
+
 export const revalidate = 300;
 
-// Generate static params for known slugs
 export async function generateStaticParams() {
     const ipos = await getAllIPOs();
     return ipos.map(ipo => ({ slug: ipo.slug }));
@@ -24,9 +25,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     if (!ipo) return { title: 'IPO Not Found | Staqq' };
 
     const sentiment = getGmpSentiment(ipo.gmpPercent);
-    const gmpText = ipo.gmpPercent !== null ? `GMP ${ipo.gmpPercent >= 0 ? '+' : ''}${ipo.gmpPercent}%` : '';
-    const title = `${ipo.name} IPO ${gmpText} | Staqq`;
-    const description = `${ipo.name} ${ipo.category} — ${gmpText}${ipo.subscription ? `, ${ipo.subscription} subscribed` : ''}${ipo.price ? `, ₹${ipo.price} issue price` : ''}. Live GMP tracking & analysis.`;
+    const gmpText = ipo.gmpPercent !== null ? `GMP ${ipo.gmpPercent >= 0 ? '+' : ''}${ipo.gmpPercent}%` : 'GMP TBA';
+    const title = `${ipo.name} IPO GMP, Allotment & Analysis | Staqq`;
+    const description = `${ipo.name} IPO Details: Expected GMP is ${gmpText}. Subscription status is ${ipo.subscription || 'TBA'}. Check allotment probability and expected listing price on Staqq.`;
 
     const ogParams = new URLSearchParams({
         name: ipo.name,
@@ -42,8 +43,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title,
         description,
-        openGraph: { title, description, type: 'website', images: [`/api/og/ipo?${ogParams.toString()}`] },
-        twitter: { card: 'summary_large_image', title, description, images: [`/api/og/ipo?${ogParams.toString()}`] },
+        alternates: {
+            canonical: `/ipo/${slug}`,
+        },
+        openGraph: { 
+            title, 
+            description, 
+            type: 'website', 
+            url: `https://staqqin.vercel.app/ipo/${slug}`,
+            images: [`/api/og/ipo?${ogParams.toString()}`] 
+        },
+        twitter: { 
+            card: 'summary_large_image', 
+            title, 
+            description, 
+            images: [`/api/og/ipo?${ogParams.toString()}`] 
+        },
     };
 }
 
@@ -62,7 +77,7 @@ export default async function IPODetail({ params }: { params: Promise<{ slug: st
         : ipo.status === 'Upcoming' ? 'neutral'
             : 'success';
 
-    // JSON-LD for IPO
+    // JSON-LD for IPO FinancialProduct
     const ipoJsonLd = {
         '@context': 'https://schema.org',
         '@type': 'FinancialProduct',
@@ -70,17 +85,61 @@ export default async function IPODetail({ params }: { params: Promise<{ slug: st
         description: `${ipo.name} ${ipo.category} IPO${ipo.price ? ` with issue price ₹${ipo.price}` : ''}${ipo.gmpPercent !== null ? `. Current GMP: ${ipo.gmpPercent}%` : ''}.`,
         provider: {
             '@type': 'Organization',
-            name: ipo.name,
+            name: "Staqq",
+            url: "https://staqqin.vercel.app"
         },
         ...(ipo.price && { offers: { '@type': 'Offer', price: ipo.price, priceCurrency: 'INR' } }),
     };
 
+    // FAQ Schema
+    const gmpVal = ipo.gmpPercent !== null ? `${ipo.gmpPercent >= 0 ? '+' : ''}${ipo.gmpPercent}%` : 'TBA';
+    const faqJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        'mainEntity': [
+            {
+                '@type': 'Question',
+                'name': `What is the GMP of ${ipo.name} IPO?`,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': `The latest Grey Market Premium (GMP) for ${ipo.name} is ${gmpVal}. Check Staqq for live daily updates.`
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': `What is the subscription status of ${ipo.name} IPO?`,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': `As of today, the ${ipo.name} IPO has been subscribed ${ipo.subscription || '0x'} times across all categories.`
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': `What is the expected listing price of ${ipo.name} IPO?`,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': `Based on the current GMP of ${gmpVal} and the issue price of ₹${ipo.price || 'TBA'}, the expected listing price is approximately ₹${ipo.estListing || 'TBA'}.`
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': `Should I apply for ${ipo.name} IPO?`,
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': `Applying for ${ipo.name} depends on your risk appetite. Current market sentiment is ${getGmpSentiment(ipo.gmpPercent).label}. Always review the full financials and allotment probability on Staqq before investing.`
+                }
+            }
+        ]
+    };
+
     return (
         <main className={styles.main}>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(ipoJsonLd) }}
-            />
+            <StructuredData schema={[ipoJsonLd, faqJsonLd]} />
+            <BreadcrumbStructuredData items={[
+                { name: 'Home', item: 'https://staqqin.vercel.app' },
+                { name: 'IPO Hub', item: 'https://staqqin.vercel.app/ipo' },
+                { name: ipo.name, item: `https://staqqin.vercel.app/ipo/${slug}` }
+            ]} />
             <div className="container">
                 {/* Breadcrumb & Actions */}
                 <div className={styles.topBar}>

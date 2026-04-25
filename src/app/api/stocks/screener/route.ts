@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { angelOne } from '@/lib/angelone';
 import { redis } from '@/lib/redis';
 import { getTrendingTickers } from '@/lib/social';
+import yahooFinance from 'yahoo-finance2';
 
 export const dynamic = 'force-dynamic';
 
@@ -56,8 +57,8 @@ async function getFundamentals(ticker: string): Promise<{
     }
 
     try {
-        const yahooFinance: any = (await import('yahoo-finance2')).default;
-        const q = await yahooFinance.quote(`${ticker}.NS`);
+        const yf = new yahooFinance();
+        const q = await yf.quote(`${ticker}.NS`);
         if (!q) return null;
         const data = {
             marketCap: q.marketCap || 0,
@@ -145,6 +146,33 @@ async function fetchAngelOnePrices(
     }
 }
 
+// ── Yahoo Finance price fallback ─────────────────────────────────────
+// Used when Angel One returns nothing (market closed / auth failure).
+// Results are cached for PRICE_TTL seconds.
+async function getYahooPriceFallback(ticker: string): Promise<{
+    price: number; change: number; changeAmount: number;
+} | null> {
+    const key = `screener:price:${ticker}`;
+    const cached = await redis.get(key);
+    if (cached) {
+        try { return JSON.parse(cached); } catch { /* fall through */ }
+    }
+    try {
+        const yf = new yahooFinance();
+        const q = await yf.quote(`${ticker}.NS`);
+        if (!q || !q.regularMarketPrice) return null;
+        const price = q.regularMarketPrice;
+        const change = q.regularMarketChangePercent || 0;
+        const changeAmount = q.regularMarketChange || 0;
+        const data = { price, change, changeAmount };
+        await redis.set(key, JSON.stringify(data), PRICE_TTL);
+        return data;
+    } catch (e: any) {
+        console.error(`[Yahoo Fallback] Error for ${ticker}:`, e.message);
+        return null;
+    }
+}
+
 // ── Route handler ─────────────────────────────────────────────────────
 
 export async function GET(request: Request) {
@@ -159,7 +187,7 @@ export async function GET(request: Request) {
         const sector = searchParams.get('sector');
         const peMax = parseFloat(searchParams.get('peMax') || '1000');
 
-        // Load instrument master (cached in /tmp + memory, 24h TTL)
+        // Load instrument master (cached in file + memory, 24h TTL)
         const tokensMap = await angelOne.getInstrumentTokens();
         if (!tokensMap || tokensMap.size === 0) {
             return NextResponse.json({ error: 'Instrument list unavailable' }, { status: 503 });
@@ -196,17 +224,18 @@ export async function GET(request: Request) {
             universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
         }
 
-        // Depth-search: scan up to MAX_SCAN stocks starting at offset
-        const MAX_SCAN = 500;
+        // Depth-search: scan stocks starting at offset
+        // Strategy: try Angel One batch first; fallback to Yahoo per-ticker if AO returns nothing.
+        const MAX_SCAN = 200;
+        const CHUNK_SIZE = 20; // smaller chunks for faster iteration
         const matchedStocks: any[] = [];
         let currentIdx = offset;
 
         while (currentIdx < universe.length && currentIdx - offset < MAX_SCAN) {
-            const chunkSize = 50;
-            const chunk = universe.slice(currentIdx, currentIdx + chunkSize);
+            const chunk = universe.slice(currentIdx, currentIdx + CHUNK_SIZE);
             if (chunk.length === 0) break;
 
-            // 1. Check per-ticker price cache
+            // 1. Check per-ticker price cache first
             const priceMisses: string[] = [];
             const priceHits: Record<string, { price: number; change: number; changeAmount: number }> = {};
 
@@ -223,21 +252,43 @@ export async function GET(request: Request) {
                     priceHits[ticker] = data;
                     await storePriceCache(ticker, data);
                 }
+
+                // 3. Yahoo fallback for anything Angel One missed
+                const angelMisses = priceMisses.filter(t => !priceHits[t]);
+                if (angelMisses.length > 0) {
+                    // Fetch in parallel but cap concurrency at 5 to avoid rate limiting
+                    const CONCURRENCY = 5;
+                    for (let i = 0; i < angelMisses.length; i += CONCURRENCY) {
+                        const batch = angelMisses.slice(i, i + CONCURRENCY);
+                        const results = await Promise.allSettled(
+                            batch.map(t => getYahooPriceFallback(t))
+                        );
+                        results.forEach((r, idx) => {
+                            if (r.status === 'fulfilled' && r.value) {
+                                priceHits[batch[idx]] = r.value;
+                            }
+                        });
+                    }
+                }
             }
 
-            // 3. Fetch fundamentals for each stock (24h cache, parallel)
+            // 4. Fetch fundamentals only for stocks that have a price (from cache)
+            const stocksWithPrice = chunk.filter(s => priceHits[s.ticker]?.price > 0);
+            
+            console.log(`[Screener Chunk] Found ${stocksWithPrice.length} stocks with price out of ${chunk.length}`);
+
             const fundamentalsArr = await Promise.allSettled(
-                chunk.map(s => getFundamentals(s.ticker))
+                stocksWithPrice.map(s => getFundamentals(s.ticker))
             );
 
-            // 4. Build enriched stocks and apply filters
-            for (let j = 0; j < chunk.length; j++) {
-                const stock = chunk[j];
+            // 5. Build enriched stocks and apply filters
+            for (let j = 0; j < stocksWithPrice.length; j++) {
+                const stock = stocksWithPrice[j];
                 const priceData = priceHits[stock.ticker];
+                if (!priceData || priceData.price <= 0) continue;
+
                 const fundamentalsResult = fundamentalsArr[j];
                 const fundamentals = fundamentalsResult.status === 'fulfilled' ? fundamentalsResult.value : null;
-
-                if (!priceData || priceData.price <= 0) continue;
 
                 const price = priceData.price;
                 const marketCap = fundamentals?.marketCap || 0;
@@ -246,8 +297,14 @@ export async function GET(request: Request) {
                 const return1Y = fundamentals?.return1Y || 0;
 
                 // Apply filters
-                if (price < priceMin || price > priceMax) continue;
-                if (peMax < 1000 && (peRatio <= 0 || peRatio > peMax)) continue;
+                if (price < priceMin || price > priceMax) {
+                    // console.log(`Skipping ${stock.ticker} due to price bounds`);
+                    continue;
+                }
+                if (peMax < 1000 && (peRatio <= 0 || peRatio > peMax)) {
+                    // console.log(`Skipping ${stock.ticker} due to peRatio ${peRatio}`);
+                    continue;
+                }
                 if (sector && sector !== 'all' && stockSector !== sector) continue;
 
                 if (matchedStocks.length < limit) {
@@ -268,8 +325,6 @@ export async function GET(request: Request) {
 
             currentIdx += chunk.length;
             if (matchedStocks.length >= limit) break;
-            // If we have some results and scanned 200+, stop early to keep response fast
-            if (matchedStocks.length > 0 && currentIdx - offset >= 200) break;
         }
 
         return NextResponse.json({
@@ -284,3 +339,5 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Screener unavailable' }, { status: 500 });
     }
 }
+
+

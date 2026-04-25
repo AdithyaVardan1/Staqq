@@ -53,19 +53,29 @@ export async function getSubscription(userId: string): Promise<SubscriptionInfo>
     }
 
     // Fetch from Supabase
-    const admin = createAdminClient();
-    const { data, error } = await admin
-        .from('subscriptions')
-        .select(`
-            plan_id,
-            status,
-            current_period_end,
-            cancel_at_period_end,
-            plans:plan_id (features)
-        `)
-        .eq('user_id', userId)
-        .eq('status', 'active')
-        .single();
+    let data = null;
+    let error = null;
+    try {
+        const admin = createAdminClient();
+        const response = await admin
+            .from('subscriptions')
+            .select(`
+                plan_id,
+                status,
+                current_period_end,
+                cancel_at_period_end,
+                plans:plan_id (features)
+            `)
+            .eq('user_id', userId)
+            .eq('status', 'active')
+            .single();
+        data = response.data;
+        error = response.error;
+    } catch (e: any) {
+        // Fallback gracefully if Supabase Admin is unconfigured
+        console.warn('[Subscription] Fallback to Free Tier:', e.message);
+        error = true;
+    }
 
     if (error || !data) {
         // No subscription found — return free tier

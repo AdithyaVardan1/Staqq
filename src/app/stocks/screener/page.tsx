@@ -583,7 +583,7 @@ export default function StockScreener() {
                                     <div className="grid-cols-1 md:grid-cols-2 lg:grid-cols-3" style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
                                         {sortedStocks.map((stock) => (
                                             <StockCard
-                                                key={stock.symbol}
+                                                key={stock.ticker}
                                                 {...stock}
                                                 marketCap={formatMarketCap(stock.marketCap)}
                                             />
