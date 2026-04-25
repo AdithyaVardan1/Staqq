@@ -43,7 +43,6 @@ export default async function SignalsPage() {
 
     const newsPosts = allPosts.filter(p => p.source === 'news');
     const redditPosts = allPosts.filter(p => p.source === 'reddit');
-    const twitterPosts = allPosts.filter(p => p.source === 'twitter');
     const hotPosts = allPosts.filter(p => p.isHot);
 
     const sourceCounts = newsPosts.reduce((acc, p) => {
@@ -103,10 +102,6 @@ export default async function SignalsPage() {
                         <span className={styles.pillNum}>{redditPosts.length}</span>
                         <span className={styles.pillLabel}>Reddit</span>
                     </div>
-                    <div className={styles.pill}>
-                        <span className={styles.pillNum}>{twitterPosts.length}</span>
-                        <span className={styles.pillLabel}>X</span>
-                    </div>
                 </div>
 
                 <div className={styles.badges}>
@@ -115,11 +110,6 @@ export default async function SignalsPage() {
                             {source} <strong>{count}</strong>
                         </span>
                     ))}
-                    {twitterPosts.length > 0 && (
-                        <span className={styles.subredditBadge}>
-                            X / Twitter <strong>{twitterPosts.length}</strong>
-                        </span>
-                    )}
                 </div>
             </section>
 

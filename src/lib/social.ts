@@ -349,14 +349,13 @@ async function loadTwitterPosts(): Promise<SocialPost[]> {
 // ─── Public API ───────────────────────────────────────────────────────
 
 export async function getAllPosts(limit?: number): Promise<SocialPost[]> {
-    const [newsPosts, redditPosts, twitterPosts] = await Promise.all([
+    const [newsPosts, redditPosts] = await Promise.all([
         fetchNewsFeedPosts(),
         fetchRedditPosts(),
-        loadTwitterPosts(),
     ]);
 
-    const all = [...newsPosts, ...redditPosts, ...twitterPosts];
-    console.log(`[Pulse] ${all.length} total posts (${newsPosts.length} news, ${redditPosts.length} Reddit, ${twitterPosts.length} Twitter)`);
+    const all = [...newsPosts, ...redditPosts];
+    console.log(`[Pulse] ${all.length} total posts (${newsPosts.length} news, ${redditPosts.length} Reddit)`);
 
     all.sort((a, b) => b.createdAt - a.createdAt);
     return limit ? all.slice(0, limit) : all;
