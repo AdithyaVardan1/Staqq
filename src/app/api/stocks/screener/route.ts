@@ -247,7 +247,7 @@ export async function GET(request: Request) {
 
                 // Apply filters
                 if (price < priceMin || price > priceMax) continue;
-                if (peMax < 1000 && (peRatio <= 0 || peRatio > peMax)) continue;
+                if (peMax < 100 && (peRatio <= 0 || peRatio > peMax)) continue;
                 if (sector && sector !== 'all' && stockSector !== sector) continue;
 
                 if (matchedStocks.length < limit) {
@@ -272,10 +272,15 @@ export async function GET(request: Request) {
             if (matchedStocks.length > 0 && currentIdx - offset >= 200) break;
         }
 
+        // If we scanned a full batch and got nothing, don't send the client chasing more
+        const hasMore = matchedStocks.length === 0
+            ? false
+            : currentIdx < universe.length;
+
         return NextResponse.json({
             stocks: matchedStocks,
             nextOffset: currentIdx,
-            hasMore: currentIdx < universe.length,
+            hasMore,
             total: universe.length,
         });
 
