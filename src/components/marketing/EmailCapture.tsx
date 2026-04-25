@@ -55,8 +55,9 @@ export function EmailCapture() {
                     onChange={(e) => { setEmail(e.target.value); setStatus('idle'); }}
                     className={styles.input}
                     required
+                    suppressHydrationWarning
                 />
-                <button type="submit" disabled={status === 'loading'} className={styles.button}>
+                <button type="submit" disabled={status === 'loading'} className={styles.button} suppressHydrationWarning>
                     {status === 'loading' ? <Loader2 size={16} className="animate-spin" /> : 'Subscribe'}
                 </button>
             </form>
