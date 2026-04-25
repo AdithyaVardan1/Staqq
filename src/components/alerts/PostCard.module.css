@@ -53,6 +53,10 @@
     background: rgba(202, 255, 0, 0.08);
 }
 
+.reddit {
+    background: rgba(255, 69, 0, 0.1);
+}
+
 .twitter {
     background: rgba(29, 155, 240, 0.12);
     font-weight: 700;

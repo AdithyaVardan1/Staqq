@@ -34,8 +34,8 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         return score.toString();
     };
 
-    const sourceIcon = post.source === 'twitter' ? '𝕏' : '📰';
-    const sourceClass = post.source === 'twitter' ? styles.twitter : styles.news;
+    const sourceIcon = post.source === 'twitter' ? '𝕏' : post.source === 'reddit' ? '🟠' : '📰';
+    const sourceClass = post.source === 'twitter' ? styles.twitter : post.source === 'reddit' ? styles.reddit : styles.news;
 
     return (
         <Link
@@ -52,7 +52,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
                             {sourceIcon}
                         </span>
                         <span className={styles.community}>
-                            {post.community}
+                            {post.source === 'reddit' ? `r/${post.community}` : post.community}
                         </span>
                     </div>
 

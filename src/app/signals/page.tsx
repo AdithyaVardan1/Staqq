@@ -42,6 +42,7 @@ export default async function SignalsPage() {
     } catch {}
 
     const newsPosts = allPosts.filter(p => p.source === 'news');
+    const redditPosts = allPosts.filter(p => p.source === 'reddit');
     const twitterPosts = allPosts.filter(p => p.source === 'twitter');
     const hotPosts = allPosts.filter(p => p.isHot);
 
@@ -92,11 +93,15 @@ export default async function SignalsPage() {
                 <div className={styles.stats}>
                     <div className={styles.pill}>
                         <span className={styles.pillNum}>{allPosts.length}</span>
-                        <span className={styles.pillLabel}>Articles</span>
+                        <span className={styles.pillLabel}>Total</span>
                     </div>
                     <div className={styles.pill}>
                         <span className={styles.pillNum}>{newsPosts.length}</span>
                         <span className={styles.pillLabel}>News</span>
+                    </div>
+                    <div className={styles.pill}>
+                        <span className={styles.pillNum}>{redditPosts.length}</span>
+                        <span className={styles.pillLabel}>Reddit</span>
                     </div>
                     <div className={styles.pill}>
                         <span className={styles.pillNum}>{twitterPosts.length}</span>

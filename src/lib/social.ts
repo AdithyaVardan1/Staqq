@@ -10,7 +10,7 @@ export interface SocialPost {
     url: string;
     score: number;
     comments: number;
-    source: 'news' | 'twitter';
+    source: 'news' | 'twitter' | 'reddit';
     community: string;
     author: string | null;
     createdAt: number;
@@ -180,6 +180,101 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
     return posts;
 }
 
+// ─── Reddit (public JSON, no API key) ────────────────────────────────
+// Reddit's .json endpoint is public and rate-limited (~1 req/sec).
+// Works from most IPs. If a subreddit 403s (private/restricted), it's
+// skipped gracefully via Promise.allSettled.
+
+const SUBREDDITS = [
+    'IndianStockMarket',
+    'IndianStreetBets',
+    'IndiaInvestments',
+    'DalalStreetTalks',
+];
+
+const REDDIT_UA = 'Staqq/1.0 (Indian stock market app; contact@staqq.com)';
+
+async function fetchRedditPosts(): Promise<SocialPost[]> {
+    const posts: SocialPost[] = [];
+    const seenIds = new Set<string>();
+
+    const fetchUrls = SUBREDDITS.flatMap(sub => [
+        { sub, url: `https://www.reddit.com/r/${sub}/hot.json?limit=50` },
+        { sub, url: `https://www.reddit.com/r/${sub}/new.json?limit=50` },
+    ]);
+
+    const results = await Promise.allSettled(
+        fetchUrls.map(async ({ sub, url }) => {
+            const res = await fetch(url, {
+                headers: { 'User-Agent': REDDIT_UA },
+                next: { revalidate: 300 },
+            });
+            if (!res.ok) {
+                console.warn(`[Reddit] r/${sub} returned ${res.status} — skipping`);
+                return { sub, children: [] };
+            }
+            const data = await res.json();
+            return { sub, children: data?.data?.children || [] };
+        })
+    );
+
+    for (const result of results) {
+        if (result.status !== 'fulfilled') continue;
+        const { sub, children } = result.value;
+
+        for (const child of children) {
+            const post = child.data;
+            if (post.stickied) continue;
+
+            const id = `reddit-${post.id}`;
+            if (seenIds.has(id)) continue;
+            seenIds.add(id);
+
+            const title = decodeHtmlEntities(post.title || '');
+            const body = truncateBody(decodeHtmlEntities(post.selftext || ''));
+            const score = post.score || 0;
+            const comments = post.num_comments || 0;
+            const tickers = extractTickers(title.toUpperCase() + ' ' + body.toUpperCase());
+
+            if (score < 5 && tickers.length === 0) continue;
+
+            let image: string | undefined;
+            if (post.post_hint === 'image' && post.url) {
+                image = post.url;
+            } else if (post.preview?.images?.[0]?.source?.url) {
+                image = post.preview.images[0].source.url.replace('&amp;', '&');
+            }
+
+            posts.push({
+                id,
+                title,
+                body,
+                url: post.url?.startsWith('/r/')
+                    ? `https://reddit.com${post.url}`
+                    : post.url || `https://reddit.com/r/${sub}/comments/${post.id}`,
+                score,
+                comments,
+                source: 'reddit',
+                community: sub,
+                author: post.author || null,
+                createdAt: post.created_utc || 0,
+                tickers,
+                isHot: score > 100 || comments > 50,
+                image,
+            });
+        }
+    }
+
+    console.log(`[Reddit] Fetched ${posts.length} posts`);
+    return posts;
+}
+
+function decodeHtmlEntities(text: string): string {
+    return text
+        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#x2F;/g, '/');
+}
+
 // ─── Twitter/X (Supabase-backed) ─────────────────────────────────────
 // fetch_tweets.py writes to the `tweets` Supabase table.
 // This reads from there in production. Falls back to local JSON in dev.
@@ -247,13 +342,14 @@ async function loadTwitterPosts(): Promise<SocialPost[]> {
 // ─── Public API ───────────────────────────────────────────────────────
 
 export async function getAllPosts(limit?: number): Promise<SocialPost[]> {
-    const [newsPosts, twitterPosts] = await Promise.all([
+    const [newsPosts, redditPosts, twitterPosts] = await Promise.all([
         fetchNewsFeedPosts(),
+        fetchRedditPosts(),
         loadTwitterPosts(),
     ]);
 
-    const all = [...newsPosts, ...twitterPosts];
-    console.log(`[Pulse] ${all.length} total posts (${newsPosts.length} news, ${twitterPosts.length} Twitter)`);
+    const all = [...newsPosts, ...redditPosts, ...twitterPosts];
+    console.log(`[Pulse] ${all.length} total posts (${newsPosts.length} news, ${redditPosts.length} Reddit, ${twitterPosts.length} Twitter)`);
 
     all.sort((a, b) => b.createdAt - a.createdAt);
     return limit ? all.slice(0, limit) : all;
