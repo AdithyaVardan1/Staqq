@@ -38,8 +38,9 @@ export async function GET(request: NextRequest) {
         // 2. Search via yahoo-finance2 (Node.js, no Python needed)
         let yResults: any[] = [];
         try {
-            const yahooFinance: any = (await import('yahoo-finance2')).default;
-            const searchResult = await yahooFinance.search(query, { region: 'IN', lang: 'en-IN' });
+            const YahooFinance: any = (await import('yahoo-finance2')).default;
+            const yf = new YahooFinance();
+            const searchResult = await yf.search(query, { region: 'IN', lang: 'en-IN' });
             const quotes = searchResult?.quotes || [];
             yResults = quotes
                 .filter((q: any) => q.symbol && (q.symbol.endsWith('.NS') || q.symbol.endsWith('.BO')))
