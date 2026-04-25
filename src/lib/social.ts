@@ -22,10 +22,8 @@ export interface SocialPost {
 // ─── RSS News Feeds ───────────────────────────────────────────────────
 
 const NEWS_FEEDS = [
-    { url: 'https://www.livemint.com/rss/markets',                          label: 'LiveMint' },
-    { url: 'https://feeds.feedburner.com/ndtvprofit-latest',                label: 'NDTV Profit' },
+    { url: 'https://www.livemint.com/rss/markets',                            label: 'LiveMint' },
     { url: 'https://www.thehindubusinessline.com/markets/feeder/default.rss', label: 'BusinessLine' },
-    { url: 'https://www.moneycontrol.com/rss/marketreports.xml',            label: 'Moneycontrol' },
 ];
 
 const IGNORE_WORDS = new Set([
@@ -149,7 +147,9 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
                 ? Math.floor(new Date(item.pubDate).getTime() / 1000)
                 : Math.floor(Date.now() / 1000);
 
-            const tickers = extractTickers(title.toUpperCase() + ' ' + body.toUpperCase());
+            // News headlines don't use ticker symbols — extracting uppercase words
+            // produces garbage like $PREVIEW, $WEATHER, $SELLERS. Skip tickers for news.
+            const tickers: string[] = [];
 
             // Extract image from media:content if available
             const mediaItem = item as any;
@@ -205,16 +205,23 @@ async function fetchRedditPosts(): Promise<SocialPost[]> {
 
     const results = await Promise.allSettled(
         fetchUrls.map(async ({ sub, url }) => {
-            const res = await fetch(url, {
-                headers: { 'User-Agent': REDDIT_UA },
-                next: { revalidate: 300 },
-            });
-            if (!res.ok) {
-                console.warn(`[Reddit] r/${sub} returned ${res.status} — skipping`);
-                return { sub, children: [] };
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 5000);
+            try {
+                const res = await fetch(url, {
+                    headers: { 'User-Agent': REDDIT_UA },
+                    signal: controller.signal,
+                    next: { revalidate: 300 },
+                });
+                if (!res.ok) {
+                    console.warn(`[Reddit] r/${sub} returned ${res.status} — skipping`);
+                    return { sub, children: [] };
+                }
+                const data = await res.json();
+                return { sub, children: data?.data?.children || [] };
+            } finally {
+                clearTimeout(timeout);
             }
-            const data = await res.json();
-            return { sub, children: data?.data?.children || [] };
         })
     );
 
