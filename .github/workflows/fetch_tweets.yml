@@ -1,0 +1,34 @@
+name: Fetch Tweets
+
+on:
+  schedule:
+    - cron: '*/30 3-11 * * 1-5'  # every 30 min, 8:30am–5pm IST (UTC+5:30), weekdays only
+  workflow_dispatch:               # allow manual trigger from GitHub UI
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install twikit supabase
+
+      - name: Fetch tweets and upsert to Supabase
+        env:
+          TWITTER_AUTH_TOKEN: ${{ secrets.TWITTER_AUTH_TOKEN }}
+          TWITTER_CT0: ${{ secrets.TWITTER_CT0 }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Write env vars to .env.local so the script can read them
+          echo "TWITTER_AUTH_TOKEN=$TWITTER_AUTH_TOKEN" > .env.local
+          echo "TWITTER_CT0=$TWITTER_CT0" >> .env.local
+          echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" >> .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.local
+          python scripts/fetch_tweets.py
