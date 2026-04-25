@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/social';
-import type { SocialPost } from '@/lib/social';
 import { createAdminClient } from '@/utils/supabase/admin';
 import PostCard from '@/components/alerts/PostCard';
 import { SignalDelayBanner } from '@/components/premium/SignalDelayBanner';
-import { Activity, Zap, BarChart3, Users, Building2 } from 'lucide-react';
+import { SignalNav } from '@/components/signals/SignalNav';
+import { Activity, Zap } from 'lucide-react';
 import styles from './page.module.css';
 
 export const revalidate = 300;
@@ -41,36 +41,20 @@ export default async function SignalsPage() {
         recentSpikes = data || [];
     } catch {}
 
-    const redditPosts = allPosts.filter(p => p.source === 'reddit');
+    const newsPosts = allPosts.filter(p => p.source === 'news');
     const twitterPosts = allPosts.filter(p => p.source === 'twitter');
     const hotPosts = allPosts.filter(p => p.isHot);
 
-    const subredditCounts = redditPosts.reduce((acc, p) => {
+    const sourceCounts = newsPosts.reduce((acc, p) => {
         acc[p.community] = (acc[p.community] || 0) + 1;
         return acc;
     }, {} as Record<string, number>);
 
     return (
         <main className={styles.page}>
-            {/* Signal Type Tabs */}
-            <section className={styles.signalTabs}>
-                <Link href="/signals" className={`${styles.signalTab} ${styles.activeTab}`}>
-                    <Activity size={16} />
-                    Social Sentiment
-                </Link>
-                <Link href="/signals/fii-dii" className={styles.signalTab}>
-                    <BarChart3 size={16} />
-                    FII/DII Flows
-                </Link>
-                <Link href="/signals/insider-trades" className={styles.signalTab}>
-                    <Users size={16} />
-                    Insider Trades
-                </Link>
-                <Link href="/signals/bulk-deals" className={styles.signalTab}>
-                    <Building2 size={16} />
-                    Bulk Deals
-                </Link>
-            </section>
+            <div className="container">
+                <SignalNav />
+            </div>
 
             {/* Spike banner */}
             {recentSpikes.length > 0 && (
@@ -99,24 +83,20 @@ export default async function SignalsPage() {
             {/* Header */}
             <section className={styles.hero}>
                 <h1 className={styles.title}>
-                    Market <span className={styles.accent}>Signals</span>
+                    Market <span className={styles.accent}>Feed</span>
                 </h1>
                 <p className={styles.subtitle}>
-                    Alternative data signals from social media, institutional flows, and insider activity.
+                    Live market news from LiveMint, NDTV Profit, BusinessLine, and X/Twitter.
                 </p>
 
                 <div className={styles.stats}>
                     <div className={styles.pill}>
                         <span className={styles.pillNum}>{allPosts.length}</span>
-                        <span className={styles.pillLabel}>Posts</span>
+                        <span className={styles.pillLabel}>Articles</span>
                     </div>
                     <div className={styles.pill}>
-                        <span className={styles.pillNum}>{hotPosts.length}</span>
-                        <span className={styles.pillLabel}>Hot</span>
-                    </div>
-                    <div className={styles.pill}>
-                        <span className={styles.pillNum}>{redditPosts.length}</span>
-                        <span className={styles.pillLabel}>Reddit</span>
+                        <span className={styles.pillNum}>{newsPosts.length}</span>
+                        <span className={styles.pillLabel}>News</span>
                     </div>
                     <div className={styles.pill}>
                         <span className={styles.pillNum}>{twitterPosts.length}</span>
@@ -125,14 +105,14 @@ export default async function SignalsPage() {
                 </div>
 
                 <div className={styles.badges}>
-                    {Object.entries(subredditCounts).map(([sub, count]) => (
-                        <span key={sub} className={styles.subredditBadge}>
-                            r/{sub} <strong>{count}</strong>
+                    {Object.entries(sourceCounts).map(([source, count]) => (
+                        <span key={source} className={styles.subredditBadge}>
+                            {source} <strong>{count}</strong>
                         </span>
                     ))}
                     {twitterPosts.length > 0 && (
                         <span className={styles.subredditBadge}>
-                            X <strong>{twitterPosts.length}</strong>
+                            X / Twitter <strong>{twitterPosts.length}</strong>
                         </span>
                     )}
                 </div>
