@@ -85,10 +85,10 @@ IGNORE_WORDS = {
 
 
 def extract_tickers(text: str) -> list:
-    dollar = re.findall(r'\$([A-Z]{2,10})\b', text)
-    words = re.findall(r'\b([A-Z]{3,10})\b', text)
-    all_tickers = list(set(dollar + [w for w in words if w not in IGNORE_WORDS]))
-    return all_tickers[:5]
+    # Only trust explicit $TICKER mentions -- bare uppercase words produce too many false positives
+    matches = re.findall(r'\$([A-Z]{2,10})\b', text)
+    filtered = [t for t in matches if t not in IGNORE_WORDS]
+    return list(dict.fromkeys(filtered))[:5]  # dedupe, preserve order
 
 
 SUBREDDITS = [
@@ -142,7 +142,7 @@ def fetch_subreddit(sub: str, session_cookie: str) -> list:
 
                 tickers = extract_tickers((title + ' ' + body).upper())
 
-                if score < 10 and not tickers:
+                if score < 10 and num_comments < 3 and not tickers:
                     continue
 
                 image = None
