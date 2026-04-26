@@ -63,10 +63,9 @@ function makeBot() {
     return bot;
 }
 
-const handleUpdate = webhookCallback(makeBot(), 'std/http');
-
 export async function POST(req: NextRequest) {
     try {
+        const handleUpdate = webhookCallback(makeBot(), 'std/http');
         return await handleUpdate(req);
     } catch (err) {
         console.error('[Telegram webhook]', err);
