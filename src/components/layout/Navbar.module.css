@@ -8,25 +8,28 @@
     max-width: 1280px;
     z-index: 100;
     border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(14, 14, 14, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.11);
+    background: rgba(12, 12, 12, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 2px 24px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
     transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .scrolled {
-    background: rgba(14, 14, 14, 0.95);
-    border-color: rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    background: rgba(12, 12, 12, 0.96);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 /* ── Inner ── */
 .inner {
-    height: 52px;
+    height: 56px;
     display: flex;
     align-items: center;
-    padding: 0 8px;
+    padding: 0 10px;
     gap: 4px;
 }
 
@@ -35,7 +38,7 @@
     display: flex;
     align-items: center;
     text-decoration: none;
-    padding: 0 10px 0 4px;
+    padding: 0 12px 0 2px;
     flex-shrink: 0;
     transition: opacity 0.15s;
 }
@@ -44,8 +47,8 @@
 
 .logoImageWrapper {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
 }
 
 .logoImage {
@@ -67,15 +70,15 @@
 .navLink {
     display: flex;
     align-items: center;
-    padding: 7px 15px;
+    padding: 7px 16px;
     border-radius: 9999px;
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.84rem;
+    font-size: 0.875rem;
     font-weight: 500;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     white-space: nowrap;
-    transition: color 0.15s ease, background 0.15s ease;
+    transition: color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .navLink:hover {
@@ -83,15 +86,17 @@
     background: rgba(255, 255, 255, 0.07);
 }
 
-/* Active = solid lime pill, dark text */
+/* Active = solid lime pill, dark text, subtle glow */
 .navLink.active {
     color: #000;
     background: var(--primary-brand);
     font-weight: 600;
+    box-shadow: 0 0 16px rgba(202, 255, 0, 0.25);
 }
 
 .navLink.active:hover {
     background: #d4ff1a;
+    box-shadow: 0 0 22px rgba(202, 255, 0, 0.35);
 }
 
 /* Alerts = violet pill */
@@ -107,10 +112,12 @@
 .navLinkAlert.active {
     color: #fff;
     background: var(--secondary-brand);
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.3);
 }
 
 .navLinkAlert.active:hover {
     background: #b76ef8;
+    box-shadow: 0 0 22px rgba(168, 85, 247, 0.4);
 }
 
 /* ── Actions ── */
