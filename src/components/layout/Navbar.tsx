@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
 import { Menu, X, Search, User, LogOut } from 'lucide-react';
@@ -100,8 +99,8 @@ export const Navbar = () => {
                         <Link href="/" className={styles.logo}>
                             <div className={styles.logoImageWrapper}>
                                 <Logo
-                                    width={120}
-                                    height={120}
+                                    width={44}
+                                    height={44}
                                     className={styles.logoImage}
                                     priority
                                 />
