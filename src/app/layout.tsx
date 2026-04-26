@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     creator: '@staqq',
   },
   icons: {
-    icon: '/icon-192x192.png',
+    icon: '/circle.png',
     apple: '/apple-touch-icon.png',
   },
 };
