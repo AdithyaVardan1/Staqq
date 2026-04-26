@@ -23,14 +23,18 @@ function registerHandlers(b: Bot) {
         if (!ctx.from) return;
         const { id, username, first_name } = ctx.from;
 
-        const supabase = createAdminClient();
-        const { error } = await supabase
-            .from('bot_users')
-            .upsert(
-                { telegram_id: id, username: username ?? null, first_name: first_name ?? null },
-                { onConflict: 'telegram_id' }
-            );
-        if (error) console.error('[Bot] Failed to save user', id, error.message);
+        try {
+            const supabase = createAdminClient();
+            const { error } = await supabase
+                .from('bot_users')
+                .upsert(
+                    { telegram_id: id, username: username ?? null, first_name: first_name ?? null },
+                    { onConflict: 'telegram_id' }
+                );
+            if (error) console.error('[Bot] Failed to save user', id, error.message);
+        } catch (e) {
+            console.error('[Bot] DB unavailable, continuing without save:', e);
+        }
 
         const name = first_name ?? 'there';
         const keyboard = new InlineKeyboard()
