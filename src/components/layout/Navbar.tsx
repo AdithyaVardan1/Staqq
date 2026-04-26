@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import clsx from 'clsx';
-import { Menu, X, Search, User, LogOut } from 'lucide-react';
+import { Menu, X, Search, User, LogOut, ChevronDown, TrendingUp, Building2, BarChart3, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Logo from '@/components/ui/Logo';
 import { createClient } from '@/utils/supabase/client';
@@ -16,12 +16,39 @@ import styles from './Navbar.module.css';
 
 const navLinks = [
     { name: 'IPO Hub', href: '/ipo' },
-    { name: 'Signals', href: '/signals' },
+    { name: 'Intel', href: '/signals', hasDropdown: true },
     { name: 'Crypto', href: '/crypto' },
     { name: 'Stocks', href: '/stocks/screener' },
     { name: 'Learn', href: '/learn' },
     { name: 'Blog', href: '/blog' },
     { name: 'Alerts', href: '/alerts' },
+];
+
+const intelDropdown = [
+    {
+        name: 'FII / DII Flows',
+        desc: 'Institutional buy & sell activity',
+        href: '/signals/fii-dii',
+        icon: <TrendingUp size={14} />,
+    },
+    {
+        name: 'Insider Trades',
+        desc: 'NSE insider filing tracker',
+        href: '/signals/insider-trades',
+        icon: <Building2 size={14} />,
+    },
+    {
+        name: 'Bulk Deals',
+        desc: 'Block & bulk deal scanner',
+        href: '/signals/bulk-deals',
+        icon: <BarChart3 size={14} />,
+    },
+    {
+        name: 'Social Buzz',
+        desc: 'Reddit & Twitter sentiment',
+        href: '/signals',
+        icon: <Zap size={14} />,
+    },
 ];
 
 export const Navbar = () => {
@@ -32,7 +59,6 @@ export const Navbar = () => {
     const router = useRouter();
     const supabase = createClient();
 
-    // Search state
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     useEffect(() => {
@@ -41,14 +67,12 @@ export const Navbar = () => {
         };
         window.addEventListener('scroll', handleScroll);
 
-        // Check active session
         const checkUser = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             setUser(session?.user ?? null);
         };
         checkUser();
 
-        // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setUser(session?.user ?? null);
             if (_event === 'SIGNED_OUT') {
@@ -109,18 +133,55 @@ export const Navbar = () => {
 
                         {/* Desktop Nav */}
                         <nav className={styles.desktopNav}>
-                            {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    href={link.href}
-                                    className={clsx(styles.navLink, {
-                                        [styles.active]: pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href)),
-                                        [styles.navLinkAlert]: link.href === '/alerts',
-                                    })}
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
+                            {navLinks.map((link) => {
+                                const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
+
+                                if (link.hasDropdown) {
+                                    return (
+                                        <div key={link.name} className={styles.navDropdownTrigger}>
+                                            <Link
+                                                href={link.href}
+                                                className={clsx(styles.navLink, { [styles.active]: isActive })}
+                                            >
+                                                {link.name}
+                                                <ChevronDown size={13} className={styles.navChevron} />
+                                            </Link>
+
+                                            <div className={styles.navDropdown}>
+                                                <div className={styles.navDropdownHeader}>Market Intelligence</div>
+                                                <div className={styles.navDropdownGrid}>
+                                                    {intelDropdown.map((item) => (
+                                                        <Link
+                                                            key={item.name}
+                                                            href={item.href}
+                                                            className={styles.navDropdownItem}
+                                                        >
+                                                            <div className={styles.navDropdownIcon}>
+                                                                {item.icon}
+                                                            </div>
+                                                            <span className={styles.navDropdownItemName}>{item.name}</span>
+                                                            <span className={styles.navDropdownItemDesc}>{item.desc}</span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                return (
+                                    <Link
+                                        key={link.name}
+                                        href={link.href}
+                                        className={clsx(styles.navLink, {
+                                            [styles.active]: isActive,
+                                            [styles.navLinkAlert]: link.href === '/alerts',
+                                        })}
+                                    >
+                                        {link.name}
+                                    </Link>
+                                );
+                            })}
                         </nav>
 
                         {/* Actions */}
@@ -232,16 +293,10 @@ export const Navbar = () => {
     );
 };
 
-/** Small inline component to show Upgrade CTA or PRO badge */
 function SubscriptionCTA() {
     const { isPro, loading } = useSubscription();
-
     if (loading) return null;
-
-    if (isPro) {
-        return <PremiumBadge size="sm" />;
-    }
-
+    if (isPro) return <PremiumBadge size="sm" />;
     return (
         <Link href="/pricing">
             <Button variant="outline" size="sm" style={{ fontSize: '0.75rem', padding: '4px 12px' }}>
@@ -251,12 +306,9 @@ function SubscriptionCTA() {
     );
 }
 
-/** Mobile menu upgrade CTA */
 function MobileSubscriptionCTA({ onClose }: { onClose: () => void }) {
     const { isPro, loading } = useSubscription();
-
     if (loading || isPro) return null;
-
     return (
         <Link href="/pricing" onClick={onClose}>
             <Button variant="outline" fullWidth style={{ borderColor: 'rgba(202,255,0,0.3)', color: '#CAFF00' }}>
