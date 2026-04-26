@@ -105,6 +105,8 @@ export default async function HomePage() {
 
             {/* Hero Section */}
             <section className={styles.hero}>
+                <div className={styles.heroGlowLime} aria-hidden="true" />
+                <div className={styles.heroGlowViolet} aria-hidden="true" />
                 <div className="container">
                     <div className={styles.heroContent}>
                         <h1 className={styles.heroTitle}>

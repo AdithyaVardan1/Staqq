@@ -99,8 +99,8 @@ export const Navbar = () => {
                         <Link href="/" className={styles.logo}>
                             <div className={styles.logoImageWrapper}>
                                 <Logo
-                                    width={44}
-                                    height={44}
+                                    width={120}
+                                    height={120}
                                     className={styles.logoImage}
                                     priority
                                 />
