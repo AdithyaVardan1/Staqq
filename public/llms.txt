@@ -1,6 +1,6 @@
 # Staqq
 
-> Staqq is an Indian stock market intelligence platform for retail investors. It provides live Grey Market Premium (GMP) tracking for IPOs, FII/DII institutional flow data, NSE insider trading disclosures, bulk deal monitoring, social sentiment signals from Reddit and financial news, and a fundamental stock screener for NSE/BSE equities. All data is in Indian Rupees (INR) and covers Indian markets only.
+> Staqq is a market intelligence platform covering Indian equities and global crypto. For Indian markets it provides live IPO Grey Market Premium (GMP) tracking, FII/DII institutional flow data, NSE insider trading disclosures, bulk deal monitoring, social sentiment signals, and a fundamental stock screener for NSE/BSE equities. For crypto it covers global tokens with social sentiment velocity, smart wallet copy-trading intelligence, and token security scanning. Indian equity data is in INR; crypto data covers global markets.
 
 ## IPO Intelligence
 - [IPO Hub](https://staqq.in/ipo): Live dashboard for all active Indian IPOs -- Grey Market Premium (GMP), subscription rates by category (QIB/NII/Retail), open/close dates, issue price, and listing performance.

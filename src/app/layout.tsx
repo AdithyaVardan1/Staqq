@@ -10,10 +10,10 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Staqq | Indian Stock Market Intelligence, IPOs & Screeners",
+    default: "Staqq | Indian Stock Market Intelligence, IPOs, Crypto & Screeners",
     template: "%s | Staqq"
   },
-  description: "Every edge, one dashboard. Real-time IPO GMP tracking, FII/DII institutional flows, NSE insider trades, and smart stock screeners specifically built for Indian retail investors.",
+  description: "Every edge, one dashboard. Real-time IPO GMP tracking, FII/DII institutional flows, NSE insider trades, smart stock screeners for Indian equities, and global crypto intelligence.",
   authors: [{ name: "Staqq", url: BASE_URL }],
   creator: "Staqq",
   publisher: "Staqq",
@@ -32,21 +32,21 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
     siteName: 'Staqq',
-    title: "Staqq | Indian Stock Market Intelligence",
-    description: "Real-time IPO GMP, FII/DII signals, and powerful stock screeners for Indian retail investors.",
+    title: "Staqq | Indian Stocks, IPOs & Global Crypto Intelligence",
+    description: "Real-time IPO GMP, FII/DII signals, stock screeners for Indian equities, and global crypto intelligence — one dashboard.",
     images: [
       {
         url: '/api/og',
         width: 1200,
         height: 630,
-        alt: 'Staqq - Indian Stock Market Intelligence Dashboard',
+        alt: 'Staqq - Indian Stock Market & Crypto Intelligence Dashboard',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Staqq | Indian Stock Market Intelligence",
-    description: "Real-time IPO GMP, FII/DII signals, and powerful stock screeners for Indian retail investors.",
+    title: "Staqq | Indian Stocks, IPOs & Global Crypto Intelligence",
+    description: "Real-time IPO GMP, FII/DII signals, stock screeners for Indian equities, and global crypto intelligence — one dashboard.",
     images: ['/api/og'],
     creator: '@staqq',
   },
@@ -71,9 +71,9 @@ const rootJsonLd = [
       "width": 512,
       "height": 512,
     },
-    "description": "Indian stock market intelligence platform. Live IPO GMP tracking, FII/DII institutional flows, NSE insider trades, and smart stock screeners for retail investors.",
+    "description": "Market intelligence platform covering Indian equities (IPO GMP, FII/DII flows, NSE insider trades, stock screeners) and global crypto analytics.",
     "foundingDate": "2024",
-    "areaServed": "IN",
+    "areaServed": ["IN", "Worldwide"],
     "sameAs": [
       "https://twitter.com/staqq",
     ],
@@ -105,7 +105,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en-IN" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
