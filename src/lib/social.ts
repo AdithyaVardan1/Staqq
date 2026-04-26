@@ -354,11 +354,19 @@ export async function getAllPosts(limit?: number): Promise<SocialPost[]> {
         fetchRedditPosts(),
     ]);
 
-    const all = [...newsPosts, ...redditPosts];
-    console.log(`[Pulse] ${all.length} total posts (${newsPosts.length} news, ${redditPosts.length} Reddit)`);
+    // Sort each source by recency independently, then cap per-source so no
+    // single source monopolises the feed when its content is newer.
+    const newsLimit  = Math.ceil((limit || 60) * 0.4);  // 40% news
+    const redditLimit = Math.ceil((limit || 60) * 0.6); // 60% Reddit (more social/discusssion)
+
+    const news   = [...newsPosts].sort((a, b) => b.createdAt - a.createdAt).slice(0, newsLimit);
+    const reddit = [...redditPosts].sort((a, b) => b.createdAt - a.createdAt).slice(0, redditLimit);
+
+    const all = [...news, ...reddit];
+    console.log(`[Pulse] ${all.length} posts (${news.length} news, ${reddit.length} Reddit)`);
 
     all.sort((a, b) => b.createdAt - a.createdAt);
-    return limit ? all.slice(0, limit) : all;
+    return all;
 }
 
 export async function getNewsPosts(): Promise<SocialPost[]> {

@@ -26,7 +26,7 @@ export const metadata = {
 };
 
 export default async function SignalsPage() {
-    const allPosts = await getAllPosts(50);
+    const allPosts = await getAllPosts();
 
     // Fetch recent spikes (last 2 hours)
     let recentSpikes: any[] = [];
