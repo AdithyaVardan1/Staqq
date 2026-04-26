@@ -32,15 +32,55 @@ def load_env():
 
 
 IGNORE_WORDS = {
+    # Common English words
     'THE', 'AND', 'FOR', 'THAT', 'THIS', 'WITH', 'YOU', 'ARE', 'NOT', 'HAVE',
-    'BUY', 'SELL', 'GDP', 'RBI', 'INR', 'USD', 'IPO', 'ETF', 'SIP', 'NIFTY',
-    'SENSEX', 'SEBI', 'NSE', 'BSE', 'YOLO', 'FOMO', 'ATH', 'WILL', 'WHAT',
-    'FROM', 'THEY', 'JUST', 'ALSO', 'MORE', 'ONLY', 'LIKE', 'TIME', 'YEAR',
-    'INDIA', 'MARKET', 'STOCK', 'STOCKS', 'TRADE', 'TRADING', 'BANKNIFTY',
-    'BEEN', 'MUCH', 'SOME', 'YOUR', 'VERY', 'MOST', 'OVER', 'SUCH', 'MAKE',
-    'WELL', 'BACK', 'GOOD', 'BEST', 'LAST', 'HELP', 'NEXT', 'DOWN', 'HIGH',
-    'NEWS', 'POST', 'PRICE', 'VALUE', 'LEVEL', 'TOTAL', 'MONTH', 'DAILY',
-    'SHARE', 'SHARES', 'PROFIT', 'GROWTH', 'RETURN', 'INVEST', 'EQUITY',
+    'WAS', 'BUT', 'ALL', 'ONE', 'OUT', 'GET', 'CAN', 'HAS', 'WHO', 'SEE',
+    'NOW', 'NEW', 'ANY', 'HOW', 'WHY', 'ITS', 'OUR', 'PAY', 'USE', 'WAY',
+    'MAY', 'DAY', 'TRY', 'SAY', 'HIS', 'HER', 'HIM', 'TWO', 'OLD', 'BIG',
+    'END', 'OWN', 'SET', 'RUN', 'ADD', 'ASK', 'OFF', 'LET', 'TOP', 'FEW',
+    'DOES', 'BEEN', 'MUCH', 'JUST', 'WILL', 'WHAT', 'FROM', 'THEY', 'THAN',
+    'SOME', 'YOUR', 'ALSO', 'VERY', 'MORE', 'MOST', 'ONLY', 'OVER', 'SUCH',
+    'MAKE', 'LIKE', 'TIME', 'YEAR', 'EACH', 'KNOW', 'TAKE', 'COME', 'WANT',
+    'GIVE', 'MANY', 'WELL', 'BACK', 'GOOD', 'BEST', 'LAST', 'HELP', 'NEXT',
+    'THEM', 'THEN', 'WHEN', 'WERE', 'SAID', 'EACH', 'WHICH', 'THEIR', 'THERE',
+    'BEEN', 'WOULD', 'COULD', 'SHOULD', 'MIGHT', 'EVERY', 'FIRST', 'GREAT',
+    'FOUND', 'GOING', 'USING', 'DOING', 'BASED', 'SINCE', 'UNTIL', 'WHILE',
+    'ABOUT', 'AFTER', 'AGAIN', 'STILL', 'THINK', 'THOSE', 'WHERE', 'OTHER',
+    'BEING', 'THESE', 'BELOW', 'ABOVE', 'UNDER', 'NEVER', 'ALWAYS', 'TODAY',
+    'HIGH', 'LOW', 'LOOK', 'NEED', 'KEEP', 'SHOW', 'MOVE', 'WORK', 'DONE',
+    'PART', 'FACT', 'HAND', 'MUST', 'REAL', 'SURE', 'FREE', 'EVEN', 'FULL',
+    'HALF', 'LATE', 'TRUE', 'OPEN', 'HARD', 'SAME', 'ABLE', 'KNOW', 'ONLY',
+    'BOTH', 'EACH', 'MUCH', 'SUCH', 'MANY', 'MOST', 'JUST', 'INTO', 'OVER',
+    'ALSO', 'BACK', 'AFTER', 'WELL', 'EVEN', 'WANT', 'FEEL', 'SEEM', 'KEEP',
+    'READ', 'WEEK', 'WEEKLY', 'MONTH', 'DAILY', 'ANNUAL', 'YEARS', 'DAYS',
+    'PEOPLE', 'ANYONE', 'EVERYONE', 'SOMEONE', 'PLEASE', 'REALLY', 'SIMPLY',
+    'THINK', 'THING', 'THINGS', 'RIGHT', 'POINT', 'CASE', 'FACT', 'HAND',
+    'BETWEEN', 'THROUGH', 'ACROSS', 'DURING', 'BEFORE', 'ANOTHER', 'SECOND',
+    'INSIDE', 'BILLION', 'MILLION', 'THOUSAND', 'HUNDRED', 'NUMBER', 'AMOUNT',
+    # Finance generic terms (not tickers)
+    'BUY', 'SELL', 'HOLD', 'LONG', 'SHORT', 'CALL', 'PUT', 'LOSS', 'GAIN',
+    'RISE', 'FALL', 'PLAN', 'RATE', 'RISK', 'SAFE', 'PICK', 'RULE', 'GOAL',
+    'GDP', 'RBI', 'INR', 'USD', 'IPO', 'LTCG', 'STCG', 'ETF', 'SIP', 'PPF',
+    'NIFTY', 'SENSEX', 'BANKNIFTY', 'FINNIFTY', 'MIDCAP', 'SMALLCAP',
+    'SEBI', 'NSE', 'BSE', 'FII', 'DII', 'ATH', 'AMC', 'NAV', 'AUM',
+    'RSI', 'MACD', 'EMA', 'SMA', 'DMA', 'VWAP', 'EPS', 'CAGR', 'XIRR',
+    'YOLO', 'FOMO', 'BTST', 'STBT', 'CNC', 'MIS', 'NRML', 'SLM',
+    'EDIT', 'UPDATE', 'TIL', 'PSA', 'IMO', 'TLDR', 'AMA', 'TBH', 'LMAO',
+    'NEWS', 'POST', 'PRICE', 'VALUE', 'LEVEL', 'TOTAL', 'WORTH', 'INCOME',
+    'STOCK', 'STOCKS', 'SHARE', 'SHARES', 'TRADE', 'TRADES', 'TRADING',
+    'MARKET', 'INVEST', 'PROFIT', 'GROWTH', 'RETURN', 'EQUITY', 'SECTOR',
+    'INDEX', 'LISTED', 'OPTION', 'OPTIONS', 'FUTURE', 'FUTURES', 'MUTUAL',
+    'DIRECT', 'FUND', 'FUNDS', 'MONEY', 'CASH', 'BANK', 'LOAN', 'DEBT',
+    'INDIA', 'INDIAN', 'ADVANCE', 'CURRENT', 'AVERAGE', 'ACTUAL', 'RECENT',
+    # Company type suffixes that appear in text but aren't tickers
+    'LIMITED', 'PRIVATE', 'PUBLIC', 'GROUP', 'CORP', 'COMPANY', 'ENTERPRISE',
+    # Words from common Reddit post patterns
+    'EMPLOYEE', 'OWNERSHIP', 'INVESTMENT', 'PORTFOLIO', 'DIVIDEND', 'INTEREST',
+    'ACCOUNT', 'BALANCE', 'CAPITAL', 'EXPENSE', 'INCOME', 'SALARY', 'BONUS',
+    'FRESHER', 'SENIOR', 'JUNIOR', 'MANAGER', 'ANALYST', 'BROKER', 'ADVISOR',
+    'QUESTION', 'ANSWER', 'COMMENT', 'ADVICE', 'SUGGEST', 'RECOMMEND',
+    'BETTER', 'WORSE', 'HIGHER', 'LOWER', 'BIGGER', 'SMALLER', 'LONGER',
+    'SHOULD', 'COULD', 'WOULD', 'MIGHT', 'SHALL', 'GOING', 'DOING', 'BEING',
 }
 
 
@@ -102,7 +142,7 @@ def fetch_subreddit(sub: str, session_cookie: str) -> list:
 
                 tickers = extract_tickers((title + ' ' + body).upper())
 
-                if score < 5 and not tickers:
+                if score < 10 and not tickers:
                     continue
 
                 image = None
