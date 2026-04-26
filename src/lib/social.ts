@@ -2,6 +2,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import Parser from 'rss-parser';
 import { createAdminClient } from '@/utils/supabase/admin';
+import { redis } from './redis';
 
 export interface SocialPost {
     id: string;
@@ -195,6 +196,14 @@ const SUBREDDITS = [
 const REDDIT_UA = 'Staqq/1.0 (Indian stock market app; contact@staqq.com)';
 
 async function fetchRedditPosts(): Promise<SocialPost[]> {
+    // Serve from Redis cache if fresh (10 min TTL) -- avoids hitting Reddit
+    // on every render and works around Vercel IP blocks on repeated requests.
+    const CACHE_KEY = 'social:reddit_posts';
+    const cached = await redis.get(CACHE_KEY);
+    if (cached) {
+        try { return JSON.parse(cached); } catch {}
+    }
+
     const posts: SocialPost[] = [];
     const seenIds = new Set<string>();
 
@@ -273,6 +282,7 @@ async function fetchRedditPosts(): Promise<SocialPost[]> {
     }
 
     console.log(`[Reddit] Fetched ${posts.length} posts`);
+    if (posts.length > 0) await redis.set(CACHE_KEY, JSON.stringify(posts), 10 * 60);
     return posts;
 }
 

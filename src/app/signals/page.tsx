@@ -86,7 +86,7 @@ export default async function SignalsPage() {
                     Market <span className={styles.accent}>Feed</span>
                 </h1>
                 <p className={styles.subtitle}>
-                    Live market news from LiveMint, NDTV Profit, BusinessLine, and X/Twitter.
+                    Live market news and discussions from LiveMint, BusinessLine, and Indian stock subreddits.
                 </p>
 
                 <div className={styles.stats}>
