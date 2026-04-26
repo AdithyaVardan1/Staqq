@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Fetch Indian stock market Reddit posts and upsert to Supabase.
-Runs via GitHub Actions cron -- Reddit blocks Vercel/AWS IPs, but not GitHub's.
+Uses reddit_session cookie for authenticated requests -- bypasses the cloud IP block
+that Reddit applies to unauthenticated requests from AWS/GitHub/Vercel IPs.
 """
 
 import sys
@@ -57,19 +58,23 @@ SUBREDDITS = [
     'DalalStreetTalks',
 ]
 
+# Mimic a real browser -- Reddit checks User-Agent alongside session cookies
 HEADERS = {
-    'User-Agent': 'Staqq/1.0 (Indian stock market app; contact@staqq.com)',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/javascript, */*; q=0.01',
+    'Accept-Language': 'en-US,en;q=0.9',
 }
 
 
-def fetch_subreddit(sub: str) -> list:
+def fetch_subreddit(sub: str, session_cookie: str) -> list:
     rows = []
     seen_ids: set = set()
+    cookies = {'reddit_session': session_cookie} if session_cookie else {}
 
     for sort in ('hot', 'new'):
         url = f'https://www.reddit.com/r/{sub}/{sort}.json?limit=50'
         try:
-            resp = requests.get(url, headers=HEADERS, timeout=10)
+            resp = requests.get(url, headers=HEADERS, cookies=cookies, timeout=10)
             if resp.status_code != 200:
                 print(f'  r/{sub}/{sort}: HTTP {resp.status_code} — skipping')
                 time.sleep(1)
@@ -146,10 +151,16 @@ def main():
     env = load_env()
     supabase_url = env.get('NEXT_PUBLIC_SUPABASE_URL', '')
     supabase_key = env.get('SUPABASE_SERVICE_ROLE_KEY', '')
+    reddit_session = env.get('REDDIT_SESSION', '')
 
     if not supabase_url or not supabase_key:
         print('❌ NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set')
         sys.exit(1)
+
+    if not reddit_session:
+        print('⚠️  REDDIT_SESSION not set — requests will be unauthenticated (may 403)')
+    else:
+        print('✓ Using reddit_session cookie for authenticated requests')
 
     from supabase import create_client
     sb = create_client(supabase_url, supabase_key)
@@ -157,7 +168,7 @@ def main():
     all_rows = []
     for sub in SUBREDDITS:
         print(f'Fetching r/{sub}...')
-        rows = fetch_subreddit(sub)
+        rows = fetch_subreddit(sub, reddit_session)
         all_rows.extend(rows)
 
     if not all_rows:
