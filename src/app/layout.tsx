@@ -10,10 +10,10 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: "Staqq | Indian Stock Market Intelligence, IPOs, Crypto & Screeners",
+    default: "Staqq | Indian IPOs, Stock Screeners & Solana Token Alerts",
     template: "%s | Staqq"
   },
-  description: "Every edge, one dashboard. Real-time IPO GMP tracking, FII/DII institutional flows, NSE insider trades, smart stock screeners for Indian equities, and global crypto intelligence.",
+  description: "Two products, one platform. Real-time IPO GMP, FII/DII flows, NSE insider trades and stock screeners for Indian equities -- plus live Solana token alerts with 5-layer rug scoring delivered to Telegram.",
   authors: [{ name: "Staqq", url: BASE_URL }],
   creator: "Staqq",
   publisher: "Staqq",
@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_IN',
     siteName: 'Staqq',
-    title: "Staqq | Indian Stocks, IPOs & Global Crypto Intelligence",
-    description: "Real-time IPO GMP, FII/DII signals, stock screeners for Indian equities, and global crypto intelligence — one dashboard.",
+    title: "Staqq | Indian IPOs, Stock Screeners & Solana Token Alerts",
+    description: "Real-time IPO GMP, FII/DII flows, NSE insider trades for Indian equities -- plus live Solana token alerts with rug scoring, delivered to Telegram.",
     images: [
       {
         url: '/api/og',
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Staqq | Indian Stocks, IPOs & Global Crypto Intelligence",
-    description: "Real-time IPO GMP, FII/DII signals, stock screeners for Indian equities, and global crypto intelligence — one dashboard.",
+    title: "Staqq | Indian IPOs, Stock Screeners & Solana Token Alerts",
+    description: "Real-time IPO GMP, FII/DII flows, NSE insider trades for Indian equities -- plus live Solana token alerts with rug scoring, delivered to Telegram.",
     images: ['/api/og'],
     creator: '@staqq',
   },
@@ -71,7 +71,7 @@ const rootJsonLd = [
       "width": 512,
       "height": 512,
     },
-    "description": "Market intelligence platform covering Indian equities (IPO GMP, FII/DII flows, NSE insider trades, stock screeners) and global crypto analytics.",
+    "description": "Market intelligence platform with two products: Indian equity intelligence (IPO GMP, FII/DII flows, NSE insider trades, stock screeners) and Solana token alerts (Telegram bot with 5-layer rug scoring, real-time alerts within 60s of pair creation).",
     "foundingDate": "2024",
     "areaServed": ["IN", "Worldwide"],
     "sameAs": [

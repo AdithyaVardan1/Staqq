@@ -1,224 +1,185 @@
-'use client';
-
-import React, { useState, useEffect, useCallback } from 'react';
-import { Bell, BellOff, Activity } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
-import { useNotificationsStore } from '@/store/useNotificationsStore';
-import { useSubscription } from '@/hooks/useSubscription';
-import { UsageMeter } from '@/components/premium/UsageMeter';
-import { UpgradeModal } from '@/components/premium/UpgradeModal';
+import Link from 'next/link';
+import { Zap, Shield, Clock, Lock, CheckCircle, ArrowRight, Send } from 'lucide-react';
 import styles from './page.module.css';
 
-interface Subscription {
-    ticker: string;
-    is_active: boolean;
-    created_at: string;
-}
+export const metadata = {
+    title: 'Solana Token Alerts | Staqq',
+    description: 'Real-time Solana new token pair alerts with 5-layer rug scoring, delivered to Telegram within 60 seconds. 5-15 quality alerts per day. Launching soon.',
+    alternates: {
+        canonical: '/alerts',
+    },
+};
+
+const steps = [
+    {
+        num: '01',
+        title: 'New pair detected',
+        desc: 'Helius webhooks catch every new token pair on Raydium and Pump.fun the moment it goes live.',
+    },
+    {
+        num: '02',
+        title: '5-layer safety check',
+        desc: 'Min $50K liquidity, RugCheck score, top-10 holder concentration, dev wallet history, LP burn status.',
+    },
+    {
+        num: '03',
+        title: 'Alert fires to Telegram',
+        desc: 'Staqq Score (0-100) attached. You get the signal within 60 seconds. Only Telegram ID stored.',
+    },
+];
+
+const features = [
+    {
+        icon: Zap,
+        title: 'Quality over noise',
+        desc: '5-15 curated alerts per day. Most bots send 200+. We filter hard so you don\'t have to.',
+    },
+    {
+        icon: Clock,
+        title: '60-second latency',
+        desc: 'From pair creation on-chain to your Telegram in under a minute. Every time.',
+    },
+    {
+        icon: Shield,
+        title: '5-layer rug filter',
+        desc: 'Liquidity floor, RugCheck score, holder concentration, dev history, and LP burn — all checked before alert fires.',
+    },
+    {
+        icon: Lock,
+        title: 'Privacy first',
+        desc: 'Only your Telegram ID is stored. No wallet address, no email, no account. Direct response to the Axiom scandal.',
+    },
+];
+
+const tiers = [
+    {
+        name: 'Free',
+        price: '$0',
+        period: 'forever',
+        perks: ['5 alerts per day', 'Real-time delivery', 'Staqq Score included', 'No wallet or email needed'],
+        cta: 'Get notified at launch',
+        highlight: false,
+    },
+    {
+        name: 'Pro',
+        price: '$9',
+        period: 'per month',
+        perks: ['Unlimited alerts', 'Priority alert queue', 'Full filter breakdown per token', 'USDC or card payment'],
+        cta: 'Get notified at launch',
+        highlight: true,
+    },
+];
 
 export default function AlertsPage() {
-    const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [actionLoading, setActionLoading] = useState<string | null>(null);
-    const [showUpgrade, setShowUpgrade] = useState(false);
-    const { notifications, fetch: fetchNotifs } = useNotificationsStore();
-    const { isFree, features } = useSubscription();
-
-    const fetchSubs = useCallback(async () => {
-        try {
-            const res = await fetch('/api/alerts/subscriptions');
-            const data = await res.json();
-            setSubscriptions(data.subscriptions ?? []);
-        } catch {}
-        setLoading(false);
-    }, []);
-
-    useEffect(() => {
-        fetchSubs();
-        fetchNotifs();
-    }, [fetchSubs, fetchNotifs]);
-
-    const hasAll = subscriptions.some(s => s.ticker === 'ALL');
-
-    const toggleAll = async () => {
-        setActionLoading('ALL');
-        const endpoint = hasAll ? '/api/alerts/unsubscribe' : '/api/alerts/subscribe';
-        try {
-            const res = await fetch(endpoint, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ticker: 'ALL' }),
-            });
-            if (res.status === 403) {
-                setShowUpgrade(true);
-                return;
-            }
-            if (res.ok) await fetchSubs();
-        } finally {
-            setActionLoading(null);
-        }
-    };
-
-    const unsubscribe = async (ticker: string) => {
-        setActionLoading(ticker);
-        try {
-            const res = await fetch('/api/alerts/unsubscribe', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ticker }),
-            });
-            if (res.ok) await fetchSubs();
-        } finally {
-            setActionLoading(null);
-        }
-    };
-
-    const formatDate = (dateStr: string) => {
-        return new Date(dateStr).toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric',
-        });
-    };
-
-    const formatTime = (dateStr: string) => {
-        const diff = Date.now() - new Date(dateStr).getTime();
-        const mins = Math.floor(diff / 60000);
-        if (mins < 1) return 'just now';
-        if (mins < 60) return `${mins}m ago`;
-        const hrs = Math.floor(mins / 60);
-        if (hrs < 24) return `${hrs}h ago`;
-        return formatDate(dateStr);
-    };
-
-    const tickerSubs = subscriptions.filter(s => s.ticker !== 'ALL');
-
     return (
         <main className={styles.page}>
+
+            {/* Hero */}
             <section className={styles.hero}>
+                <div className={styles.badge}>
+                    <span className={styles.badgeDot} />
+                    Launching soon
+                </div>
                 <h1 className={styles.title}>
-                    Spike <span className={styles.accent}>Alerts</span>
+                    Solana Alpha.<br />
+                    <span className={styles.accent}>Delivered.</span>
                 </h1>
                 <p className={styles.subtitle}>
-                    Get notified when stocks suddenly explode on Reddit. Manage your alert subscriptions and view recent spikes.
+                    Real-time Solana new token pair alerts with 5-layer rug scoring, fired to your Telegram within 60 seconds of pair creation on Raydium and Pump.fun.
+                </p>
+                <a
+                    href="https://t.me/StaqqBot"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.ctaBtn}
+                >
+                    <Send size={16} />
+                    Follow @StaqqBot on Telegram
+                </a>
+                <p className={styles.heroNote}>
+                    No account. No wallet. Just your Telegram.
                 </p>
             </section>
 
-            <div className={styles.content}>
-                {/* Subscribe to ALL toggle */}
-                <div className={styles.allToggle}>
-                    <div className={styles.allToggleText}>
-                        <span className={styles.allToggleLabel}>
-                            {hasAll ? 'Subscribed to all tickers' : 'Subscribe to all tickers'}
-                        </span>
-                        <span className={styles.allToggleDesc}>
-                            Get alerted whenever any stock spikes on Reddit
-                        </span>
+            <div className={styles.wrap}>
+
+                {/* How it works */}
+                <section className={styles.section}>
+                    <div className={styles.eyebrow}>HOW IT WORKS</div>
+                    <h2 className={styles.sectionTitle}>Three steps. Sixty seconds.</h2>
+                    <div className={styles.steps}>
+                        {steps.map((step) => (
+                            <div key={step.num} className={styles.step}>
+                                <div className={styles.stepNum}>{step.num}</div>
+                                <div>
+                                    <div className={styles.stepTitle}>{step.title}</div>
+                                    <div className={styles.stepDesc}>{step.desc}</div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                    <Button
-                        variant={hasAll ? 'primary' : 'outline'}
-                        size="sm"
-                        onClick={toggleAll}
-                        isLoading={actionLoading === 'ALL'}
-                    >
-                        {hasAll
-                            ? <><BellOff size={14} className="mr-2" />Unsubscribe</>
-                            : <><Bell size={14} className="mr-2" />Subscribe</>
-                        }
-                    </Button>
-                </div>
+                </section>
 
-                {/* Alert subscription usage meter for free users */}
-                {isFree && !loading && (
-                    <UsageMeter
-                        current={tickerSubs.length}
-                        limit={features.max_alert_subs}
-                        label="alert subscriptions"
-                        showUpgrade={true}
-                    />
-                )}
+                {/* Features */}
+                <section className={styles.section}>
+                    <div className={styles.eyebrow}>WHY STAQQ ALERTS</div>
+                    <h2 className={styles.sectionTitle}>Built different from day one</h2>
+                    <div className={styles.featureGrid}>
+                        {features.map((f) => (
+                            <div key={f.title} className={styles.featureCard}>
+                                <f.icon size={22} className={styles.featureIcon} />
+                                <div className={styles.featureTitle}>{f.title}</div>
+                                <div className={styles.featureDesc}>{f.desc}</div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
 
-                {/* Active subscriptions */}
-                <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>
-                        <Bell size={18} /> Active Subscriptions
-                    </h2>
-
-                    {loading ? (
-                        <div className={styles.empty}>Loading...</div>
-                    ) : tickerSubs.length === 0 ? (
-                        <div className={styles.empty}>
-                            No ticker-specific subscriptions yet. Visit any stock page and click &quot;Alert Me&quot; to subscribe.
-                        </div>
-                    ) : (
-                        <div className={styles.subList}>
-                            {tickerSubs.map(sub => (
-                                <div key={sub.ticker} className={styles.subItem}>
-                                    <div>
-                                        <div className={styles.subTicker}>${sub.ticker}</div>
-                                        <div className={styles.subDate}>Since {formatDate(sub.created_at)}</div>
-                                    </div>
-                                    <button
-                                        className={styles.removeBtn}
-                                        onClick={() => unsubscribe(sub.ticker)}
-                                        disabled={actionLoading === sub.ticker}
-                                    >
-                                        {actionLoading === sub.ticker ? '...' : 'Remove'}
-                                    </button>
+                {/* Pricing */}
+                <section className={styles.section}>
+                    <div className={styles.eyebrow}>PRICING</div>
+                    <h2 className={styles.sectionTitle}>Simple. No gotchas.</h2>
+                    <div className={styles.pricingGrid}>
+                        {tiers.map((tier) => (
+                            <div key={tier.name} className={`${styles.pricingCard} ${tier.highlight ? styles.pricingCardPro : ''}`}>
+                                {tier.highlight && <div className={styles.proBadge}>Most popular</div>}
+                                <div className={styles.tierName}>{tier.name}</div>
+                                <div className={styles.tierPrice}>
+                                    {tier.price}
+                                    <span className={styles.tierPeriod}> / {tier.period}</span>
                                 </div>
-                            ))}
-                        </div>
-                    )}
+                                <ul className={styles.perkList}>
+                                    {tier.perks.map((perk) => (
+                                        <li key={perk} className={styles.perk}>
+                                            <CheckCircle size={14} className={styles.perkIcon} />
+                                            {perk}
+                                        </li>
+                                    ))}
+                                </ul>
+                                <a
+                                    href="https://t.me/StaqqBot"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={tier.highlight ? styles.ctaBtn : styles.ctaBtnOutline}
+                                >
+                                    {tier.cta}
+                                    <ArrowRight size={14} />
+                                </a>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* Bottom note */}
+                <div className={styles.bottomNote}>
+                    <p>
+                        Also on Staqq: <Link href="/ipo" className={styles.inlineLink}>Indian IPO GMP</Link>,{' '}
+                        <Link href="/signals/fii-dii" className={styles.inlineLink}>FII/DII flows</Link>,{' '}
+                        <Link href="/stocks/screener" className={styles.inlineLink}>stock screener</Link>.
+                    </p>
                 </div>
 
-                {/* Recent alerts */}
-                <div className={styles.section}>
-                    <h2 className={styles.sectionTitle}>
-                        <Activity size={18} /> Recent Alerts
-                    </h2>
-
-                    {notifications.length === 0 ? (
-                        <div className={styles.empty}>
-                            No spike alerts yet. When a subscribed ticker surges on Reddit, it will appear here.
-                        </div>
-                    ) : (
-                        <div>
-                            {notifications.map(n => (
-                                <div key={n.id} className={styles.alertItem}>
-                                    <div className={styles.alertHeader}>
-                                        <span className={styles.alertTicker}>${n.alert.ticker}</span>
-                                        <span className={styles.alertMult}>{n.alert.spike_mult}x</span>
-                                    </div>
-                                    <div className={styles.alertMsg}>
-                                        {n.alert.mention_count} mentions in 15 min &middot; {n.alert.spike_mult}x above 24h average
-                                    </div>
-                                    <div className={styles.alertTime}>
-                                        {formatTime(n.alert.detected_at)}
-                                        {n.alert.top_post_url && (
-                                            <>
-                                                {' '}&middot;{' '}
-                                                <a
-                                                    href={n.alert.top_post_url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className={styles.alertLink}
-                                                >
-                                                    View top post
-                                                </a>
-                                            </>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
             </div>
-
-            <UpgradeModal
-                isOpen={showUpgrade}
-                onClose={() => setShowUpgrade(false)}
-                feature="Unlimited alert subscriptions"
-            />
         </main>
     );
 }

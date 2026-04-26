@@ -30,7 +30,7 @@ const STATIC_ROUTES: { url: string; lastModified: Date; changeFrequency: Metadat
   { url: '/learn',                lastModified: new Date('2025-01-01'), changeFrequency: 'weekly',  priority: 0.55 },
   { url: '/blog',                 lastModified: new Date('2025-01-01'), changeFrequency: 'daily',   priority: 0.65 },
   { url: '/pricing',              lastModified: new Date('2025-01-01'), changeFrequency: 'monthly', priority: 0.45 },
-  { url: '/alerts',               lastModified: new Date('2025-01-01'), changeFrequency: 'monthly', priority: 0.40 },
+  { url: '/alerts',               lastModified: new Date('2025-01-01'), changeFrequency: 'weekly',  priority: 0.85 },
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
