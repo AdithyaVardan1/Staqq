@@ -17,7 +17,7 @@ jobs:
           cache: 'pip'
 
       - name: Install dependencies
-        run: pip install twikit supabase
+        run: pip install -r requirements.txt
 
       - name: Fetch tweets and upsert to Supabase
         env:
