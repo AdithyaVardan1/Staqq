@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
 import { sessionManager } from '@/lib/session';
+import { getUserFromRequest } from '@/utils/supabase/mobile-auth';
+
+async function resolveUserId(req: NextRequest): Promise<string> {
+    const user = await getUserFromRequest(req);
+    if (user) return `uid:${user.id}`;
+    // Anonymous fallback -- IP is not spoofable from Vercel's trusted proxy
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'anonymous';
+    return `ip:${ip}`;
+}
 
 export async function GET(req: NextRequest) {
     try {
-        const userId = req.headers.get('x-forwarded-for') || 'anonymous';
-        // Retrieve directly from the consolidated session object
+        const userId = await resolveUserId(req);
         const tickers = await sessionManager.getSessionData<string[]>(userId, 'recent_stocks');
         return NextResponse.json({ tickers: tickers || [] });
     } catch (error: any) {
@@ -17,24 +25,18 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const { ticker } = await req.json();
-        if (!ticker) return NextResponse.json({ error: 'Ticker required' }, { status: 400 });
+        if (!ticker || typeof ticker !== 'string') {
+            return NextResponse.json({ error: 'Ticker required' }, { status: 400 });
+        }
 
-        const userId = req.headers.get('x-forwarded-for') || 'anonymous';
+        const userId = await resolveUserId(req);
 
-        // simple Read-Modify-Write (acceptable for per-user concurrency)
         let currentList = await sessionManager.getSessionData<string[]>(userId, 'recent_stocks') || [];
-
-        // Remove duplicate if exists
         currentList = currentList.filter(t => t !== ticker.toUpperCase());
-        // Add to front
         currentList.unshift(ticker.toUpperCase());
-        // Limit to 10
         if (currentList.length > 10) currentList = currentList.slice(0, 10);
 
-        // Save back to session
         await sessionManager.setSessionData(userId, 'recent_stocks', currentList);
-
-        // Also increment global trending score (Global state, keep separate from session)
         await redis.zincrby('trending_stocks', 1, ticker.toUpperCase());
 
         return NextResponse.json({ success: true });

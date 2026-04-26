@@ -47,7 +47,10 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
             event.waitUntil(
                 fetch(trackUrl, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-internal-secret': process.env.INTERNAL_API_SECRET ?? '',
+                    },
                     body: JSON.stringify({ userId: user.id }),
                 }).catch(err => console.error('Session Track Error:', err))
             );
