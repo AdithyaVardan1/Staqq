@@ -2,7 +2,6 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import Parser from 'rss-parser';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { redis } from './redis';
 
 export interface SocialPost {
     id: string;
@@ -27,84 +26,6 @@ const NEWS_FEEDS = [
     { url: 'https://www.thehindubusinessline.com/markets/feeder/default.rss', label: 'BusinessLine' },
 ];
 
-const IGNORE_WORDS = new Set([
-    'THE', 'AND', 'FOR', 'THAT', 'THIS', 'WITH', 'YOU', 'ARE', 'NOT', 'HAVE',
-    'WAS', 'BUT', 'ALL', 'ONE', 'OUT', 'GET', 'CAN', 'HAS', 'WHO', 'SEE',
-    'NOW', 'NEW', 'ANY', 'HOW', 'WHY', 'ITS', 'OUR', 'PAY', 'USE', 'WAY',
-    'MAY', 'DAY', 'TRY', 'SAY', 'HIS', 'HER', 'HIM', 'TWO', 'OLD', 'BIG',
-    'END', 'OWN', 'SET', 'RUN', 'ADD', 'ASK', 'OFF', 'LET', 'TOP', 'FEW',
-    'FAR', 'BAD', 'AGO', 'LOT', 'YET', 'DID', 'GOT', 'SAT', 'CUT', 'MET',
-    'DOES', 'BEEN', 'MUCH', 'JUST', 'WILL', 'WHAT', 'FROM', 'THEY', 'THAN',
-    'SOME', 'YOUR', 'ALSO', 'VERY', 'MORE', 'MOST', 'ONLY', 'OVER', 'SUCH',
-    'MAKE', 'LIKE', 'TIME', 'YEAR', 'EACH', 'KNOW', 'TAKE', 'COME', 'WANT',
-    'GIVE', 'MANY', 'WELL', 'BACK', 'GOOD', 'BEST', 'LAST', 'HELP', 'NEXT',
-    'FIVE', 'DAYS', 'LIVE', 'DOWN', 'CASE', 'NOTE', 'UNDER', 'PRESS', 'EARLY',
-    'MONEY', 'TOUCH', 'ALWAYS', 'NEVER', 'TODAY', 'PHASE', 'ABOUT', 'AFTER',
-    'AGAIN', 'STILL', 'THINK', 'THOSE', 'WHERE', 'WHICH', 'THEIR', 'OTHER',
-    'BEING', 'WOULD', 'COULD', 'SHOULD', 'MIGHT', 'EVERY', 'FIRST', 'GREAT',
-    'FOUND', 'GOING', 'USING', 'DOING', 'BASED', 'SINCE', 'UNTIL', 'WHILE',
-    'WATCH', 'BANKS', 'THEM', 'TEST', 'RICE', 'RELEASE', 'UPDATES', 'BREAKING',
-    'FINANCIAL', 'RETIRE', 'MILITARY', 'ACADEMY', 'DEFENCE',
-    'BUY', 'SELL', 'GDP', 'RBI', 'INR', 'USD', 'IPO', 'LTCG', 'STCG',
-    'ETF', 'SIP', 'PPF', 'NIFTY', 'SENSEX', 'BANKNIFTY', 'FINNIFTY',
-    'MIDCAP', 'SMALLCAP', 'SEBI', 'AMC', 'NAV', 'NSE', 'BSE', 'FII', 'DII',
-    'ATH', 'RED', 'GREEN', 'BULL', 'BEAR', 'LONG', 'SHORT', 'CALL', 'PUT',
-    'ITM', 'OTM', 'ATM', 'NPS', 'LIC', 'TAX', 'EMI', 'ROI', 'CAGR', 'XIRR',
-    'QOQ', 'YOY', 'MOM', 'FPO', 'OFS', 'AGM', 'EGM', 'ESOP', 'ESPP',
-    'HNI', 'RHP', 'DRHP', 'GMP', 'AUM', 'TER', 'ELSS', 'ULIP',
-    'DIY', 'FIRE', 'BTST', 'STBT', 'CNC', 'MIS', 'NRML',
-    'RSI', 'MACD', 'EMA', 'SMA', 'DMA', 'VWAP',
-    'EPS', 'PE', 'PB', 'CE', 'IV', 'OI', 'SL', 'TP',
-    'EDIT', 'UPDATE', 'TIL', 'PSA', 'IMO', 'TLDR', 'YOLO', 'FOMO', 'AMA',
-    'TBH', 'LMAO', 'IMHO', 'AFAIK', 'IIRC', 'NSFW',
-    'US', 'USA', 'UK', 'EU', 'UN', 'UAE', 'NRI', 'OPEC', 'IRAN', 'NATO',
-    'AI', 'ML', 'AGI', 'ASI', 'GPT', 'LLM', 'PDF', 'URL', 'API', 'CSS',
-    'UI', 'UX', 'IT', 'HR', 'PR', 'QA', 'ID', 'PIN', 'CC', 'DD', 'DM',
-    'PM', 'FM', 'AM', 'AA', 'BB', 'HO', 'DO', 'NS',
-    'FD', 'RD', 'MF', 'PF', 'HUF', 'PAN', 'GST', 'STT', 'CTT',
-    'LTCL', 'STCL', 'CPI', 'WPI', 'HRA', 'LRS', 'FBAR', 'PFIC',
-    'IRS', 'CPA', 'NRE', 'NRO', 'SSO', 'EPF', 'VPF',
-    'FDI', 'FPI', 'QFI', 'PMS', 'AIF', 'HFT', 'LDR',
-    'REITS', 'INVITS', 'ULIPS', 'BMI', 'IVR', 'IVF',
-    'PSU', 'NBFC', 'PVT', 'LTD', 'SME', 'SMC',
-    'BTC', 'ETH', 'USDT', 'USDC', 'SOL', 'ADA', 'XRP', 'DOGE',
-    'VTI', 'SPY', 'QQQ', 'VOO', 'FTSE', 'NASDAQ', 'DJIA',
-    'CRSP', 'DFIV', 'DFSV', 'AVUV', 'MSCI',
-    'FIN', 'WAR', 'BANK', 'GOLD', 'SEP', 'CFO', 'CEO', 'CTO', 'COO',
-    'IMD', 'AMFI', 'PED', 'RR', 'ABC', 'PPL', 'RM', 'FY',
-    'SENP', 'LNG', 'III', 'RTD', 'SNA', 'NK', 'QE', 'LPG',
-    'NSDL', 'PROTEAN', 'ITR', 'VIX', 'SPR', 'SLM',
-    'CNN', 'NBC', 'CBS', 'ABC', 'FOX', 'HBO', 'IRGC', 'THAAD',
-    'BOM', 'GIRIBSE', 'BSESME',
-    'TDS', 'GBP', 'AUD', 'EUR', 'JPY', 'CNY', 'CAD', 'CHF',
-    'CGAS', 'CPC', 'SGB', 'CBOI',
-    'NEWS', 'POST', 'REPORT', 'ALERT', 'BREAKING', 'LATEST',
-    'STOCK', 'STOCKS', 'SHARE', 'SHARES', 'TRADE', 'TRADES',
-    'PRICE', 'MARKET', 'VALUE', 'LEVEL', 'BELOW', 'ABOVE',
-    'TOTAL', 'WORTH', 'MONTH', 'YEARS', 'DAILY', 'WEEKLY', 'ANNUAL',
-    'AROUND', 'INVEST', 'PROFIT', 'GROWTH', 'RETURN', 'INCOME',
-    'AMOUNT', 'OPTION', 'OPTIONS', 'FUTURE', 'FUTURES', 'DIRECT',
-    'MUTUAL', 'EQUITY', 'SECTOR', 'INDEX', 'LISTED', 'UNLISTED',
-    'BETWEEN', 'THROUGH', 'ACROSS', 'DURING', 'BEFORE', 'ANOTHER',
-    'PLEASE', 'REALLY', 'PEOPLE', 'ANYONE', 'SECOND', 'SIMPLY', 'NUMBER',
-    'INSIDE', 'BILLION', 'MILLION', 'THOUSAND', 'HUNDRED',
-    'HIGH', 'LOW', 'LOOK', 'NEED', 'KEEP', 'SHOW', 'MOVE', 'WORK',
-    'PART', 'FACT', 'HAND', 'MUST', 'REAL', 'SURE', 'FREE', 'EVEN',
-    'FULL', 'HALF', 'LATE', 'TRUE', 'OPEN', 'HARD', 'SAME', 'ABLE',
-    'RATE', 'RULE', 'RISK', 'SAFE', 'LOSS', 'GAIN', 'PICK', 'HOLD',
-    'RISE', 'FALL', 'PLAN', 'DONE', 'MADE', 'TOLD', 'TOOK', 'PAID',
-    'THINK', 'THING', 'THINGS', 'RIGHT', 'POINT',
-    'P&L', 'XLM', 'DOT', 'AVAX', 'MATIC', 'SHIB', 'LINK', 'UNI',
-    'SPHQ', 'SCHD', 'VXUS',
-]);
-
-function extractTickers(text: string): string[] {
-    const ampMatches = text.match(/\b[A-Z]{1,5}&[A-Z]{1,5}\b/g) || [];
-    const stdMatches = text.match(/\b[A-Z]{3,10}\b/g) || [];
-    const all = [...ampMatches, ...stdMatches];
-    const filtered = all.filter(m => !IGNORE_WORDS.has(m));
-    return [...new Set(filtered)].slice(0, 8);
-}
 
 function truncateBody(text: string, maxLen = 300): string {
     if (!text || text.length <= maxLen) return text || '';
@@ -181,116 +102,46 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
     return posts;
 }
 
-// ─── Reddit (public JSON, no API key) ────────────────────────────────
-// Reddit's .json endpoint is public and rate-limited (~1 req/sec).
-// Works from most IPs. If a subreddit 403s (private/restricted), it's
-// skipped gracefully via Promise.allSettled.
+// ─── Reddit (Supabase-backed) ─────────────────────────────────────────
+// fetch_reddit.py (GitHub Actions cron) fetches from Reddit and writes
+// to the `tweets` table. We read from there -- Reddit blocks Vercel IPs.
 
-const SUBREDDITS = [
-    'IndianStockMarket',
-    'IndianStreetBets',
-    'IndiaInvestments',
-    'DalalStreetTalks',
-];
+async function loadRedditPostsFromSupabase(): Promise<SocialPost[]> {
+    try {
+        const supabase = createAdminClient();
+        const { data, error } = await supabase
+            .from('tweets')
+            .select('*')
+            .eq('source', 'reddit')
+            .gte('created_at_ts', Math.floor(Date.now() / 1000) - 86400)
+            .order('created_at_ts', { ascending: false })
+            .limit(150);
 
-const REDDIT_UA = 'Staqq/1.0 (Indian stock market app; contact@staqq.com)';
-
-async function fetchRedditPosts(): Promise<SocialPost[]> {
-    // Serve from Redis cache if fresh (10 min TTL) -- avoids hitting Reddit
-    // on every render and works around Vercel IP blocks on repeated requests.
-    const CACHE_KEY = 'social:reddit_posts';
-    const cached = await redis.get(CACHE_KEY);
-    if (cached) {
-        try { return JSON.parse(cached); } catch {}
-    }
-
-    const posts: SocialPost[] = [];
-    const seenIds = new Set<string>();
-
-    const fetchUrls = SUBREDDITS.flatMap(sub => [
-        { sub, url: `https://www.reddit.com/r/${sub}/hot.json?limit=50` },
-        { sub, url: `https://www.reddit.com/r/${sub}/new.json?limit=50` },
-    ]);
-
-    const results = await Promise.allSettled(
-        fetchUrls.map(async ({ sub, url }) => {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 5000);
-            try {
-                const res = await fetch(url, {
-                    headers: { 'User-Agent': REDDIT_UA },
-                    signal: controller.signal,
-                    next: { revalidate: 300 },
-                });
-                if (!res.ok) {
-                    console.warn(`[Reddit] r/${sub} returned ${res.status} — skipping`);
-                    return { sub, children: [] };
-                }
-                const data = await res.json();
-                return { sub, children: data?.data?.children || [] };
-            } finally {
-                clearTimeout(timeout);
-            }
-        })
-    );
-
-    for (const result of results) {
-        if (result.status !== 'fulfilled') continue;
-        const { sub, children } = result.value;
-
-        for (const child of children) {
-            const post = child.data;
-            if (post.stickied) continue;
-
-            const id = `reddit-${post.id}`;
-            if (seenIds.has(id)) continue;
-            seenIds.add(id);
-
-            const title = decodeHtmlEntities(post.title || '');
-            const body = truncateBody(decodeHtmlEntities(post.selftext || ''));
-            const score = post.score || 0;
-            const comments = post.num_comments || 0;
-            const tickers = extractTickers(title.toUpperCase() + ' ' + body.toUpperCase());
-
-            if (score < 5 && tickers.length === 0) continue;
-
-            let image: string | undefined;
-            if (post.post_hint === 'image' && post.url) {
-                image = post.url;
-            } else if (post.preview?.images?.[0]?.source?.url) {
-                image = post.preview.images[0].source.url.replace('&amp;', '&');
-            }
-
-            posts.push({
-                id,
-                title,
-                body,
-                url: post.url?.startsWith('/r/')
-                    ? `https://reddit.com${post.url}`
-                    : post.url || `https://reddit.com/r/${sub}/comments/${post.id}`,
-                score,
-                comments,
-                source: 'reddit',
-                community: sub,
-                author: post.author || null,
-                createdAt: post.created_utc || 0,
-                tickers,
-                isHot: score > 100 || comments > 50,
-                image,
-            });
+        if (!error && data && data.length > 0) {
+            console.log(`[Reddit] Loaded ${data.length} posts from Supabase`);
+            return data.map((t: any) => ({
+                id: t.post_id,
+                title: t.title || '',
+                body: t.body || '',
+                url: t.url || '',
+                score: t.score || 0,
+                comments: t.comments || 0,
+                source: 'reddit' as const,
+                community: t.community || '',
+                author: t.author || null,
+                createdAt: t.created_at_ts || 0,
+                tickers: t.tickers || [],
+                isHot: t.is_hot || false,
+                image: t.image || undefined,
+            }));
         }
+        console.log('[Reddit] No posts in Supabase yet');
+    } catch (err) {
+        console.error('[Reddit] Supabase read error:', err);
     }
-
-    console.log(`[Reddit] Fetched ${posts.length} posts`);
-    if (posts.length > 0) await redis.set(CACHE_KEY, JSON.stringify(posts), 10 * 60);
-    return posts;
+    return [];
 }
 
-function decodeHtmlEntities(text: string): string {
-    return text
-        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-        .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&#x2F;/g, '/');
-}
 
 // ─── Twitter/X (Supabase-backed) ─────────────────────────────────────
 // fetch_tweets.py writes to the `tweets` Supabase table.
@@ -361,7 +212,7 @@ async function loadTwitterPosts(): Promise<SocialPost[]> {
 export async function getAllPosts(limit?: number): Promise<SocialPost[]> {
     const [newsPosts, redditPosts] = await Promise.all([
         fetchNewsFeedPosts(),
-        fetchRedditPosts(),
+        loadRedditPostsFromSupabase(),
     ]);
 
     // Sort each source by recency independently, then cap per-source so no
