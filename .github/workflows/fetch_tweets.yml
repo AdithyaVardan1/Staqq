@@ -2,7 +2,7 @@ name: Fetch Tweets
 
 on:
   schedule:
-    - cron: '*/15 3-11 * * 1-5'  # every 15 min, 8:30am–5pm IST (UTC+5:30), weekdays only
+    - cron: '*/5 3-11 * * 1-5'   # every 5 min, 8:30am–5pm IST (UTC+5:30), weekdays only
   workflow_dispatch:               # allow manual trigger from GitHub UI
 
 jobs:
