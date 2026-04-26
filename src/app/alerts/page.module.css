@@ -337,6 +337,21 @@
     justify-content: center;
 }
 
+/* ── Waitlist ── */
+.waitlistSection {
+    margin-bottom: 72px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 18px;
+    padding: 40px;
+}
+
+@media (max-width: 560px) {
+    .waitlistSection {
+        padding: 28px 20px;
+    }
+}
+
 /* ── Bottom note ── */
 .bottomNote {
     text-align: center;

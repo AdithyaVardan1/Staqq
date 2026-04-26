@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { Zap, Shield, Clock, Lock, CheckCircle, ArrowRight, Send } from 'lucide-react';
+import { BotWaitlistForm } from './BotWaitlistForm';
 import styles from './page.module.css';
 
 export const metadata = {
     title: 'Solana Token Alerts | Staqq',
-    description: 'Real-time Solana new token pair alerts with 5-layer rug scoring, delivered to Telegram within 60 seconds. 5-15 quality alerts per day. Launching soon.',
+    description: 'Real-time Solana new token pair alerts with multi-layer rug scoring, delivered to Telegram within 60 seconds. 5-15 quality alerts per day. Launching soon.',
     alternates: {
         canonical: '/alerts',
     },
@@ -14,17 +15,17 @@ const steps = [
     {
         num: '01',
         title: 'New pair detected',
-        desc: 'Helius webhooks catch every new token pair on Raydium and Pump.fun the moment it goes live.',
+        desc: 'Every new token pair on Raydium and Pump.fun is caught the moment it goes live on-chain.',
     },
     {
         num: '02',
-        title: '5-layer safety check',
-        desc: 'Min $50K liquidity, RugCheck score, top-10 holder concentration, dev wallet history, LP burn status.',
+        title: 'Multi-layer safety analysis',
+        desc: 'Each token passes through our scoring system before an alert is ever sent. Most tokens never make it through.',
     },
     {
         num: '03',
         title: 'Alert fires to Telegram',
-        desc: 'Staqq Score (0-100) attached. You get the signal within 60 seconds. Only Telegram ID stored.',
+        desc: 'Staqq Score (0-100) attached to every alert. You get the signal within 60 seconds. No account needed beyond your Telegram.',
     },
 ];
 
@@ -32,7 +33,7 @@ const features = [
     {
         icon: Zap,
         title: 'Quality over noise',
-        desc: '5-15 curated alerts per day. Most bots send 200+. We filter hard so you don\'t have to.',
+        desc: '5-15 curated alerts per day. Most bots send 200+. We filter hard so you do not have to sort through garbage.',
     },
     {
         icon: Clock,
@@ -41,13 +42,13 @@ const features = [
     },
     {
         icon: Shield,
-        title: '5-layer rug filter',
-        desc: 'Liquidity floor, RugCheck score, holder concentration, dev history, and LP burn — all checked before alert fires.',
+        title: 'Proprietary rug filter',
+        desc: 'Multi-factor safety analysis runs on every token before it reaches you. The exact criteria are what make it hard to game.',
     },
     {
         icon: Lock,
         title: 'Privacy first',
-        desc: 'Only your Telegram ID is stored. No wallet address, no email, no account. Direct response to the Axiom scandal.',
+        desc: 'Only your Telegram ID is stored. No wallet address, no email, no account. Built as a direct response to the Axiom scandal.',
     },
 ];
 
@@ -56,16 +57,14 @@ const tiers = [
         name: 'Free',
         price: '$0',
         period: 'forever',
-        perks: ['5 alerts per day', 'Real-time delivery', 'Staqq Score included', 'No wallet or email needed'],
-        cta: 'Get notified at launch',
+        perks: ['5 alerts per day', 'Real-time delivery', 'Staqq Score on every alert', 'No wallet or email needed'],
         highlight: false,
     },
     {
         name: 'Pro',
         price: '$9',
         period: 'per month',
-        perks: ['Unlimited alerts', 'Priority alert queue', 'Full filter breakdown per token', 'USDC or card payment'],
-        cta: 'Get notified at launch',
+        perks: ['Unlimited alerts', 'Priority alert queue', 'Full score breakdown per token', 'Pay with USDC or card'],
         highlight: true,
     },
 ];
@@ -85,7 +84,7 @@ export default function AlertsPage() {
                     <span className={styles.accent}>Delivered.</span>
                 </h1>
                 <p className={styles.subtitle}>
-                    Real-time Solana new token pair alerts with 5-layer rug scoring, fired to your Telegram within 60 seconds of pair creation on Raydium and Pump.fun.
+                    Real-time Solana new token pair alerts with multi-layer rug scoring, fired to your Telegram within 60 seconds of pair creation.
                 </p>
                 <a
                     href="https://t.me/StaqqBot"
@@ -162,7 +161,7 @@ export default function AlertsPage() {
                                     rel="noopener noreferrer"
                                     className={tier.highlight ? styles.ctaBtn : styles.ctaBtnOutline}
                                 >
-                                    {tier.cta}
+                                    Get notified at launch
                                     <ArrowRight size={14} />
                                 </a>
                             </div>
@@ -170,10 +169,18 @@ export default function AlertsPage() {
                     </div>
                 </section>
 
+                {/* Waitlist */}
+                <section className={styles.waitlistSection}>
+                    <div className={styles.eyebrow}>EARLY ACCESS</div>
+                    <h2 className={styles.sectionTitle}>Get in before launch</h2>
+                    <BotWaitlistForm />
+                </section>
+
                 {/* Bottom note */}
                 <div className={styles.bottomNote}>
                     <p>
-                        Also on Staqq: <Link href="/ipo" className={styles.inlineLink}>Indian IPO GMP</Link>,{' '}
+                        Also on Staqq:{' '}
+                        <Link href="/ipo" className={styles.inlineLink}>Indian IPO GMP</Link>,{' '}
                         <Link href="/signals/fii-dii" className={styles.inlineLink}>FII/DII flows</Link>,{' '}
                         <Link href="/stocks/screener" className={styles.inlineLink}>stock screener</Link>.
                     </p>
