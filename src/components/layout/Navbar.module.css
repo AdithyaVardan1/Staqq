@@ -4,49 +4,43 @@
     top: 16px;
     left: 50%;
     transform: translateX(-50%);
-    width: 92%;
-    max-width: 1280px;
+    width: auto;
+    max-width: 1100px;
     z-index: 100;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.09);
-    background: rgba(8, 8, 8, 0.82);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    overflow: hidden; /* clips hover backgrounds to rounded corners */
-    transition: width 0.3s ease, top 0.3s ease,
-                background 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(14, 14, 14, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .scrolled {
-    background: rgba(8, 8, 8, 0.94);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    background: rgba(14, 14, 14, 0.95);
     border-color: rgba(255, 255, 255, 0.12);
-    width: 96%;
-    top: 10px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
 }
 
-/* ── Inner — stretch so cells can be full height ── */
+/* ── Inner ── */
 .inner {
-    height: 58px;
+    height: 52px;
     display: flex;
-    align-items: stretch;
-    position: relative;
+    align-items: center;
+    padding: 0 8px;
+    gap: 4px;
 }
 
-/* ── Logo cell ── */
+/* ── Logo ── */
 .logo {
     display: flex;
     align-items: center;
-    padding: 0 20px;
     text-decoration: none;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 0 10px 0 4px;
     flex-shrink: 0;
-    transition: background 0.15s ease;
+    transition: opacity 0.15s;
 }
 
-.logo:hover {
-    background: rgba(255, 255, 255, 0.04);
-}
+.logo:hover { opacity: 0.8; }
 
 .logoImageWrapper {
     position: relative;
@@ -60,109 +54,79 @@
     height: 100%;
 }
 
-/* ── Desktop nav — absolute centred, full height ── */
+/* ── Desktop nav ── */
 .desktopNav {
     display: none;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 100%;
-    align-items: stretch;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
+    align-items: center;
+    gap: 2px;
 }
 
-/* Each nav link is a full-height cell */
+/* Each link is a pill-within-pill */
 .navLink {
     display: flex;
     align-items: center;
-    padding: 0 18px;
+    padding: 7px 15px;
+    border-radius: 9999px;
     color: var(--text-secondary);
     text-decoration: none;
     font-size: 0.84rem;
     font-weight: 500;
-    border-right: 1px solid rgba(255, 255, 255, 0.07);
-    position: relative;
-    white-space: nowrap;
     letter-spacing: 0.01em;
+    white-space: nowrap;
     transition: color 0.15s ease, background 0.15s ease;
-}
-
-.navLink:last-child {
-    border-right: none;
-}
-
-/* Dot indicator — sits at the very top of each cell */
-.navLink::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: var(--primary-brand);
-    opacity: 0;
-    transition: opacity 0.2s ease;
 }
 
 .navLink:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.07);
 }
 
-.navLink:hover::before {
-    opacity: 0.5;
-}
-
+/* Active = solid lime pill, dark text */
 .navLink.active {
-    color: var(--primary-brand);
-    background: rgba(202, 255, 0, 0.06);
+    color: #000;
+    background: var(--primary-brand);
+    font-weight: 600;
 }
 
-.navLink.active::before {
-    opacity: 1;
+.navLink.active:hover {
+    background: #d4ff1a;
 }
 
-/* Alerts — violet product accent */
+/* Alerts = violet pill */
 .navLinkAlert {
     color: var(--secondary-brand);
 }
 
-.navLinkAlert::before {
-    background: var(--secondary-brand);
-}
-
 .navLinkAlert:hover {
-    color: var(--secondary-brand);
-    background: rgba(168, 85, 247, 0.08);
-}
-
-.navLinkAlert.active {
     color: var(--secondary-brand);
     background: rgba(168, 85, 247, 0.1);
 }
 
-/* ── Actions cell ── */
+.navLinkAlert.active {
+    color: #fff;
+    background: var(--secondary-brand);
+}
+
+.navLinkAlert.active:hover {
+    background: #b76ef8;
+}
+
+/* ── Actions ── */
 .actions {
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-left: auto;
-    padding: 0 14px;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 4px;
+    margin-left: 4px;
 }
 
-/* Square icon buttons */
 .iconBtn {
     color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
+    width: 34px;
+    height: 34px;
+    border-radius: 9999px;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -183,15 +147,14 @@
     display: none;
 }
 
-/* Mobile toggle */
 .mobileToggle {
     color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
+    width: 34px;
+    height: 34px;
+    border-radius: 9999px;
     background: transparent;
     border: none;
     cursor: pointer;
@@ -207,7 +170,7 @@
 .mobileMenu {
     position: fixed;
     inset: 0;
-    background: #080808;
+    background: #090909;
     z-index: 49;
     padding-top: 90px;
     transform: translateY(-100%);
@@ -222,7 +185,7 @@
     padding: 20px 16px;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
 }
 
 .mobileNavLink {
@@ -231,8 +194,8 @@
     font-weight: 700;
     color: var(--text-secondary);
     text-decoration: none;
-    padding: 10px 14px;
-    border-radius: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
     letter-spacing: -0.03em;
     transition: color 0.15s ease, background 0.15s ease;
 }
@@ -243,8 +206,8 @@
 }
 
 .mobileNavLink.active {
-    color: var(--primary-brand);
-    background: rgba(202, 255, 0, 0.06);
+    color: #000;
+    background: var(--primary-brand);
 }
 
 .mobileNavLinkAlert {
@@ -256,13 +219,14 @@
 }
 
 .mobileNavLinkAlert.active {
-    background: rgba(168, 85, 247, 0.08) !important;
+    color: #fff !important;
+    background: var(--secondary-brand) !important;
 }
 
 .mobileAuth {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     flex-direction: column;
     gap: 10px;
