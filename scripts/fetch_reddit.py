@@ -212,8 +212,8 @@ def main():
         all_rows.extend(rows)
 
     if not all_rows:
-        print('No Reddit posts fetched.')
-        return
+        print('❌ No Reddit posts fetched — reddit_session cookie may have expired. Refresh it in GitHub secrets.')
+        sys.exit(1)  # fail the step so GitHub emails you
 
     for i in range(0, len(all_rows), 100):
         batch = all_rows[i:i + 100]

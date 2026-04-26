@@ -21,6 +21,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Fetch tweets and upsert to Supabase
+        continue-on-error: true  # Twitter breaking never blocks Reddit
         env:
           TWITTER_AUTH_TOKEN: ${{ secrets.TWITTER_AUTH_TOKEN }}
           TWITTER_CT0: ${{ secrets.TWITTER_CT0 }}
