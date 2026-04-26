@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
 
-export default function robots(): MetadataRoute.Robots {
-    const baseUrl = 'https://staqqin.vercel.app';
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
 
+export default function robots(): MetadataRoute.Robots {
     return {
         rules: [
             {
@@ -10,21 +10,14 @@ export default function robots(): MetadataRoute.Robots {
                 allow: '/',
                 disallow: ['/api/', '/auth/', '/profile/', '/admin/', '/login', '/signup', '/dashboard/'],
             },
-            // Explicitly allow AI crawlers
-            {
-                userAgent: 'GPTBot',
-                allow: '/',
-                disallow: ['/api/', '/auth/'],
-            },
-            {
-                userAgent: 'ChatGPT-User',
-                allow: '/',
-            },
-            {
-                userAgent: 'PerplexityBot',
-                allow: '/',
-            },
+            // AI crawlers -- explicitly allowed so Perplexity, ChatGPT, Claude can cite us
+            { userAgent: 'GPTBot',        allow: '/' },
+            { userAgent: 'OAI-SearchBot', allow: '/' },
+            { userAgent: 'ChatGPT-User',  allow: '/' },
+            { userAgent: 'PerplexityBot', allow: '/' },
+            { userAgent: 'ClaudeBot',     allow: '/' },
+            { userAgent: 'Applebot',      allow: '/' },
         ],
-        sitemap: `${baseUrl}/sitemap.xml`,
+        sitemap: `${BASE_URL}/sitemap.xml`,
     };
 }

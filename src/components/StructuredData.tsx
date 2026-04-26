@@ -1,8 +1,7 @@
 import React from 'react';
 
-/**
- * Reusable component for injecting JSON-LD structured data into the <head>.
- */
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
+
 export function StructuredData({ schema }: { schema: object | object[] }) {
   return (
     <script
@@ -12,48 +11,50 @@ export function StructuredData({ schema }: { schema: object | object[] }) {
   );
 }
 
-// Named schema generators for consistent usage
-
-export function OrganizationStructuredData() {
+export function BreadcrumbStructuredData({ items }: { items: { name: string; item: string }[] }) {
   const schema = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Staqq",
-    "url": "https://staqqin.vercel.app",
-    "logo": "https://staqqin.vercel.app/logo.png",
-    "description": "Indian stock market intelligence platform for retail investors. Live IPO GMP, FII/DII data, and smart stock screeners.",
-    "sameAs": [
-      // Add social links here if available
-      "https://twitter.com/staqq",
-    ]
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((crumb, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": crumb.name,
+      "item": crumb.item,
+    })),
   };
   return <StructuredData schema={schema} />;
 }
 
-export function WebSiteStructuredData() {
+// FAQPage schema -- highest single impact for AI Overview citations (41% citation rate vs 15% without)
+export function FAQStructuredData({ faqs }: { faqs: { question: string; answer: string }[] }) {
   const schema = {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "url": "https://staqqin.vercel.app",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://staqqin.vercel.app/stocks/screener?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer,
+      },
+    })),
   };
   return <StructuredData schema={schema} />;
 }
 
-export function DatasetStructuredData({ 
-  name, 
-  description, 
-  url, 
-  dateModified 
-}: { 
-  name: string, 
-  description: string, 
-  url: string, 
-  dateModified: string 
+// Dataset schema -- signals to Google + AI systems that this page contains citable structured data
+export function DatasetStructuredData({
+  name,
+  description,
+  url,
+  dateModified,
+  keywords,
+}: {
+  name: string;
+  description: string;
+  url: string;
+  dateModified: string;
+  keywords?: string[];
 }) {
   const schema = {
     "@context": "https://schema.org",
@@ -61,46 +62,32 @@ export function DatasetStructuredData({
     "name": name,
     "description": description,
     "url": url,
-    "creator": {
-      "@type": "Organization",
-      "name": "Staqq"
-    },
-    "temporalCoverage": "2024/2026",
+    "creator": { "@id": `${BASE_URL}/#organization` },
+    "publisher": { "@id": `${BASE_URL}/#organization` },
     "spatialCoverage": "India",
+    "temporalCoverage": `2024/${new Date().getFullYear()}`,
     "dateModified": dateModified,
-    "keywords": ["Indian Stock Market", "NSE", "BSE", "FII DII", "Insider Trades"]
+    "inLanguage": "en-IN",
+    "license": "https://creativecommons.org/licenses/by-nc/4.0/",
+    "keywords": keywords ?? ["Indian Stock Market", "NSE", "BSE", "FII", "DII"],
   };
   return <StructuredData schema={schema} />;
 }
 
-export function BreadcrumbStructuredData({ items }: { items: { name: string, item: string }[] }) {
-  const schema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": items.map((item, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "name": item.name,
-      "item": item.item
-    }))
-  };
-  return <StructuredData schema={schema} />;
-}
-
-export function ArticleStructuredData({ 
-  headline, 
-  description, 
-  author, 
-  datePublished, 
-  dateModified, 
-  url 
-}: { 
-  headline: string, 
-  description: string, 
-  author: string, 
-  datePublished: string, 
-  dateModified: string, 
-  url: string 
+export function ArticleStructuredData({
+  headline,
+  description,
+  author,
+  datePublished,
+  dateModified,
+  url,
+}: {
+  headline: string;
+  description: string;
+  author: string;
+  datePublished: string;
+  dateModified: string;
+  url: string;
 }) {
   const schema = {
     "@context": "https://schema.org",
@@ -109,22 +96,15 @@ export function ArticleStructuredData({
     "description": description,
     "author": {
       "@type": "Person",
-      "name": author
+      "name": author,
     },
+    "publisher": { "@id": `${BASE_URL}/#organization` },
     "datePublished": datePublished,
     "dateModified": dateModified,
-    "publisher": {
-      "@type": "Organization",
-      "name": "Staqq",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://staqqin.vercel.app/logo.png"
-      }
-    },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": url
-    }
+      "@id": url,
+    },
   };
   return <StructuredData schema={schema} />;
 }
