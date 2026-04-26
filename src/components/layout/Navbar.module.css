@@ -1,3 +1,4 @@
+/* ── Shell ── */
 .navbar {
     position: fixed;
     top: var(--spacing-md);
@@ -6,41 +7,45 @@
     width: 90%;
     max-width: 1200px;
     z-index: 100;
-    transition: all 0.3s ease;
     border-radius: 100px;
-    /* Floating Pill */
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    background: rgba(10, 10, 10, 0.6);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(10, 10, 10, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: width 0.3s ease, top 0.3s ease, background 0.3s ease,
+                border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .scrolled {
-    background: rgba(10, 10, 10, 0.85);
-    border-color: rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    background: rgba(10, 10, 10, 0.88);
+    border-color: rgba(255, 255, 255, 0.11);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     width: 95%;
-    /* Expand slightly when scrolled */
     top: var(--spacing-sm);
 }
 
+/* ── Inner layout ── */
 .inner {
-    height: 60px;
-    /* Compact height */
+    height: 58px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-right: var(--spacing-xl);
-    padding-left: var(--spacing-md);
-    /* Reduced left padding to move logo left */
+    padding: 0 20px 0 16px;
     position: relative;
 }
 
+/* ── Logo ── */
 .logo {
     display: flex;
     align-items: center;
     z-index: 51;
     text-decoration: none;
+    border-radius: 12px;
+    transition: opacity 0.15s;
+}
+
+.logo:hover {
+    opacity: 0.85;
 }
 
 .logoImageWrapper {
@@ -55,48 +60,91 @@
     height: 100%;
 }
 
-/* Desktop Nav */
+/* ── Desktop nav ── */
 .desktopNav {
     display: none;
-    gap: var(--spacing-xl);
+    align-items: center;
+    gap: 2px;
 }
 
 .navLink {
+    position: relative;
     color: var(--text-secondary);
     text-decoration: none;
+    font-size: 0.875rem;
     font-weight: 500;
-    transition: color 0.2s;
-    font-size: 0.95rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: color 0.15s ease, background 0.15s ease;
+    white-space: nowrap;
 }
 
 .navLink:hover {
     color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.07);
 }
 
 .navLink.active {
     color: var(--primary-brand);
+    background: rgba(202, 255, 0, 0.08);
 }
 
-/* Actions */
+.navLink.active:hover {
+    background: rgba(202, 255, 0, 0.12);
+}
+
+/* Alerts link -- violet accent for Solana bot product */
+.navLinkAlert {
+    color: var(--secondary-brand);
+}
+
+.navLinkAlert:hover {
+    color: var(--secondary-brand);
+    background: rgba(168, 85, 247, 0.1);
+}
+
+.navLinkAlert.active {
+    color: var(--secondary-brand);
+    background: rgba(168, 85, 247, 0.12);
+}
+
+.navLinkAlert.active:hover {
+    background: rgba(168, 85, 247, 0.16);
+}
+
+/* ── Actions ── */
 .actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
+    gap: 6px;
     z-index: 51;
 }
 
+/* Square-pill icon buttons */
 .iconBtn {
-    color: var(--text-primary);
+    color: var(--text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background 0.2s;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    flex-shrink: 0;
 }
 
 .iconBtn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Watchlist link in nav */
+.watchlistLink {
+    text-decoration: none;
 }
 
 .desktopAuth {
@@ -104,18 +152,32 @@
 }
 
 .mobileToggle {
-    color: var(--text-primary);
-    display: block;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
 
-/* Mobile Menu */
+.mobileToggle:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ── Mobile menu ── */
 .mobileMenu {
     position: fixed;
     inset: 0;
     background: var(--bg-dark);
     z-index: 49;
-    padding-top: 100px;
-    /* Account for floating nav */
+    padding-top: 96px;
     transform: translateY(-100%);
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -125,32 +187,57 @@
 }
 
 .mobileMenuInner {
-    padding: var(--spacing-md);
+    padding: 24px 20px;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-lg);
+    gap: 4px;
 }
 
 .mobileNavLink {
     font-family: var(--font-outfit), sans-serif;
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 700;
     color: var(--text-secondary);
     text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    transition: color 0.15s ease, background 0.15s ease;
+    letter-spacing: -0.02em;
+}
+
+.mobileNavLink:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .mobileNavLink.active {
-    color: var(--text-primary);
+    color: var(--primary-brand);
+    background: rgba(202, 255, 0, 0.06);
+}
+
+/* Mobile alerts link -- violet */
+.mobileNavLinkAlert {
+    color: var(--secondary-brand) !important;
+}
+
+.mobileNavLinkAlert:hover {
+    background: rgba(168, 85, 247, 0.08) !important;
+}
+
+.mobileNavLinkAlert.active {
+    background: rgba(168, 85, 247, 0.1) !important;
 }
 
 .mobileAuth {
-    margin-top: var(--spacing-xl);
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
 }
 
-/* Responsive */
+/* ── Responsive ── */
 @media (min-width: 768px) {
     .desktopNav {
         display: flex;

@@ -7,12 +7,16 @@
 :root {
   /* Premium Dark Theme Palette */
 
-  /* Primary Brand: Neon Lime/Yellow (High Energy) */
+  /* Primary Brand: Neon Lime/Yellow (Indian stocks, CTAs) */
   --primary-brand-h: 74;
   --primary-brand-s: 100%;
   --primary-brand-l: 50%;
   --primary-brand: hsl(var(--primary-brand-h), var(--primary-brand-s), var(--primary-brand-l));
   --primary-brand-rgb: 202, 255, 0;
+
+  /* Secondary Brand: Violet (Solana bot, Pro tier, crypto) */
+  --secondary-brand: #a855f7;
+  --secondary-brand-rgb: 168, 85, 247;
 
   /* Backgrounds */
   --bg-dark: #0A0A0A;

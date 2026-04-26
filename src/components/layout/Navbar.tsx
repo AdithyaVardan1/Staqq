@@ -116,6 +116,7 @@ export const Navbar = () => {
                                     href={link.href}
                                     className={clsx(styles.navLink, {
                                         [styles.active]: pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href)),
+                                        [styles.navLinkAlert]: link.href === '/alerts',
                                     })}
                                 >
                                     {link.name}
@@ -186,6 +187,7 @@ export const Navbar = () => {
                             href={link.href}
                             className={clsx(styles.mobileNavLink, {
                                 [styles.active]: pathname === link.href,
+                                [styles.mobileNavLinkAlert]: link.href === '/alerts',
                             })}
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
