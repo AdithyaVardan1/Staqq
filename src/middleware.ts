@@ -59,7 +59,7 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
     }
 
     // Protected routes pattern
-    const protectedRoutes = ['/profile', '/watchlist', '/alerts'];
+    const protectedRoutes = ['/profile', '/watchlist'];
     const isProtectedRoute = protectedRoutes.some((route) =>
         request.nextUrl.pathname.startsWith(route)
     );
@@ -91,6 +91,6 @@ export const config = {
          * - favicon.ico (favicon file)
          * - public folder
          */
-        '/((?!_next/static|_next/image|favicon.ico).*)',
+        '/((?!_next/static|_next/image|favicon.ico|api/).*)',
     ],
 };
