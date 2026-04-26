@@ -8,7 +8,7 @@ import { SignalNav } from '@/components/signals/SignalNav';
 import { Activity, Zap } from 'lucide-react';
 import styles from './page.module.css';
 
-export const revalidate = 300;
+export const revalidate = 60;
 
 export const metadata = {
     title: 'Market Signals | Staqq',
