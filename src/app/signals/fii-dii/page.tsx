@@ -3,12 +3,16 @@ import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
 import { fetchFiiDiiToday, fetchFiiDiiHistory } from '@/lib/fiiDii';
 import { SignalNav } from '@/components/signals/SignalNav';
 import styles from '../shared.module.css';
+import { DatasetStructuredData, StructuredData, BreadcrumbStructuredData } from '@/components/StructuredData';
 
 export const revalidate = 900;
 
 export const metadata = {
-    title: 'FII / DII Flows | Staqq Signals',
-    description: 'Foreign and Domestic Institutional Investor daily buy/sell flows for Indian stock markets. Live data from NSE.',
+    title: 'FII / DII Daily Buy/Sell Flows NSE/BSE | Staqq',
+    description: 'Foreign (FII) and Domestic (DII) institutional daily buy/sell data for the Indian stock market. Real-time net positioning and trend analysis from NSE.',
+    alternates: {
+        canonical: '/signals/fii-dii',
+    }
 };
 
 function inr(n: number): string {
@@ -25,8 +29,44 @@ export default async function FiiDiiPage() {
         ? Math.max(...history.map(d => Math.abs(d.totalNet)), 1)
         : 1;
 
+    // FII DII FAQ
+    const faqSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        'mainEntity': [
+            {
+                '@type': 'Question',
+                'name': 'What is the net buying value of FIIs today?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': today ? `FIIs were net ${today.fii.net >= 0 ? 'buyers' : 'sellers'} of ₹${inr(today.fii.net)} Cr on ${today.date}.` : 'FII data is updated daily after market close.'
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': 'Are DIIs currently bullish or bearish?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': today ? `DIIs were net ${today.dii.net >= 0 ? 'buyers' : 'sellers'} of ₹${inr(today.dii.net)} Cr on ${today.date}.` : 'DII data indicates domestic institutional sentiment.'
+                }
+            }
+        ]
+    };
+
     return (
         <main className={styles.main}>
+            <DatasetStructuredData 
+                name="FII DII Daily Institutional Flows"
+                description="Daily net buy/sell values of Foreign Institutional Investors and Domestic Institutional Investors in the Indian cash market."
+                url="https://staqqin.vercel.app/signals/fii-dii"
+                dateModified={new Date().toISOString()}
+            />
+            <StructuredData schema={faqSchema} />
+            <BreadcrumbStructuredData items={[
+                { name: 'Home', item: 'https://staqqin.vercel.app' },
+                { name: 'Signals', item: 'https://staqqin.vercel.app/signals' },
+                { name: 'FII / DII', item: 'https://staqqin.vercel.app/signals/fii-dii' }
+            ]} />
             <div className="container">
                 <SignalNav />
 

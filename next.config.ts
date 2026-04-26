@@ -14,6 +14,9 @@ const withMDX = createMDX({
 
 const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
   serverExternalPackages: ['smartapi-javascript', 'yahoo-finance2'],
   turbopack: {
     resolveAlias: {

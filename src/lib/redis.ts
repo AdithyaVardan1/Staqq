@@ -55,6 +55,7 @@ class RedisService {
                     reconnectOnError: () => true,
                     enableReadyCheck: false, // don't wait for PING before first command
                     lazyConnect: false,
+                    enableOfflineQueue: false, // FAIL FAST if Redis is down!
                 });
 
                 this.client.on('error', (err) => {

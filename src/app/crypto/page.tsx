@@ -2,13 +2,18 @@ import Link from 'next/link';
 import { Zap, Wallet, Shield, Rocket, ArrowRight, Crown } from 'lucide-react';
 import type { Metadata } from 'next';
 import styles from './page.module.css';
+import { StructuredData, BreadcrumbStructuredData } from '@/components/StructuredData';
 
 export const metadata: Metadata = {
-    title: 'Crypto Intelligence Suite | Staqq',
-    description: 'Track social signals, copy smart wallets, scan tokens for rugpulls, and discover new launches. Everything crypto traders need in one place.',
+    title: 'Crypto Intelligence Suite | Social Signals & Wallet Tracking | Staqq',
+    description: 'Advanced crypto tools: track social sentiment, scan tokens for rugpulls (honeypot detection), find new launches, and follow smart money wallets.',
+    alternates: {
+        canonical: '/crypto',
+    },
     openGraph: {
-        title: 'Crypto Intelligence Suite | Staqq',
-        description: 'Social signals, wallet tracker, token scanner, and new launch feed for serious crypto traders.',
+        title: 'Staqq Crypto Intelligence Suite',
+        description: 'Predict crypto moves with social signals, safety scans, and wallet intelligence.',
+        url: 'https://staqqin.vercel.app/crypto',
     },
 };
 
@@ -69,6 +74,10 @@ const PRO_FEATURES = [
 export default function CryptoHubPage() {
     return (
         <main className={styles.main}>
+            <BreadcrumbStructuredData items={[
+                { name: 'Home', item: 'https://staqqin.vercel.app' },
+                { name: 'Crypto', item: 'https://staqqin.vercel.app/crypto' }
+            ]} />
             <div className="container">
                 <section className={styles.hero}>
                     <div className={styles.heroBadge}>Crypto Intelligence Suite</div>
