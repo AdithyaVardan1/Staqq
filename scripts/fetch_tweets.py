@@ -17,6 +17,24 @@ from datetime import datetime
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
+def _patch_twikit():
+    try:
+        from twikit.x_client_transaction.transaction import ClientTransaction
+        _orig = ClientTransaction.get_indices
+
+        async def safe_get_indices(self, *args, **kwargs):
+            try:
+                return await _orig(self, *args, **kwargs)
+            except Exception:
+                return (0, [0, 1, 2])
+
+        ClientTransaction.get_indices = safe_get_indices
+    except Exception:
+        pass
+
+_patch_twikit()
+
+
 def load_env():
     env_path = PROJECT_ROOT / ".env.local"
     if not env_path.exists():
