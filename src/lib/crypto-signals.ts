@@ -424,6 +424,7 @@ async function detectSignals(): Promise<Omit<CryptoSignal, 'id' | 'isLocked'>[]>
 async function storeSignals(signals: Omit<CryptoSignal, 'id' | 'isLocked'>[]): Promise<void> {
     if (signals.length === 0) return;
     const supabase = createAdminClient();
+    if (!supabase) return;
 
     for (const signal of signals) {
         const detectedAt = new Date(signal.firstDetectedAt);

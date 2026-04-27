@@ -117,6 +117,7 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
 async function loadTwitterPosts(): Promise<SocialPost[]> {
     try {
         const supabase = createAdminClient();
+        if (!supabase) return [];
         const { data, error } = await supabase
             .from('tweets')
             .select('*')
@@ -198,6 +199,7 @@ function rowToPulse(row: any): MarketPulse {
 export async function getMarketPulse(limit = 20): Promise<MarketPulse[]> {
     try {
         const supabase = createAdminClient();
+        if (!supabase) return [];
         const sevenDaysAgo = new Date(Date.now() - 7 * 86400 * 1000).toISOString().split('T')[0];
 
         const { data, error } = await supabase
@@ -221,6 +223,7 @@ export async function getMarketPulse(limit = 20): Promise<MarketPulse[]> {
 export async function getSocialPulses(limit = 8): Promise<MarketPulse[]> {
     try {
         const supabase = createAdminClient();
+        if (!supabase) return [];
         const sevenDaysAgo = new Date(Date.now() - 7 * 86400 * 1000).toISOString().split('T')[0];
 
         const { data } = await supabase
@@ -240,6 +243,7 @@ export async function getSocialPulses(limit = 8): Promise<MarketPulse[]> {
 export async function getNewsPulses(limit = 8): Promise<MarketPulse[]> {
     try {
         const supabase = createAdminClient();
+        if (!supabase) return [];
 
         const { data } = await supabase
             .from('market_pulse')

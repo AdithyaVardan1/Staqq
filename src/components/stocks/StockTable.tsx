@@ -1,11 +1,11 @@
 
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { TrendingUp, TrendingDown, ChevronRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { StockLogo } from './StockLogo';
+import { useComparisonStore } from '@/store/useComparisonStore';
+import clsx from 'clsx';
 import styles from './StockTable.module.css';
 
 interface StockTableProps {
@@ -13,6 +13,8 @@ interface StockTableProps {
 }
 
 export const StockTable: React.FC<StockTableProps> = ({ stocks }) => {
+    const { selectedTickers, addTicker, removeTicker } = useComparisonStore();
+
     return (
         <div className={styles.container}>
             <table className={styles.table}>
@@ -33,11 +35,24 @@ export const StockTable: React.FC<StockTableProps> = ({ stocks }) => {
                         const isPositive = stock.change >= 0;
                         const isReturnPositive = stock.return1Y >= 0;
                         const changeColor = isPositive ? 'var(--status-success)' : 'var(--status-danger)';
+                        const isSelected = selectedTickers.includes(stock.ticker);
+
+                        const toggleCompare = () => {
+                            if (isSelected) removeTicker(stock.ticker);
+                            else addTicker(stock.ticker);
+                        };
 
                         return (
-                            <tr key={stock.ticker} className={styles.row}>
+                            <tr key={stock.ticker} className={clsx(styles.row, isSelected && styles.rowSelected)}>
                                 <td className={styles.tdMain}>
                                     <div className={styles.header}>
+                                        <button 
+                                            className={clsx(styles.compareCheck, isSelected && styles.checked)}
+                                            onClick={toggleCompare}
+                                            title={isSelected ? "Remove from comparison" : "Add to comparison"}
+                                        >
+                                            {isSelected ? <Trash2 size={12} /> : <Plus size={12} />}
+                                        </button>
                                         <StockLogo ticker={stock.ticker} name={stock.name} size="sm" />
                                         <div>
                                             <div className={styles.ticker}>{stock.ticker}</div>
@@ -51,14 +66,16 @@ export const StockTable: React.FC<StockTableProps> = ({ stocks }) => {
                                 <td className={styles.tdNumber}>
                                     <div className={styles.change} style={{ color: changeColor }}>
                                         {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                                        {isPositive ? '+' : ''}{stock.change}%
+                                        {isPositive ? '+' : ''}{stock.change.toFixed(2)}%
                                     </div>
                                 </td>
-                                <td className={styles.tdNumber}>{stock.marketCap}</td>
-                                <td className={styles.tdNumber}>{stock.peRatio}</td>
+                                <td className={styles.tdNumber}>{fmtMcap(stock.marketCap)}</td>
+                                <td className={styles.tdNumber}>
+                                    {stock.peRatio && stock.peRatio > 0 ? stock.peRatio.toFixed(1) : 'N/A'}
+                                </td>
                                 <td className={styles.tdNumber}>
                                     <span style={{ color: isReturnPositive ? 'var(--status-success)' : 'var(--status-danger)' }}>
-                                        {isReturnPositive ? '+' : ''}{stock.return1Y}%
+                                        {isReturnPositive ? '+' : ''}{stock.return1Y.toFixed(2)}%
                                     </span>
                                 </td>
                                 <td className={styles.tdChart}>
@@ -79,3 +96,10 @@ export const StockTable: React.FC<StockTableProps> = ({ stocks }) => {
         </div>
     );
 };
+
+function fmtMcap(v: number) {
+    if (!v || isNaN(v)) return '---';
+    if (v >= 1e12) return `₹${(v / 1e12).toFixed(1)}T`;
+    if (v >= 1e7)  return `₹${(v / 1e7).toFixed(0)}Cr`;
+    return `₹${v.toLocaleString()}`;
+}

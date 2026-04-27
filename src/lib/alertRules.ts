@@ -162,6 +162,7 @@ export async function evaluateCustomRules(
   context: EvaluationContext,
 ): Promise<AlertRule[]> {
   const supabase = createAdminClient();
+  if (!supabase) return [];
 
   // Fetch all active custom rules for Pro users only
   const { data: rules, error } = await supabase

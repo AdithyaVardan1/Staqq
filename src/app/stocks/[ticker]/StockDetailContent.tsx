@@ -18,14 +18,18 @@ import {
     TrendingDown,
     Share2,
     Bookmark,
-    Activity
+    Activity,
+    Plus,
+    Trash2
 } from 'lucide-react';
 import Link from 'next/link';
 import clsx from 'clsx';
 import { useWatchlist } from '@/hooks/useWatchlist';
+import { useComparisonStore } from '@/store/useComparisonStore';
 import { StockLogo } from '@/components/stocks/StockLogo';
 import { AlertSubscribeButton } from '@/components/alerts/AlertSubscribeButton';
 import { Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, LabelList } from 'recharts';
+import { TickerBanner } from '@/components/marketing/TickerBanner';
 import styles from './page.module.css';
 
 import { useLiveMarketData } from '@/hooks/useLiveMarketData';
@@ -85,6 +89,14 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
     const [activePeriod, setActivePeriod] = useState<'quarterly' | 'yearly'>('quarterly');
     const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
     const isWatched = isInWatchlist(data.ticker);
+
+    const { selectedTickers, addTicker, removeTicker } = useComparisonStore();
+    const isSelected = selectedTickers.includes(ticker);
+
+    const toggleCompare = () => {
+        if (isSelected) removeTicker(ticker);
+        else addTicker(ticker);
+    };
 
     const [showDetails, setShowDetails] = useState(false);
 
@@ -302,6 +314,10 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
 
     return (
         <main className={styles.main}>
+            {/* Animated background glows — same as landing page */}
+            <div className={styles.heroGlow} />
+            <div className={styles.heroGlowViolet} />
+
             <div className="container">
                 {/* Back Link & Info Header */}
                 <div className={styles.navBar}>
@@ -309,6 +325,15 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                         <ArrowLeft size={18} /> Screener
                     </Link>
                     <div className={styles.actions}>
+                        <Button
+                            variant={isSelected ? "primary" : "outline"}
+                            size="sm"
+                            className={styles.watchlistBtn}
+                            onClick={toggleCompare}
+                        >
+                            {isSelected ? <Trash2 size={18} /> : <Plus size={18} />}
+                            {isSelected ? 'Remove' : 'Compare'}
+                        </Button>
                         <Button variant="ghost" size="icon"><Share2 size={20} /></Button>
                         <Button
                             variant={isWatched ? "primary" : "outline"}

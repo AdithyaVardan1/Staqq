@@ -1,0 +1,236 @@
+.main {
+    padding-top: 120px;
+    padding-bottom: 4rem;
+    min-height: 100vh;
+}
+
+.loading {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+    padding-top: 1rem;
+}
+
+.backBtn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.headerTitle h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+}
+
+.headerTitle p {
+    color: var(--text-secondary);
+}
+
+.exportActions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.compareGrid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .compareGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tableCard {
+    background: rgba(20, 20, 22, 0.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(202, 255, 0, 0.15);
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    padding: 0;
+}
+
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table th,
+.table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.stickyCol {
+    position: sticky;
+    left: 0;
+    background: rgba(15, 15, 18, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 10;
+    font-weight: 700;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stockHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem 0;
+}
+
+.stockInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tickerName {
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.removeTag {
+    background: var(--glass-bg);
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+}
+
+.signalCell {
+    padding: 1.5rem !important;
+    vertical-align: top;
+}
+
+.prosList,
+.consList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.proItem,
+.conItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.proItem {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--status-success);
+}
+
+.conItem {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--status-danger);
+}
+
+.subHeader td {
+    background: linear-gradient(90deg, rgba(var(--primary-brand-rgb), 0.1), rgba(var(--primary-brand-rgb), 0.02));
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--primary-brand);
+    border-bottom: 1px solid rgba(var(--primary-brand-rgb), 0.2);
+}
+
+.valCell {
+    font-weight: 700;
+    font-family: var(--font-outfit);
+}
+
+.better {
+    color: var(--status-success);
+}
+
+.priceVal {
+    font-size: 1.25rem;
+    color: #fff;
+    font-weight: 800;
+}
+
+/* Insight Card */
+.aiInsights {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.insightCard {
+    background: linear-gradient(135deg, rgba(202, 255, 0, 0.08), rgba(10, 10, 10, 0.9));
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(202, 255, 0, 0.3);
+    border-radius: 1.5rem;
+    box-shadow: 0 0 30px rgba(202, 255, 0, 0.05), inset 0 0 20px rgba(202, 255, 0, 0.02);
+    position: sticky;
+    top: 100px;
+    animation: pulseGlow 4s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from { box-shadow: 0 0 30px rgba(202, 255, 0, 0.05), inset 0 0 20px rgba(202, 255, 0, 0.02); }
+    to { box-shadow: 0 0 40px rgba(202, 255, 0, 0.1), inset 0 0 30px rgba(202, 255, 0, 0.05); }
+}
+
+.insightTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary-brand);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.insightContent {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.insightContent ul {
+    margin: 0.75rem 0 0 1.25rem;
+    padding: 0;
+}
+
+.insightContent li {
+    margin-bottom: 0.5rem;
+}

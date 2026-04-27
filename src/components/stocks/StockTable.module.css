@@ -119,3 +119,38 @@
 .viewLink:hover {
     opacity: 1;
 }
+
+.rowSelected {
+    background: rgba(var(--primary-brand-rgb), 0.03) !important;
+}
+
+.compareCheck {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.compareCheck:hover {
+    border-color: var(--primary-brand);
+    color: var(--primary-brand);
+}
+
+.compareCheck.checked {
+    background: var(--primary-brand);
+    border-color: var(--primary-brand);
+    color: #000;
+}
+
+.compareCheck.checked:hover {
+    background: var(--status-danger);
+    border-color: var(--status-danger);
+    color: #fff;
+}

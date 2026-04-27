@@ -3,10 +3,11 @@ import Link from 'next/link';
 import clsx from 'clsx';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { TrendingUp, TrendingDown, ChevronRight, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, ChevronRight, Activity, Plus, Trash2 } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { StockLogo } from './StockLogo';
 import { useLiveMarketData } from '@/hooks/useLiveMarketData';
+import { useComparisonStore } from '@/store/useComparisonStore';
 import styles from './StockCard.module.css';
 
 interface StockCardProps {
@@ -37,12 +38,24 @@ export const StockCard: React.FC<StockCardProps> = ({
     metricLabel,
 }) => {
     const { price, change, changePercent, status } = useLiveMarketData(ticker, initialPrice, initialChangeAmount, initialChange);
+    const { selectedTickers, addTicker, removeTicker } = useComparisonStore();
+
+    const isSelected = selectedTickers.includes(ticker);
+
+    const toggleCompare = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isSelected) {
+            removeTicker(ticker);
+        } else {
+            addTicker(ticker);
+        }
+    };
 
     // Live calculations
     const displayPrice = price ?? initialPrice;
 
     // Use live change if available, otherwise fallback to initial props
-    // This avoids incorrect calculations when mixing real price with mock open price
     const currentChange = changePercent !== undefined ? changePercent : initialChange;
     const currentChangeAmount = change !== undefined ? change : initialChangeAmount;
     const isPositive = currentChange >= 0;
@@ -51,12 +64,9 @@ export const StockCard: React.FC<StockCardProps> = ({
 
     return (
         <Card hoverEffect className={clsx(styles.container, "group relative overflow-hidden")}>
-
-
             <div className={styles.cardContent}>
                 <div className={styles.header}>
                     <StockLogo ticker={ticker} name={name} size="md" />
-                    {/* ... rest of header ... */}
                     <div className={styles.tickerInfo}>
                         <div className={styles.tickerHeader}>
                             <h4 className={styles.ticker}>{ticker}</h4>
@@ -71,6 +81,14 @@ export const StockCard: React.FC<StockCardProps> = ({
                                         <Activity size={10} /> LIVE
                                     </span>
                                 )}
+                                <button
+                                    className={clsx(styles.compareBtn, isSelected && styles.selected)}
+                                    onClick={toggleCompare}
+                                    title={isSelected ? "Remove from comparison" : "Add to comparison"}
+                                >
+                                    {isSelected ? <Trash2 size={12} /> : <Plus size={12} />}
+                                    {isSelected ? 'Remove' : 'Compare'}
+                                </button>
                             </div>
                         </div>
                         <div className={styles.name}>{name}</div>
@@ -97,7 +115,9 @@ export const StockCard: React.FC<StockCardProps> = ({
                     </div>
                     <div className={styles.metric}>
                         <span className={styles.metricLabel}>P/E</span>
-                        <span className={styles.metricValue}>{peRatio}</span>
+                        <span className={styles.metricValue}>
+                            {peRatio && peRatio > 0 ? peRatio.toFixed(1) : 'N/A'}
+                        </span>
                     </div>
                     <div className={styles.metric}>
                         <span className={styles.metricLabel}>{metricLabel || '1Y Return'}</span>

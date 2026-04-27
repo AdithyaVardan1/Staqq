@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { StockCard } from '@/components/stocks/StockCard';
 import { StockTable } from '@/components/stocks/StockTable';
 import { StockCardSkeleton } from '@/components/stocks/StockCardSkeleton';
+import { ComparisonTray } from '@/components/comparison/ComparisonTray';
 import { BackToTop } from '@/components/ui/BackToTop';
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -160,6 +161,7 @@ export default function StockScreener() {
             key={value}
             className={clsx(styles.pill, filters[field] === value && styles.pillActive)}
             onClick={() => setFilters(prev => ({ ...prev, [field]: value }))}
+            suppressHydrationWarning
         >
             {label}
         </button>
@@ -167,12 +169,20 @@ export default function StockScreener() {
 
     return (
         <main className={styles.main}>
+            {/* Animated background glows — same as landing page */}
+            <div className={styles.heroGlow} />
+            <div className={styles.heroGlowViolet} />
+
             <div className="container">
                 <div className={styles.header}>
-                    <div>
-                        <div className={styles.eyebrow}>NSE EQUITY</div>
-                        <h1 className={styles.title}>Stock <span className={styles.accent}>Screener</span></h1>
+                    <div className={styles.eyebrowPill}>
+                        <span className={styles.eyebrowDot} />
+                        NSE Equity &middot; Live Data
                     </div>
+                    <h1 className={styles.title}>
+                        Stock <span className={styles.accent}>Screener</span>
+                    </h1>
+                    <p className={styles.subtitle}>Scan 500+ NSE stocks with real-time filters, smart sorting, and instant comparison.</p>
                 </div>
 
                 <RecentlyViewedSection />
@@ -188,7 +198,7 @@ export default function StockScreener() {
                                     <span className={styles.filterCount}>{activeFilterCount}</span>
                                 )}
                                 {activeFilterCount > 0 && (
-                                    <button className={styles.resetBtn} onClick={() => setFilters(INITIAL_FILTERS)}>
+                                    <button className={styles.resetBtn} onClick={() => setFilters(INITIAL_FILTERS)} suppressHydrationWarning>
                                         Reset
                                     </button>
                                 )}
@@ -305,8 +315,8 @@ export default function StockScreener() {
 
                                 {/* View toggle */}
                                 <div className={styles.viewToggle}>
-                                    <button className={clsx(styles.toggleBtn, viewMode === 'card' && styles.toggleActive)} onClick={() => setViewMode('card')}><LayoutGrid size={16} /></button>
-                                    <button className={clsx(styles.toggleBtn, viewMode === 'table' && styles.toggleActive)} onClick={() => setViewMode('table')}><List size={16} /></button>
+                                    <button className={clsx(styles.toggleBtn, viewMode === 'card' && styles.toggleActive)} onClick={() => setViewMode('card')} suppressHydrationWarning><LayoutGrid size={16} /></button>
+                                    <button className={clsx(styles.toggleBtn, viewMode === 'table' && styles.toggleActive)} onClick={() => setViewMode('table')} suppressHydrationWarning><List size={16} /></button>
                                 </div>
                             </div>
                         </div>
@@ -359,6 +369,7 @@ export default function StockScreener() {
                 </div>
             </div>
             <BackToTop />
+            <ComparisonTray />
         </main>
     );
 }

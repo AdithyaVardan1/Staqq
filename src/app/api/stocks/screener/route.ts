@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getNifty500 } from '@/lib/nse';
 import { getTrendingTickers } from '@/lib/social';
-import yahooFinance from 'yahoo-finance2';
 import { redis } from '@/lib/redis';
-import { angelOne } from '@/lib/angel';
+import { angelOne } from '@/lib/angelone';
+import { yahoo } from '@/lib/yahoo';
 
 export const dynamic = 'force-dynamic';
 
@@ -63,12 +63,11 @@ async function getFundamentals(ticker: string): Promise<{
     }
 
     try {
-        const yf = new yahooFinance();
-        const q = await yf.quote(`${ticker}.NS`);
+        const q = await yahoo.getQuote(`${ticker}.NS`);
         if (!q) return null;
         const data = {
             marketCap: q.marketCap || 0,
-            peRatio: q.trailingPE || 0,
+            peRatio: q.trailingPE || q.forwardPE || 0,
             sector: q.sector || 'Unknown',
             return1Y: q.fiftyTwoWeekChangePercent ? q.fiftyTwoWeekChangePercent * 100 : 0,
         };
@@ -164,8 +163,7 @@ async function getYahooPriceFallback(ticker: string): Promise<{
         try { return JSON.parse(cached); } catch { /* fall through */ }
     }
     try {
-        const yf = new yahooFinance();
-        const q = await yf.quote(`${ticker}.NS`);
+        const q = await yahoo.getQuote(`${ticker}.NS`);
         if (!q || !q.regularMarketPrice) return null;
         const price = q.regularMarketPrice;
         const change = q.regularMarketChangePercent || 0;
@@ -217,9 +215,9 @@ export async function GET(request: Request) {
             const priceHits: Record<string, { price: number; change: number; changeAmount: number }> = {};
 
             for (const stock of chunk) {
-                const hit = await getPriceCached(stock.ticker);
-                if (hit) priceHits[stock.ticker] = hit;
-                else priceMisses.push(stock.ticker);
+                const hit = await getPriceCached(stock.symbol);
+                if (hit) priceHits[stock.symbol] = hit;
+                else priceMisses.push(stock.symbol);
             }
 
             // 2. Batch-fetch price misses from Angel One
@@ -250,18 +248,18 @@ export async function GET(request: Request) {
             }
 
             // 4. Fetch fundamentals only for stocks that have a price (from cache)
-            const stocksWithPrice = chunk.filter(s => priceHits[s.ticker]?.price > 0);
+            const stocksWithPrice = chunk.filter(s => priceHits[s.symbol]?.price > 0);
             
             console.log(`[Screener Chunk] Found ${stocksWithPrice.length} stocks with price out of ${chunk.length}`);
 
             const fundamentalsArr = await Promise.allSettled(
-                stocksWithPrice.map(s => getFundamentals(s.ticker))
+                stocksWithPrice.map(s => getFundamentals(s.symbol))
             );
 
             // 5. Build enriched stocks and apply filters
             for (let j = 0; j < stocksWithPrice.length; j++) {
                 const stock = stocksWithPrice[j];
-                const priceData = priceHits[stock.ticker];
+                const priceData = priceHits[stock.symbol];
                 if (!priceData || priceData.price <= 0) continue;
 
                 const fundamentalsResult = fundamentalsArr[j];
@@ -288,7 +286,7 @@ export async function GET(request: Request) {
 
                 if (matchedStocks.length < limit) {
                     matchedStocks.push({
-                        ticker: stock.ticker,
+                        ticker: stock.symbol,
                         name: stock.name,
                         price,
                         change: priceData.change,

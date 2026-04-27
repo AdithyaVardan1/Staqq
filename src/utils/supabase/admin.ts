@@ -11,9 +11,10 @@ export function createAdminClient() {
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!url || !key) {
-        throw new Error(
-            '[Supabase Admin] NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set.'
+        console.warn(
+            '[Supabase Admin] NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is not set. Supabase features will be disabled.'
         );
+        return null;
     }
 
     return createClient(url, key, {

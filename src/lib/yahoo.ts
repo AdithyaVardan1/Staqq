@@ -17,6 +17,9 @@ export interface FundamentalData {
     low52: number;
     debtToEquity: number;
     website: string;
+    price?: number;
+    change?: number;
+    percentChange?: number;
     financials: {
         quarterly: {
             period: string;
@@ -56,6 +59,11 @@ export class YahooFinanceService {
         return this.yf;
     }
 
+    public async getQuote(symbol: string): Promise<any> {
+        const yf = await this.getClient();
+        return await yf.quote(symbol);
+    }
+
     public async getFundamentals(ticker: string): Promise<FundamentalData | null> {
         try {
             console.log(`[Yahoo] Starting fetch for ticker: ${ticker}`);
@@ -93,6 +101,10 @@ export class YahooFinanceService {
                 sector: profile?.sector || 'Unknown',
                 industry: profile?.industry || 'Unknown',
                 website: profile?.website || '',
+
+                price: financials?.currentPrice || summary?.previousClose || 0,
+                change: (financials?.currentPrice || 0) - (summary?.previousClose || 0),
+                percentChange: summary?.previousClose ? (((financials?.currentPrice || 0) - summary.previousClose) / summary.previousClose) * 100 : 0,
 
                 marketCap: summary?.marketCap || 0,
                 peRatio: summary?.trailingPE || stats?.forwardPE || 0,
