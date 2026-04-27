@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { getAllPosts, getSocialPulses, getNewsPulses } from '@/lib/social';
 import { createAdminClient } from '@/utils/supabase/admin';
 import { NewsCard } from '@/components/signals/NewsCard';
+import { MarketFeedAnimator } from '@/components/signals/MarketFeedAnimator';
 import { OpinionFeed } from '@/components/signals/OpinionFeed';
 import { SignalDelayBanner } from '@/components/premium/SignalDelayBanner';
-import { SignalNav } from '@/components/signals/SignalNav';
 import { Zap } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -50,15 +50,24 @@ export default async function SignalsPage() {
 
     return (
         <main className={styles.page}>
-            <div className={styles.navWrap}>
-                <SignalNav />
+
+            <div style={{ textAlign: 'center', marginBottom: 32 }}>
+                <h1 className={styles.shimmerTitle} style={{ fontSize: 'clamp(2.4rem, 4vw, 3.8rem)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 12 }}>
+                    Market Intelligence
+                </h1>
+                <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
+                    Real-time signals, social buzz, and alternative data for the smart investor.
+                </p>
             </div>
 
             {/* Spike banner */}
             {recentSpikes.length > 0 && (
                 <div className={styles.spikeBanner}>
                     <Zap size={14} style={{ color: '#caff00', flexShrink: 0 }} />
-                    <span className={styles.spikeLabel}>Live Spikes</span>
+                    <span className={styles.spikeLabel}>
+                        <span className={styles.spikeDot} />
+                        Live Spikes
+                    </span>
                     {recentSpikes.map((s, i) => (
                         <Link key={i} href={`/stocks/${s.ticker}`} className={styles.spikeChip}>
                             <span>${s.ticker}</span>
@@ -82,21 +91,15 @@ export default async function SignalsPage() {
                         <span className={styles.colCount}>{newsPosts.length} articles</span>
                     </div>
 
-                    {heroPost && (
-                        <div className={styles.heroSlot}>
-                            <NewsCard post={heroPost} size="hero" />
-                        </div>
-                    )}
-
-                    <div className={styles.newsGrid}>
-                        {gridPosts.map(post => (
-                            <NewsCard key={post.id} post={post} />
-                        ))}
-                    </div>
+                    <MarketFeedAnimator 
+                        heroPost={heroPost} 
+                        gridPosts={gridPosts} 
+                        styles={styles} 
+                    />
                 </div>
 
                 {/* RIGHT — opinion panels stacked */}
-                <div className={styles.opinionCol}>
+                <div className={styles.opinionCol} style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.3s' }}>
 
                     {/* Social opinion — top half */}
                     <div className={styles.opinionPane}>

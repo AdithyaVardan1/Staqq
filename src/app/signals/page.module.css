@@ -1,10 +1,6 @@
 /* ── Page shell ── */
 .page {
     width: 100%;
-    min-height: 100vh;
-    padding-top: 80px;
-    padding-bottom: 80px;
-    overflow-x: hidden;
 }
 
 .navWrap {
@@ -13,62 +9,121 @@
     padding: 0 24px;
 }
 
+/* ── Title Shimmer ── */
+.shimmerTitle {
+    background: linear-gradient(
+        to right,
+        #fff 20%,
+        var(--primary-brand) 40%,
+        var(--primary-brand) 60%,
+        #fff 80%
+    );
+    background-size: 200% auto;
+    color: #000;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: textShine 4s linear infinite;
+}
+
+@keyframes textShine {
+    to {
+        background-position: 200% center;
+    }
+}
+
 /* ── Spike banner ── */
 .spikeBanner {
     display: flex;
     align-items: center;
-    gap: 10px;
-    max-width: 1400px;
-    margin: 16px auto 0;
-    padding: 10px 24px;
-    background: rgba(202, 255, 0, 0.03);
-    border-top: 1px solid rgba(202, 255, 0, 0.1);
-    border-bottom: 1px solid rgba(202, 255, 0, 0.1);
+    gap: 12px;
+    width: fit-content;
+    margin: 0 auto 32px;
+    padding: 12px 24px;
+    background: rgba(10, 10, 10, 0.8);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(202, 255, 0, 0.2);
+    border-radius: 9999px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(202, 255, 0, 0.05);
     flex-wrap: wrap;
+    animation: heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+@keyframes heroFadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .spikeLabel {
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: #caff00;
+    letter-spacing: 0.1em;
+    color: var(--primary-brand);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.spikeDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary-brand);
+    animation: dotPulse 2s infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
 }
 
 .spikeChip {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    font-size: 0.76rem;
-    font-weight: 600;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
     color: #fff;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 4px 10px;
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 14px;
+    border-radius: 9999px;
     text-decoration: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .spikeChip:hover {
+    background: rgba(202, 255, 0, 0.1);
     border-color: rgba(202, 255, 0, 0.3);
+    color: var(--primary-brand);
+    transform: translateY(-2px);
 }
 
 .spikeMult {
-    color: #caff00;
-    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.spikeChip:hover .spikeMult {
+    color: var(--primary-brand);
 }
 
 .spikeSetup {
-    font-size: 0.72rem;
-    color: #555;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
     text-decoration: none;
-    margin-left: auto;
+    margin-left: 8px;
+    padding-left: 12px;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
     transition: color 0.2s;
 }
 
 .spikeSetup:hover {
-    color: #888;
+    color: #fff;
 }
 
 /* ── Main layout: left news + right opinions ── */

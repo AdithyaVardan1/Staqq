@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { Users, ExternalLink } from 'lucide-react';
 import { fetchInsiderTrades } from '@/lib/insiderTrades';
-import { SignalNav } from '@/components/signals/SignalNav';
 import styles from '../shared.module.css';
 
 export const revalidate = 900;
@@ -42,9 +41,7 @@ export default async function InsiderTradesPage() {
     return (
         <main className={styles.main}>
             <div className="container">
-                <SignalNav />
-
-                <div className={styles.header}>
+                <div className={styles.header} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.1s' }}>
                     <div className={styles.eyebrow}>CORPORATE GOVERNANCE</div>
                     <h1 className={styles.title}>
                         Insider <span className={styles.accent}>Trades</span>
@@ -60,7 +57,7 @@ export default async function InsiderTradesPage() {
 
                 {trades.length > 0 ? (
                     <>
-                        <div className={styles.statGrid}>
+                        <div className={styles.statGrid} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.2s' }}>
                             <div className={styles.statCard}>
                                 <div className={styles.statLabel}>Total Disclosures</div>
                                 <div className={styles.statVal}>{trades.length}</div>
@@ -90,7 +87,7 @@ export default async function InsiderTradesPage() {
                             </div>
                         </div>
 
-                        <div className={styles.tableSection}>
+                        <div className={styles.tableSection} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.3s' }}>
                             <div className={styles.tableSectionTitle}>All Disclosures (last 14 days)</div>
                             <div className={styles.tableWrapper}>
                                 <table className={styles.table}>
@@ -138,14 +135,14 @@ export default async function InsiderTradesPage() {
                             </div>
                         </div>
 
-                        <div style={{ marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
+                        <div style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.4s', marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
                             <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: 8 }}>What is PIT?</div>
                             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
                                 Under SEBI's Prohibition of Insider Trading (PIT) Regulations, company insiders (promoters, directors, KMPs) must disclose all trades above 10 lakh rupees within 2 trading days. These filings are a leading indicator of insider conviction, since insiders have the most accurate view of business fundamentals.
                             </p>
                         </div>
 
-                        <div className={styles.sourceNote}>
+                        <div className={styles.sourceNote} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.5s' }}>
                             <ExternalLink size={11} />
                             Source: NSE India · PIT disclosures filed within 2 trading days of transaction
                         </div>

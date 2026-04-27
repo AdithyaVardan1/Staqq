@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { Building2, ExternalLink } from 'lucide-react';
 import { fetchTodayDeals } from '@/lib/bulkDeals';
-import { SignalNav } from '@/components/signals/SignalNav';
 import styles from '../shared.module.css';
 
 export const revalidate = 900;
@@ -34,9 +33,7 @@ export default async function BulkDealsPage() {
     return (
         <main className={styles.main}>
             <div className="container">
-                <SignalNav />
-
-                <div className={styles.header}>
+                <div className={styles.header} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.1s' }}>
                     <div className={styles.eyebrow}>MARKET ACTIVITY</div>
                     <h1 className={styles.title}>
                         Bulk & Block <span className={styles.accent}>Deals</span>
@@ -52,7 +49,7 @@ export default async function BulkDealsPage() {
 
                 {deals.length > 0 ? (
                     <>
-                        <div className={styles.statGrid}>
+                        <div className={styles.statGrid} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.2s' }}>
                             <div className={styles.statCard}>
                                 <div className={styles.statLabel}>Total Deals</div>
                                 <div className={styles.statVal}>{deals.length}</div>
@@ -81,7 +78,7 @@ export default async function BulkDealsPage() {
                             </div>
                         </div>
 
-                        <div className={styles.tableSection}>
+                        <div className={styles.tableSection} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.3s' }}>
                             <div className={styles.tableSectionTitle}>All Deals (latest trading day)</div>
                             <div className={styles.tableWrapper}>
                                 <table className={styles.table}>
@@ -129,14 +126,14 @@ export default async function BulkDealsPage() {
                             </div>
                         </div>
 
-                        <div style={{ marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
+                        <div style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.4s', marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
                             <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: 8 }}>Bulk vs Block</div>
                             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
                                 A bulk deal is a single transaction of more than 0.5% of a company's equity, disclosed at end of day. A block deal is a negotiated transaction between two parties, executed in the block window (8:45 to 9:00 AM) or regular hours. Both signal significant institutional movement in a stock.
                             </p>
                         </div>
 
-                        <div className={styles.sourceNote}>
+                        <div className={styles.sourceNote} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.5s' }}>
                             <ExternalLink size={11} />
                             Source: NSE India · Bulk deals disclosed post-market · Block deals disclosed intraday
                         </div>

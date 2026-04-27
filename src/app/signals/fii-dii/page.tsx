@@ -1,7 +1,6 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Minus, ExternalLink } from 'lucide-react';
 import { fetchFiiDiiToday, fetchFiiDiiHistory } from '@/lib/fiiDii';
-import { SignalNav } from '@/components/signals/SignalNav';
 import styles from '../shared.module.css';
 import { DatasetStructuredData, StructuredData, BreadcrumbStructuredData } from '@/components/StructuredData';
 
@@ -98,9 +97,7 @@ export default async function FiiDiiPage() {
                 { name: 'FII / DII', item: `${BASE_URL}/signals/fii-dii` },
             ]} />
             <div className="container">
-                <SignalNav />
-
-                <div className={styles.header}>
+                <div className={styles.header} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.1s' }}>
                     <div className={styles.eyebrow}>INSTITUTIONAL FLOWS</div>
                     <h1 className={styles.title}>
                         FII / DII <span className={styles.accent}>Flows</span>
@@ -118,7 +115,7 @@ export default async function FiiDiiPage() {
 
                 {today ? (
                     <>
-                        <div className={styles.statGrid}>
+                        <div className={styles.statGrid} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.2s' }}>
                             <div className={styles.statCard}>
                                 <div className={styles.statLabel}>FII / FPI Net</div>
                                 <div className={styles.statVal} style={{ color: today.fii.net >= 0 ? '#22c55e' : '#ef4444' }}>
@@ -167,7 +164,7 @@ export default async function FiiDiiPage() {
                         </div>
 
                         {history.length > 1 && (
-                            <div className={styles.trendSection}>
+                            <div className={styles.trendSection} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.3s' }}>
                                 <div className={styles.trendHeader}>
                                     <span className={styles.trendTitle}>10-Day Combined Net Flow</span>
                                     <div className={styles.trendLegend}>
@@ -198,7 +195,7 @@ export default async function FiiDiiPage() {
                             </div>
                         )}
 
-                        <div className={styles.tableSection}>
+                        <div className={styles.tableSection} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.4s' }}>
                             <div className={styles.tableSectionTitle}>Today's Breakdown</div>
                             <div className={styles.tableWrapper}>
                                 <table className={styles.table}>
@@ -228,14 +225,14 @@ export default async function FiiDiiPage() {
                             </div>
                         </div>
 
-                        <div style={{ marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
+                        <div style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.5s', marginTop: 24, padding: '16px 20px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12 }}>
                             <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: 8 }}>How to read this</div>
                             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.65, margin: 0 }}>
                                 FII/FPI are global funds (BlackRock, Vanguard, sovereign funds). Their moves signal global risk appetite for India. DII includes mutual funds and insurance companies (LIC, SBI MF) — they typically buy when FII sells. When both are net buyers, it is broadly bullish. When FII sells and DII absorbs, the market holds steady. When both sell together, watch for corrections.
                             </p>
                         </div>
 
-                        <div className={styles.sourceNote}>
+                        <div className={styles.sourceNote} style={{ animation: 'heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.6s' }}>
                             <ExternalLink size={11} />
                             Source: NSE India · Published after market close (~7–8 PM IST on trading days)
                         </div>
