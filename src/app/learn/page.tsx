@@ -9,14 +9,8 @@ import Link from "next/link";
 const RECOMMENDED_PATH = "beginner";
 
 export default function LearnPage() {
-  const {
-    getCompletedCountForPath,
-    isLoaded,
-    totalCompleted,
-    currentStreak,
-  } = useProgress();
+  const { getCompletedCountForPath, isLoaded, totalCompleted, currentStreak } = useProgress();
 
-  // Find a path the user is currently in the middle of (started but not finished)
   const inProgressPath = isLoaded
     ? Object.entries(learnPaths).find(([key, path]) => {
         const total = path.modules.reduce((s, m) => s + m.chapterCount, 0);
@@ -28,108 +22,119 @@ export default function LearnPage() {
   const isNewUser = isLoaded && totalCompleted === 0;
 
   return (
-    <main className={styles.container}>
-      {/* Hero */}
-      <div className={styles.hero}>
-        <div className={styles.heroTop}>
-          <div>
-            <div className={styles.eyebrow}>Learning Hub</div>
-            <h1 className={styles.title}>
-              Master the markets,<br />one lesson at a time.
-            </h1>
-            <p className={styles.subtitle}>
-              Five structured tracks covering everything from opening your first demat
-              account to reading a DCF model. No fluff, no paywall.
-            </p>
-          </div>
+    <div className={styles.page}>
+      {/* Ambient glows */}
+      <div className={styles.glowLime} aria-hidden />
+      <div className={styles.glowViolet} aria-hidden />
 
-          {/* Streak card — only once they've started */}
-          {isLoaded && currentStreak > 0 && (
-            <div className={styles.streakCard}>
-              <div className={styles.streakFlame}>🔥</div>
-              <div className={styles.streakNum}>{currentStreak}</div>
-              <div className={styles.streakLabel}>day streak</div>
-            </div>
-          )}
+      {/* Hero */}
+      <section className={styles.hero}>
+        <div className={styles.heroBadge}>
+          <span className={styles.heroBadgeDot} />
+          Learning Hub · Free forever
         </div>
 
-        {/* Stats row */}
-        <div className={styles.statsRow}>
+        <h1 className={styles.heroTitle}>
+          Master the markets,<br />
+          <span className={styles.heroAccent}>one lesson at a time.</span>
+        </h1>
+
+        <p className={styles.heroSubtitle}>
+          Five structured tracks from opening your first demat account to reading a DCF model.
+          No fluff, no paywall.
+        </p>
+
+        {/* Stats strip */}
+        <div className={styles.statsStrip}>
           {[
             { num: "5", label: "Tracks" },
             { num: "22", label: "Modules" },
             { num: "83", label: "Lessons" },
             isLoaded && totalCompleted > 0
               ? { num: String(totalCompleted), label: "Completed" }
-              : { num: "Free", label: "Always" },
-          ].map((s) => (
-            <div key={s.label} className={styles.statItem}>
-              <span className={styles.statNum}>{s.num}</span>
-              <span className={styles.statLabel}>{s.label}</span>
+              : { num: "100%", label: "Free" },
+          ].map((s, i) => (
+            <div key={s.label} className={styles.statCell}>
+              {i > 0 && <div className={styles.statDivider} />}
+              <div className={styles.statNum}>{s.num}</div>
+              <div className={styles.statLabel}>{s.label}</div>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Contextual CTA banner */}
-      {isNewUser && (
-        <Link href={`/learn/${RECOMMENDED_PATH}`} className={styles.startBanner}>
-          <div className={styles.startBannerLeft}>
-            <span className={styles.startBannerIcon}>👋</span>
-            <div>
-              <div className={styles.startBannerTitle}>New here? Start with Absolute Beginner</div>
-              <div className={styles.startBannerSub}>15 bite-sized lessons, no prior knowledge needed.</div>
-            </div>
+        {/* Streak — visible once user starts */}
+        {isLoaded && currentStreak > 0 && (
+          <div className={styles.streakPill}>
+            🔥 {currentStreak}-day streak
           </div>
-          <svg className={styles.startBannerArrow} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-          </svg>
-        </Link>
-      )}
+        )}
+      </section>
 
-      {inProgressPath && (
-        <Link href={`/learn/${inProgressPath[0]}`} className={styles.continueBanner}>
-          <div className={styles.continueBannerLeft}>
-            <span className={styles.continueDot} />
-            <div>
-              <div className={styles.continueBannerTitle}>Continue: {inProgressPath[1].title}</div>
-              <div className={styles.continueBannerSub}>
-                {getCompletedCountForPath(inProgressPath[0])} of{" "}
-                {inProgressPath[1].modules.reduce((s, m) => s + m.chapterCount, 0)} lessons done
+      {/* Main content */}
+      <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+
+        {/* Contextual banner */}
+        {isNewUser && (
+          <Link href={`/learn/${RECOMMENDED_PATH}`} className={styles.startBanner}>
+            <div className={styles.bannerLeft}>
+              <div className={styles.bannerIcon}>👋</div>
+              <div>
+                <div className={styles.bannerTitle}>New here? Start with Absolute Beginner</div>
+                <div className={styles.bannerSub}>15 bite-sized lessons, no prior knowledge needed.</div>
               </div>
             </div>
-          </div>
-          <svg className={styles.startBannerArrow} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-          </svg>
-        </Link>
-      )}
+            <svg className={styles.bannerArrow} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </Link>
+        )}
 
-      {/* Section label */}
-      <div className={styles.sectionLabel}>All tracks</div>
+        {inProgressPath && (
+          <Link href={`/learn/${inProgressPath[0]}`} className={`${styles.startBanner} ${styles.continueBanner}`}>
+            <div className={styles.bannerLeft}>
+              <div className={styles.continueDot} />
+              <div>
+                <div className={styles.bannerTitle}>Continue: {inProgressPath[1].title}</div>
+                <div className={styles.bannerSub}>
+                  {getCompletedCountForPath(inProgressPath[0])} of{" "}
+                  {inProgressPath[1].modules.reduce((s, m) => s + m.chapterCount, 0)} lessons done
+                </div>
+              </div>
+            </div>
+            <svg className={styles.bannerArrow} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            </svg>
+          </Link>
+        )}
 
-      {/* Path cards */}
-      <section className={styles.grid}>
-        {Object.entries(learnPaths).map(([key, path]) => {
-          const totalLessons = path.modules.reduce((sum, m) => sum + m.chapterCount, 0);
-          const completed = isLoaded ? getCompletedCountForPath(key) : 0;
-          const progress = totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
+        {/* Section header */}
+        <div className={styles.sectionHeader}>
+          <span className={styles.sectionEyebrow}>All tracks</span>
+        </div>
 
-          return (
-            <LearningPathCard
-              key={key}
-              title={path.title}
-              description={path.description}
-              modules={path.modules.length}
-              progress={progress}
-              slug={key}
-              difficulty={path.difficulty}
-              estimatedTime={path.estimatedTime}
-              icon={path.icon}
-            />
-          );
-        })}
-      </section>
-    </main>
+        {/* Grid */}
+        <section className={styles.grid}>
+          {Object.entries(learnPaths).map(([key, path]) => {
+            const totalLessons = path.modules.reduce((sum, m) => sum + m.chapterCount, 0);
+            const completed = isLoaded ? getCompletedCountForPath(key) : 0;
+            const progress = totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
+
+            return (
+              <LearningPathCard
+                key={key}
+                title={path.title}
+                description={path.description}
+                modules={path.modules.length}
+                progress={progress}
+                slug={key}
+                difficulty={path.difficulty}
+                estimatedTime={path.estimatedTime}
+                icon={path.icon}
+              />
+            );
+          })}
+        </section>
+      </div>
+    </div>
   );
 }
