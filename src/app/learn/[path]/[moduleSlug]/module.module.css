@@ -1,126 +1,184 @@
 .container {
-    padding: 6rem 2rem 3rem;
-    max-width: 1100px;
+    padding: 5.5rem 1.5rem 5rem;
+    max-width: 800px;
     margin: 0 auto;
     min-height: 100vh;
 }
 
 .header {
     margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #111;
 }
 
 .backLink {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    color: #b6ff00;
+    gap: 0.4rem;
+    color: #444;
     text-decoration: none;
+    font-size: 0.825rem;
     font-weight: 500;
-    transition: all 0.2s ease;
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+    transition: color 0.2s ease;
+    margin-bottom: 1.75rem;
 }
 
-.backLink:hover {
-    text-decoration: underline;
-    opacity: 0.8;
+.backLink:hover { color: #b6ff00; }
+
+.eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #444;
+    margin-bottom: 0.6rem;
 }
 
 .title {
-    font-size: 2.25rem;
-    font-weight: 700;
-    margin-bottom: 0.75rem;
+    font-size: clamp(1.6rem, 3vw, 2.1rem);
+    font-weight: 800;
+    margin: 0 0 0.6rem;
     color: #fff;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
 }
 
 .description {
-    color: #9a9a9a;
-    font-size: 1.1rem;
-    line-height: 1.6;
+    color: #555;
+    font-size: 0.975rem;
+    line-height: 1.65;
+    margin: 0 0 1.5rem;
 }
 
-.chaptersGrid {
+.progressWrap {
+    max-width: 320px;
+}
+
+/* ── Section label ── */
+.sectionLabel {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* ── Timeline chapters ── */
+.chaptersTimeline {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+}
+
+/* Vertical connecting line */
+.chaptersTimeline::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: 24px;
+    bottom: 24px;
+    width: 1px;
+    background: linear-gradient(to bottom, #1e1e1e 0%, #1e1e1e 90%, transparent 100%);
 }
 
 .chapterCard {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    padding: 1.25rem 1.5rem;
-    background: #000000;
-    border: 1px solid #1a1a1a;
-    border-radius: 14px;
+    gap: 1.1rem;
+    padding: 1rem 1.25rem 1rem 0.5rem;
+    border-radius: 12px;
     text-decoration: none;
-    transition: all 0.25s ease;
+    position: relative;
+    transition: background 0.2s ease;
+    margin-bottom: 4px;
 }
 
-.chapterCard:hover {
-    border-color: #333;
-    transform: translateX(8px);
-    background: #0A0A0A;
-    box-shadow: 0 4px 20px rgba(182, 255, 0, 0.1);
-}
+.chapterCard:hover { background: #080808; }
 
-.chapterNumber {
+/* ── Timeline node ── */
+.timelineNode {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 44px;
     height: 44px;
-    background: #b6ff00;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    color: #000;
+    border-radius: 12px;
     flex-shrink: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+    transition: all 0.2s ease;
 }
 
-.chapterContent {
-    flex: 1;
+.nodeDefault {
+    background: #0a0a0a;
+    border: 1px solid #1e1e1e;
+    color: #333;
 }
 
-.chapterTitle {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 0.25rem;
-}
-
-.chapterCta {
-    font-size: 0.85rem;
-    color: #9a9a9a;
-    margin: 0;
-    transition: color 0.2s ease;
-}
-
-.chapterCard:hover .chapterCta {
+.nodeDone {
+    background: rgba(182, 255, 0, 0.1);
+    border: 1px solid rgba(182, 255, 0, 0.3);
     color: #b6ff00;
 }
 
+.chapterCard:hover .nodeDefault {
+    border-color: #333;
+    color: #888;
+}
+
+/* ── Chapter content ── */
+.chapterContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.chapterTitle {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ccc;
+    margin-bottom: 3px;
+    line-height: 1.3;
+    transition: color 0.2s ease;
+}
+
+.chapterCard:hover .chapterTitle { color: #fff; }
+
+.chapterMeta {
+    font-size: 0.78rem;
+    color: #444;
+    transition: color 0.2s ease;
+}
+
+.chapterCard:hover .chapterMeta { color: #b6ff00; }
+
+/* ── Completed badge ── */
+.checkBadge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(182, 255, 0, 0.12);
+    color: #b6ff00;
+    flex-shrink: 0;
+}
+
 @media (max-width: 600px) {
-    .container {
-        padding: 2rem 1rem;
+    .container { padding: 5rem 1rem 3rem; }
+    .title { font-size: 1.5rem; }
+
+    .chaptersTimeline::before {
+        left: 19px;
     }
 
-    .title {
-        font-size: 1.75rem;
-    }
-
-    .chapterCard {
-        padding: 1rem;
-        gap: 1rem;
-    }
-
-    .chapterNumber {
+    .timelineNode {
         width: 38px;
         height: 38px;
-        font-size: 1rem;
-    }
-
-    .chapterTitle {
-        font-size: 1rem;
+        border-radius: 10px;
+        font-size: 0.8rem;
     }
 }

@@ -6,7 +6,16 @@
 
 /* ── Hero ── */
 .hero {
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
+}
+
+.heroTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
 }
 
 .eyebrow {
@@ -15,11 +24,11 @@
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #b6ff00;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .title {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.9rem, 4vw, 2.75rem);
   font-weight: 800;
   color: #fff;
   margin: 0 0 0.75rem;
@@ -28,11 +37,44 @@
 }
 
 .subtitle {
-  font-size: 1rem;
-  color: #666;
-  margin: 0 0 2rem;
-  max-width: 560px;
+  font-size: 0.975rem;
+  color: #555;
+  margin: 0;
+  max-width: 520px;
   line-height: 1.65;
+}
+
+/* ── Streak card ── */
+.streakCard {
+  flex-shrink: 0;
+  background: #0a0a0a;
+  border: 1px solid #1a1a1a;
+  border-radius: 16px;
+  padding: 1.25rem 1.75rem;
+  text-align: center;
+  min-width: 110px;
+}
+
+.streakFlame {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+  line-height: 1;
+}
+
+.streakNum {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ff8c42;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.streakLabel {
+  font-size: 0.72rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
 }
 
 /* ── Stats row ── */
@@ -49,78 +91,133 @@
 }
 
 .statNum {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: #fff;
   letter-spacing: -0.02em;
 }
 
 .statLabel {
-  font-size: 0.75rem;
-  color: #555;
+  font-size: 0.72rem;
+  color: #444;
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
 
-/* ── In-progress banner ── */
-.progressBanner {
+/* ── Banners ── */
+.startBanner,
+.continueBanner {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  background: rgba(182, 255, 0, 0.05);
-  border: 1px solid rgba(182, 255, 0, 0.15);
-  border-radius: 10px;
-  padding: 0.75rem 1.1rem;
-  margin-bottom: 2rem;
+  justify-content: space-between;
+  gap: 1rem;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  text-decoration: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.progressBannerDot {
-  width: 7px;
-  height: 7px;
+.startBanner {
+  background: rgba(182, 255, 0, 0.04);
+  border: 1px solid rgba(182, 255, 0, 0.15);
+}
+
+.startBanner:hover {
+  background: rgba(182, 255, 0, 0.08);
+  border-color: rgba(182, 255, 0, 0.35);
+}
+
+.continueBanner {
+  background: rgba(255, 140, 66, 0.04);
+  border: 1px solid rgba(255, 140, 66, 0.15);
+}
+
+.continueBanner:hover {
+  background: rgba(255, 140, 66, 0.08);
+  border-color: rgba(255, 140, 66, 0.35);
+}
+
+.startBannerLeft,
+.continueBannerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.startBannerIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.continueDot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #b6ff00;
+  background: #ff8c42;
   flex-shrink: 0;
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.85); }
+  50% { opacity: 0.5; transform: scale(0.8); }
 }
 
-.progressBannerText {
-  font-size: 0.875rem;
+.startBannerTitle,
+.continueBannerTitle {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.startBannerSub,
+.continueBannerSub {
+  font-size: 0.8rem;
+  color: #555;
+}
+
+.startBannerArrow {
+  color: #555;
+  flex-shrink: 0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.startBanner:hover .startBannerArrow,
+.continueBanner:hover .startBannerArrow {
   color: #b6ff00;
-  font-weight: 500;
+  transform: translateX(3px);
+}
+
+/* ── Section label ── */
+.sectionLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #333;
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
 }
 
 /* ── Grid ── */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  gap: 1.1rem;
 }
 
 @media (max-width: 1024px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 640px) {
-  .container {
-    padding: 5rem 1rem 3rem;
-  }
-
-  .title {
-    font-size: 1.8rem;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
-  .statsRow {
-    gap: 1.25rem;
-  }
+  .container { padding: 5rem 1rem 3rem; }
+  .title { font-size: 1.75rem; }
+  .grid { grid-template-columns: 1fr; }
+  .statsRow { gap: 1.25rem; }
+  .heroTop { flex-direction: column; }
+  .streakCard { align-self: flex-start; }
 }

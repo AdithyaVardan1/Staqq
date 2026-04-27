@@ -8,18 +8,10 @@ interface ChapterStatusProps {
     chapterSlug: string;
 }
 
-export function ChapterStatus({
-    path,
-    moduleSlug,
-    chapterSlug,
-}: ChapterStatusProps) {
+export function ChapterStatus({ path, moduleSlug, chapterSlug }: ChapterStatusProps) {
     const { isLessonComplete, isLoaded } = useProgress();
 
-    if (!isLoaded) return null;
-
-    const isComplete = isLessonComplete(path, moduleSlug, chapterSlug);
-
-    if (!isComplete) return null;
+    if (!isLoaded || !isLessonComplete(path, moduleSlug, chapterSlug)) return null;
 
     return (
         <span
@@ -27,17 +19,17 @@ export function ChapterStatus({
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
-                width: "24px",
-                height: "24px",
-                background: "#4ade80",
+                width: "22px",
+                height: "22px",
+                background: "rgba(182,255,0,0.12)",
                 borderRadius: "50%",
-                color: "#000",
-                fontSize: "14px",
-                marginLeft: "auto",
+                color: "#b6ff00",
+                flexShrink: 0,
             }}
-            title="Completed"
         >
-            ✓
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+            </svg>
         </span>
     );
 }
