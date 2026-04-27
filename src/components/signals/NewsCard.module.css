@@ -12,26 +12,40 @@
     height: 100%;
     /* Parallelogram: slight skew on the whole card */
     transform: skewX(-1.2deg);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), box-shadow 0.3s cubic-bezier(0.16,1,0.3,1);
+    border-radius: 12px;
 }
 
 .card:hover {
-    transform: skewX(-1.2deg) translateY(-3px);
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent, #caff00) 22;
+    transform: skewX(-1.2deg) translateY(-4px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 
+                0 0 30px color-mix(in srgb, var(--accent, #caff00) 15%, transparent);
 }
 
 /* Dark background layer — sits behind inner content */
 .bg {
     position: absolute;
     inset: 0;
-    background: linear-gradient(160deg, rgba(18, 18, 24, 0.97) 0%, rgba(10, 10, 14, 0.99) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 10px;
-    transition: border-color 0.25s;
+    background: linear-gradient(145deg, rgba(24, 24, 30, 0.95) 0%, rgba(14, 14, 18, 0.98) 50%, rgba(20, 20, 26, 0.96) 100%);
+    background-size: 200% 200%;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition: border-color 0.3s, background 0.3s;
+    animation: cardBgBreathe 8s ease-in-out infinite;
+}
+
+@keyframes cardBgBreathe {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
 .card:hover .bg {
-    border-color: color-mix(in srgb, var(--accent, #caff00) 30%, transparent);
+    border-color: color-mix(in srgb, var(--accent, #caff00) 40%, transparent);
+    background: linear-gradient(145deg, rgba(30, 30, 38, 0.95) 0%, rgba(10, 10, 14, 0.98) 100%);
+    animation: none;
 }
 
 /* Left accent stripe */
@@ -39,17 +53,25 @@
     content: '';
     position: absolute;
     left: 0;
-    top: 12%;
-    bottom: 12%;
+    top: 15%;
+    bottom: 15%;
     width: 3px;
     background: var(--accent, #caff00);
-    border-radius: 2px;
+    border-radius: 0 4px 4px 0;
     opacity: 0.6;
-    transition: opacity 0.25s;
+    transition: opacity 0.3s, box-shadow 0.3s;
+    animation: cardStripePulse 4s ease-in-out infinite;
+}
+
+@keyframes cardStripePulse {
+    0%, 100% { opacity: 0.4; box-shadow: 0 0 0 transparent; }
+    50% { opacity: 0.8; box-shadow: 0 0 8px color-mix(in srgb, var(--accent, #caff00) 40%, transparent); }
 }
 
 .card:hover .bg::before {
     opacity: 1;
+    box-shadow: 0 0 15px var(--accent, #caff00);
+    animation: none;
 }
 
 /* ── Inner content (counter-skew so text is straight) ── */

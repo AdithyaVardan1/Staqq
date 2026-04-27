@@ -110,6 +110,8 @@
 /* Dropdown trigger wrapper */
 .navDropdownTrigger {
     position: relative;
+    padding-bottom: 16px;
+    margin-bottom: -16px;
 }
 
 /* Pill links */
@@ -204,7 +206,7 @@
 /* ── Dropdown Panel ── */
 .navDropdown {
     position: absolute;
-    top: calc(100% + 16px);
+    top: 100%;
     left: 50%;
     transform: translateX(-50%) translateY(-8px);
     width: 380px;

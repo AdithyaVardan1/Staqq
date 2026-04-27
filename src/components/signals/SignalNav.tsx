@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { Activity, BarChart3, Users, Building2 } from 'lucide-react';
 import styles from './SignalNav.module.css';
 
@@ -26,7 +27,15 @@ export function SignalNav() {
                         href={tab.href}
                         className={`${styles.tab} ${active ? styles.active : ''}`}
                     >
-                        <Icon size={15} />
+                        {active && (
+                            <motion.div
+                                layoutId="activeSignalTab"
+                                className={styles.activeBg}
+                                initial={false}
+                                transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                            />
+                        )}
+                        <Icon size={15} className={styles.tabIcon} />
                         {tab.label}
                     </Link>
                 );
