@@ -71,18 +71,18 @@ const PROOF = [
     { num: '5-15', label: 'Alerts / Day' },
 ];
 
-const fadeUp = (delay = 0) => ({
+const fadeUp = (delay = 0): any => ({
     initial: { opacity: 0, y: 28, filter: 'blur(8px)' },
     animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
     transition: { duration: 0.85, delay, ease: [0.22, 1, 0.36, 1] }
 });
 
-const stagger = {
+const stagger: any = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
-const childVariant = {
+const childVariant: any = {
     hidden: { opacity: 0, y: 24, filter: 'blur(6px)' },
     show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] } }
 };

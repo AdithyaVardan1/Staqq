@@ -85,7 +85,7 @@ const containerVariants = {
     }
 };
 
-const cardVariants = {
+const cardVariants: any = {
     hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
     show: {
         opacity: 1, y: 0, filter: 'blur(0px)',

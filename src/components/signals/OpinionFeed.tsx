@@ -34,7 +34,7 @@ const containerVariants = {
     }
 };
 
-const itemVariants = {
+const itemVariants: any = {
     hidden: { opacity: 0, rotateX: -15, y: 15, filter: 'blur(3px)', transformPerspective: 800 },
     show: { 
         opacity: 1, 
