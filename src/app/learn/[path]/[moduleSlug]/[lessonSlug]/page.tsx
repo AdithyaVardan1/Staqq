@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getModuleBySlug, modules } from "@/data/modules";
 import styles from "./lesson.module.css";
 import { MarkCompleteButton } from "@/components/MarkCompleteButton";
+import { ReadingProgress } from "@/components/ReadingProgress/ReadingProgress";
 
 interface PageProps {
     params: Promise<{
@@ -80,6 +81,7 @@ export default async function LessonPage({ params }: PageProps) {
 
     return (
         <main className={styles.lessonContainer}>
+            <ReadingProgress />
             <div className={styles.topNavigation}>
                 <Link href={`/learn/${pathKey}/${moduleSlug}`} className={styles.backLink}>
                     <ArrowLeft strokeWidth={2.5} size={18} />

@@ -1,27 +1,97 @@
 .container {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 6rem 1.5rem 4rem;
+  padding: 6rem 1.5rem 5rem;
 }
 
-/* ── Page header ── */
-.header {
-  margin-bottom: 2.5rem;
+/* ── Hero ── */
+.hero {
+  margin-bottom: 3rem;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b6ff00;
+  margin-bottom: 1rem;
 }
 
 .title {
-  font-size: 2.4rem;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 800;
   color: #fff;
-  margin: 0 0 0.4rem;
-  letter-spacing: -0.02em;
+  margin: 0 0 0.75rem;
+  letter-spacing: -0.03em;
   line-height: 1.1;
 }
 
 .subtitle {
   font-size: 1rem;
   color: #666;
-  margin: 0;
+  margin: 0 0 2rem;
+  max-width: 560px;
+  line-height: 1.65;
+}
+
+/* ── Stats row ── */
+.statsRow {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statNum {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── In-progress banner ── */
+.progressBanner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(182, 255, 0, 0.05);
+  border: 1px solid rgba(182, 255, 0, 0.15);
+  border-radius: 10px;
+  padding: 0.75rem 1.1rem;
+  margin-bottom: 2rem;
+}
+
+.progressBannerDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b6ff00;
+  flex-shrink: 0;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.progressBannerText {
+  font-size: 0.875rem;
+  color: #b6ff00;
+  font-weight: 500;
 }
 
 /* ── Grid ── */
@@ -48,5 +118,9 @@
 
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .statsRow {
+    gap: 1.25rem;
   }
 }

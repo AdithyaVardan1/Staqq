@@ -1,48 +1,25 @@
 'use client';
 
 import { useProgress } from '@/hooks/useProgress';
+import styles from './PathProgressBar.module.css';
 
 interface PathProgressBarProps {
   pathKey: string;
   totalLessons: number;
 }
 
-export default function PathProgressBar({
-  pathKey,
-  totalLessons,
-}: PathProgressBarProps) {
+export default function PathProgressBar({ pathKey, totalLessons }: PathProgressBarProps) {
   const { getCompletedCountForPath, isLoaded } = useProgress();
-  const completed = getCompletedCountForPath(pathKey);
-
-  const percentage = totalLessons > 0
-    ? Math.round((completed / totalLessons) * 100)
-    : 0;
-
-  if (!isLoaded) return null;
+  const completed = isLoaded ? getCompletedCountForPath(pathKey) : 0;
+  const percentage = totalLessons > 0 ? Math.round((completed / totalLessons) * 100) : 0;
 
   return (
-    <div style={{ marginBottom: '2rem' }}>
-      <div
-        style={{
-          height: '8px',
-          background: '#222',
-          borderRadius: '999px',
-          overflow: 'hidden',
-          marginBottom: '0.4rem',
-        }}
-      >
-        <div
-          style={{
-            height: '100%',
-            width: `${percentage}%`,
-            background: '#b6ff00',
-            transition: 'width 0.3s ease',
-          }}
-        />
+    <div className={styles.wrap}>
+      <div className={styles.bar}>
+        <div className={styles.fill} style={{ width: `${percentage}%` }} />
       </div>
-
-      <p style={{ fontSize: '0.9rem', color: '#9a9a9a' }}>
-        {completed} of {totalLessons} lessons completed
+      <p className={styles.label}>
+        {isLoaded ? `${completed} of ${totalLessons} lessons completed` : `${totalLessons} lessons`}
       </p>
     </div>
   );
