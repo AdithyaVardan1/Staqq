@@ -1,120 +1,95 @@
-@keyframes glowBreath {
-  0%, 100% { opacity: 0.6; }
-  50%       { opacity: 1; }
-}
-
 .page {
-  position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem 5rem;
 }
 
-.glowLime {
-  position: fixed;
-  top: -15%;
-  left: 40%;
-  width: 800px;
-  height: 600px;
-  background: radial-gradient(ellipse, rgba(182, 255, 0, 0.05) 0%, transparent 65%);
-  pointer-events: none;
-  z-index: 0;
-  animation: glowBreath 9s ease-in-out infinite;
-}
-
-/* ── Back link ── */
-.backLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 0.825rem;
-  font-weight: 500;
-  padding-top: 5.5rem;
-  transition: color 0.2s ease;
-  margin-bottom: 2.5rem;
-  width: fit-content;
-}
-
-.backLink:hover { color: var(--primary-brand); }
-
-/* ── Hero ── */
-.hero {
-  padding-bottom: 2.5rem;
-  margin-bottom: 2.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.diffBadge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.3rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid;
-  margin-bottom: 1.1rem;
-}
-
-.heroTitle {
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-  font-weight: 800;
-  color: var(--text-primary);
-  margin: 0 0 0.75rem;
-  letter-spacing: -0.03em;
-  line-height: 1.12;
-}
-
-.heroDesc {
-  font-size: 1rem;
-  color: var(--text-secondary);
-  margin: 0 0 1.5rem;
-  line-height: 1.65;
-  max-width: 540px;
-}
-
-/* ── Meta chips ── */
-.metaRow {
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.75rem;
-}
-
-.metaChip {
+.back {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 8px;
-  padding: 0.3rem 0.7rem;
+  text-decoration: none;
+  margin-bottom: 2rem;
+  transition: color 0.15s ease;
 }
 
-/* ── Progress ── */
-.progressWrap {
-  max-width: 380px;
+.back:hover { color: var(--text-primary); }
+
+/* ── Title row ── */
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
 }
 
-/* ── Module section ── */
-.moduleSection {
-  padding-bottom: 5rem;
-}
-
-.moduleSectionLabel {
-  font-size: 0.7rem;
+.title {
+  font-size: 1.75rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.diffBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.desc {
+  font-size: 0.925rem;
+  color: var(--text-secondary);
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+  max-width: 560px;
+}
+
+/* ── Meta bar ── */
+.metaBar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.metaItem {
+  font-size: 0.8rem;
   color: var(--text-muted);
-  margin-bottom: 1rem;
+}
+
+.metaDot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  opacity: 0.4;
+}
+
+.metaSpacer { flex: 1; }
+
+.progressInline {
+  min-width: 160px;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  margin-bottom: 1.5rem;
 }
 
 @media (max-width: 640px) {
-  .backLink { padding-top: 5rem; }
-  .heroTitle { font-size: 1.7rem; }
+  .page { padding: 5rem 1rem 3rem; }
+  .title { font-size: 1.4rem; }
+  .metaSpacer { display: none; }
+  .progressInline { width: 100%; min-width: unset; }
 }
