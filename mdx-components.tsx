@@ -4,6 +4,7 @@ import { CodePlayground } from "@/components/mdx/CodePlayground";
 import { InfoBox } from "@/components/mdx/InfoBox";
 import { ChartExample } from "@/components/mdx/ChartExample";
 import { Table } from "@/components/mdx/Table";
+import Sources from "@/components/mdx/Sources";
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
     return {
@@ -13,6 +14,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         InfoBox,
         ChartExample,
         Table,
+        Sources,
         // Spread default components
         ...components,
     };
