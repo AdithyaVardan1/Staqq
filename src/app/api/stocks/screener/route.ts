@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
-import { angelOne } from '@/lib/angelone';
-import { redis } from '@/lib/redis';
+import { getNifty500 } from '@/lib/nse';
 import { getTrendingTickers } from '@/lib/social';
 import yahooFinance from 'yahoo-finance2';
+import { redis } from '@/lib/redis';
+import { angelOne } from '@/lib/angel';
 
 export const dynamic = 'force-dynamic';
+
+// ffmc thresholds in rupees (NSE classification)
+const LARGE_CAP = 200_000_000_000; // ₹20,000 Cr+
+const MID_CAP   =  50_000_000_000; // ₹5,000–20,000 Cr
+// Small cap = below MID_CAP
 
 // ── Fundamentals cache (P/E, market cap, sector) ─────────────────────
 // These don't change real-time — cache 24 hours in Redis.
@@ -178,50 +184,21 @@ async function getYahooPriceFallback(ticker: string): Promise<{
 export async function GET(request: Request) {
     try {
         const { searchParams } = new URL(request.url);
-        const offset = parseInt(searchParams.get('offset') || '0');
-        const limit = parseInt(searchParams.get('limit') || '10');
-        const sortBy = searchParams.get('sortBy') || 'marketCap';
+        const offset    = parseInt(searchParams.get('offset') || '0');
+        const limit     = parseInt(searchParams.get('limit') || '10');
+        const sortBy    = searchParams.get('sortBy') || 'marketCap';
+        const priceMin  = parseFloat(searchParams.get('priceMin') || '0');
+        const priceMax  = parseFloat(searchParams.get('priceMax') || '1000000');
+        const sector    = searchParams.get('sector') || 'all';
+        const mcap      = searchParams.get('mcap') || 'all'; // all | large | mid | small
+        const return1Y  = searchParams.get('return1Y') || 'all'; // all | positive | top10 | top30
 
-        const priceMin = parseFloat(searchParams.get('priceMin') || '0');
-        const priceMax = parseFloat(searchParams.get('priceMax') || '1000000');
-        const sector = searchParams.get('sector');
-        const peMax = parseFloat(searchParams.get('peMax') || '1000');
+        const universe = await getNifty500();
 
         // Load instrument master (cached in file + memory, 24h TTL)
         const tokensMap = await angelOne.getInstrumentTokens();
         if (!tokensMap || tokensMap.size === 0) {
             return NextResponse.json({ error: 'Instrument list unavailable' }, { status: 503 });
-        }
-
-        // Build NSE equity universe
-        const universe: { ticker: string; name: string }[] = [];
-        for (const [, instrument] of tokensMap.entries()) {
-            if (
-                instrument.exch_seg === 'NSE' &&
-                instrument.symbol.endsWith('-EQ') &&
-                !/TEST/i.test(instrument.symbol) &&
-                !/TEST/i.test(instrument.name || '')
-            ) {
-                universe.push({
-                    ticker: instrument.symbol.replace('-EQ', ''),
-                    name: instrument.name || instrument.symbol.replace('-EQ', ''),
-                });
-            }
-        }
-
-        // Sort universe
-        if (sortBy === 'trending') {
-            const trendingTickers = await getTrendingTickers();
-            const trendingSet = new Set(trendingTickers);
-            universe.sort((a, b) => {
-                const aT = trendingSet.has(a.ticker);
-                const bT = trendingSet.has(b.ticker);
-                if (aT && !bT) return -1;
-                if (!aT && bT) return 1;
-                return a.ticker.localeCompare(b.ticker);
-            });
-        } else {
-            universe.sort((a, b) => a.ticker.localeCompare(b.ticker));
         }
 
         // Depth-search: scan stocks starting at offset
@@ -297,15 +274,17 @@ export async function GET(request: Request) {
                 const return1Y = fundamentals?.return1Y || 0;
 
                 // Apply filters
-                if (price < priceMin || price > priceMax) {
-                    // console.log(`Skipping ${stock.ticker} due to price bounds`);
-                    continue;
-                }
-                if (peMax < 1000 && (peRatio <= 0 || peRatio > peMax)) {
-                    // console.log(`Skipping ${stock.ticker} due to peRatio ${peRatio}`);
-                    continue;
-                }
-                if (sector && sector !== 'all' && stockSector !== sector) continue;
+                if (price < priceMin || price > priceMax) continue;
+                
+                if (sector && sector !== 'all' && !stockSector.toLowerCase().includes(sector.toLowerCase())) continue;
+
+                if (mcap === 'large' && marketCap < LARGE_CAP) continue;
+                if (mcap === 'mid'   && (marketCap < MID_CAP || marketCap >= LARGE_CAP)) continue;
+                if (mcap === 'small' && marketCap >= MID_CAP) continue;
+
+                if (return1Y === 'positive' && return1Y <= 0) continue;
+                if (return1Y === 'top10'    && return1Y < 10) continue;
+                if (return1Y === 'top30'    && return1Y < 30) continue;
 
                 if (matchedStocks.length < limit) {
                     matchedStocks.push({
@@ -339,5 +318,3 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Screener unavailable' }, { status: 500 });
     }
 }
-
-

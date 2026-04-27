@@ -49,8 +49,12 @@
     border-radius: 8px;
 }
 
+.news {
+    background: rgba(202, 255, 0, 0.08);
+}
+
 .reddit {
-    background: rgba(255, 69, 0, 0.12);
+    background: rgba(255, 69, 0, 0.1);
 }
 
 .twitter {

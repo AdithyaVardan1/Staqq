@@ -29,43 +29,73 @@ export default async function FiiDiiPage() {
         ? Math.max(...history.map(d => Math.abs(d.totalNet)), 1)
         : 1;
 
-    // FII DII FAQ
+    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
+
     const faqSchema = {
         '@context': 'https://schema.org',
         '@type': 'FAQPage',
         'mainEntity': [
             {
                 '@type': 'Question',
-                'name': 'What is the net buying value of FIIs today?',
+                'name': 'What is the FII net buy/sell data today?',
                 'acceptedAnswer': {
                     '@type': 'Answer',
-                    'text': today ? `FIIs were net ${today.fii.net >= 0 ? 'buyers' : 'sellers'} of ₹${inr(today.fii.net)} Cr on ${today.date}.` : 'FII data is updated daily after market close.'
+                    'text': today
+                        ? `On ${today.date}, FIIs (Foreign Institutional Investors) were net ${today.fii.net >= 0 ? 'buyers' : 'sellers'} of ₹${inr(Math.abs(today.fii.net))} Cr in Indian equities. They bought ₹${inr(today.fii.buy)} Cr and sold ₹${inr(today.fii.sell)} Cr.`
+                        : 'FII net buy/sell data is updated daily after NSE market close (~4:30 PM IST).',
                 }
             },
             {
                 '@type': 'Question',
-                'name': 'Are DIIs currently bullish or bearish?',
+                'name': 'What are DII flows today?',
                 'acceptedAnswer': {
                     '@type': 'Answer',
-                    'text': today ? `DIIs were net ${today.dii.net >= 0 ? 'buyers' : 'sellers'} of ₹${inr(today.dii.net)} Cr on ${today.date}.` : 'DII data indicates domestic institutional sentiment.'
+                    'text': today
+                        ? `On ${today.date}, DIIs (Domestic Institutional Investors) were net ${today.dii.net >= 0 ? 'buyers' : 'sellers'} of ₹${inr(Math.abs(today.dii.net))} Cr. They bought ₹${inr(today.dii.buy)} Cr and sold ₹${inr(today.dii.sell)} Cr.`
+                        : 'DII flow data is updated daily after market close.',
                 }
-            }
-        ]
+            },
+            {
+                '@type': 'Question',
+                'name': 'What does FII buying mean for the Indian stock market?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'When FIIs are net buyers, it signals positive foreign sentiment toward Indian equities and typically supports market upside. Sustained FII buying often leads to Nifty and Sensex gains. Conversely, FII selling puts downward pressure on Indian markets, especially large-cap stocks.',
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': 'What is the difference between FII and DII in the stock market?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'FII (Foreign Institutional Investors) are overseas entities like hedge funds and sovereign wealth funds investing in Indian markets. DII (Domestic Institutional Investors) include Indian mutual funds, insurance companies, and banks. They often act as counterweights — when FIIs sell, DIIs tend to buy, providing market stability.',
+                }
+            },
+            {
+                '@type': 'Question',
+                'name': 'How often is FII DII data updated on Staqq?',
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': 'FII and DII data on Staqq is sourced from NSE India and updated daily after market close, typically available by 7:00–7:30 PM IST on trading days.',
+                }
+            },
+        ],
     };
 
     return (
         <main className={styles.main}>
-            <DatasetStructuredData 
-                name="FII DII Daily Institutional Flows"
-                description="Daily net buy/sell values of Foreign Institutional Investors and Domestic Institutional Investors in the Indian cash market."
-                url="https://staqqin.vercel.app/signals/fii-dii"
+            <DatasetStructuredData
+                name="FII DII Daily Institutional Flows — India"
+                description="Daily net buy/sell values of Foreign Institutional Investors (FII/FPI) and Domestic Institutional Investors (DII) in the Indian cash equity market. Sourced from NSE India."
+                url={`${BASE_URL}/signals/fii-dii`}
                 dateModified={new Date().toISOString()}
+                keywords={["FII data today", "DII data today", "FII DII flows NSE", "institutional buying India", "foreign investor data India"]}
             />
             <StructuredData schema={faqSchema} />
             <BreadcrumbStructuredData items={[
-                { name: 'Home', item: 'https://staqqin.vercel.app' },
-                { name: 'Signals', item: 'https://staqqin.vercel.app/signals' },
-                { name: 'FII / DII', item: 'https://staqqin.vercel.app/signals/fii-dii' }
+                { name: 'Home',     item: BASE_URL },
+                { name: 'Signals',  item: `${BASE_URL}/signals` },
+                { name: 'FII / DII', item: `${BASE_URL}/signals/fii-dii` },
             ]} />
             <div className="container">
                 <SignalNav />

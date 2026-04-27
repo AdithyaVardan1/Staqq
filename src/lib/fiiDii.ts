@@ -1,15 +1,11 @@
-// ─── FII/DII Daily Flow Data ─────────────────────────────────────────
-// Fetches Foreign & Domestic Institutional Investor buy/sell data from NSE.
-// ─────────────────────────────────────────────────────────────────────
-
 import { nseGet } from './nseClient';
 
 export interface FiiDiiEntry {
     category: 'FII' | 'DII';
     date: string;
-    buyValue: number;   // in crores
-    sellValue: number;  // in crores
-    netValue: number;   // in crores
+    buyValue: number;
+    sellValue: number;
+    netValue: number;
 }
 
 export interface FiiDiiDaily {
@@ -50,7 +46,6 @@ export async function fetchFiiDiiHistory(days = 10): Promise<FiiDiiDaily[]> {
 
         if (!data || !Array.isArray(data) || data.length === 0) return [];
 
-        // Group by date
         const byDate: Record<string, { fii?: NseFiiDiiResponse; dii?: NseFiiDiiResponse }> = {};
         for (const row of data) {
             const key = row.date || '';

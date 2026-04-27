@@ -3,9 +3,14 @@ import { getAllIPOs } from '@/lib/ipo';
 import { getCategoryStats } from '@/lib/ipoAnalytics';
 import { getGmpSentiment } from '@/lib/ipoAnalytics';
 import { fetchFiiDiiToday } from '@/lib/fiiDii';
-import { getAllPosts } from '@/lib/social';
-import { Layers, BarChart3, TrendingUp, Activity, Zap, ArrowRight, Users, Building2, Crown, Bell, LineChart, Mail } from 'lucide-react';
+import { getTrendingTickers } from '@/lib/social';
+import {
+    Layers, BarChart3, TrendingUp, Activity, Zap, ArrowRight,
+    Users, Building2, Crown, Bell, LineChart, Mail,
+    CheckCircle2, ChevronRight, Shield, Clock,
+} from 'lucide-react';
 import { EmailCapture } from '@/components/marketing/EmailCapture';
+import { TickerBanner } from '@/components/marketing/TickerBanner';
 import styles from './page.module.css';
 
 export const revalidate = 300;
@@ -20,46 +25,28 @@ function JsonLd({ data }: { data: Record<string, unknown> }) {
 }
 
 export default async function HomePage() {
-    const [allIPOs, fiiDii, posts] = await Promise.all([
+    const [allIPOs, fiiDii, trending] = await Promise.all([
         getAllIPOs(),
         fetchFiiDiiToday().catch(() => null),
-        getAllPosts(20).catch(() => []),
+        getTrendingTickers(8).catch(() => [] as string[]),
     ]);
 
     const liveIPOs = allIPOs.filter(i => i.status === 'Live');
     const upcomingIPOs = allIPOs.filter(i => i.status === 'Upcoming');
     const stats = getCategoryStats(allIPOs);
 
-    // Top GMP IPOs for showcase
     const topGmp = allIPOs
         .filter(i => i.gmpPercent !== null && i.gmpPercent > 0)
         .sort((a, b) => (b.gmpPercent ?? 0) - (a.gmpPercent ?? 0))
         .slice(0, 5);
 
-    // Trending tickers from social posts
-    const tickerCounts: Record<string, number> = {};
-    posts.forEach(p => {
-        p.tickers?.forEach((t: string) => {
-            tickerCounts[t] = (tickerCounts[t] || 0) + 1;
-        });
-    });
-    const trending = Object.entries(tickerCounts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 8)
-        .map(([ticker]) => ticker);
-
-    // JSON-LD structured data
     const websiteSchema = {
         '@context': 'https://schema.org',
         '@type': 'WebSite',
         name: 'Staqq',
         url: 'https://staqq.in',
-        description: 'Every edge, one dashboard. IPO GMP tracking, FII/DII flows, social sentiment, insider trades, and smart screeners for Indian investors.',
-        publisher: {
-            '@type': 'Organization',
-            name: 'Staqq',
-            url: 'https://staqq.in',
-        },
+        description: "India's first unified market intelligence platform. IPO GMP tracking, FII/DII flows, insider trades, and live Solana token alerts.",
+        publisher: { '@type': 'Organization', name: 'Staqq', url: 'https://staqq.in' },
         potentialAction: {
             '@type': 'SearchAction',
             target: 'https://staqq.in/stocks/{search_term}',
@@ -84,7 +71,7 @@ export default async function HomePage() {
                 name: 'How to check FII DII data today?',
                 acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'Staqq provides real-time FII (Foreign Institutional Investor) and DII (Domestic Institutional Investor) buy/sell data from NSE. Check the Signals page for daily institutional flow data updated after market hours.',
+                    text: 'Staqq provides real-time FII and DII buy/sell data from NSE. Check the Intel page for daily institutional flow data updated after market hours.',
                 },
             },
             {
@@ -92,7 +79,7 @@ export default async function HomePage() {
                 name: 'How to calculate IPO allotment probability?',
                 acceptedAnswer: {
                     '@type': 'Answer',
-                    text: 'IPO allotment probability depends on the subscription multiple. If an IPO is subscribed 10x in retail category, each application has roughly a 10% chance of allotment. Use Staqq\'s Allotment Calculator for exact estimates with multi-application strategies.',
+                    text: "IPO allotment probability depends on the subscription multiple. Use Staqq's Allotment Calculator for exact estimates with multi-application strategies.",
                 },
             },
         ],
@@ -103,30 +90,97 @@ export default async function HomePage() {
             <JsonLd data={websiteSchema} />
             <JsonLd data={faqSchema} />
 
-            {/* Hero Section */}
+            {/* ── 1. Hero ── */}
             <section className={styles.hero}>
+                <div className={styles.heroGlowLime} aria-hidden="true" />
+                <div className={styles.heroGlowViolet} aria-hidden="true" />
+
+                <div className={styles.heroFloating} aria-hidden="true">
+                    {/* FII Net Buy */}
+                    <div className={`${styles.heroBadgeFloat} ${styles.heroBadge1}`}>
+                        <div className={styles.badgeRow}>
+                            <div className={`${styles.badgeIcon} ${styles.badgeIconLime}`}>
+                                <TrendingUp size={14} />
+                            </div>
+                            <span className={`${styles.badgeLiveChip} ${styles.badgeLiveChipGreen}`}>
+                                <span className={styles.heroBadgeDotPulse2} style={{ background: '#22c55e' }} />
+                                LIVE
+                            </span>
+                        </div>
+                        <div className={styles.badgeTitle}>FII Net Activity</div>
+                        <div className={`${styles.badgeValue} ${styles.badgeValueGreen}`}>₹2,400 Cr</div>
+                        <div className={styles.badgeSub}>Net buy today · NSE data</div>
+                    </div>
+
+                    {/* Live IPOs */}
+                    <div className={`${styles.heroBadgeFloat} ${styles.heroBadge2}`}>
+                        <div className={styles.badgeRow}>
+                            <div className={`${styles.badgeIcon} ${styles.badgeIconLime}`}>
+                                <Zap size={14} />
+                            </div>
+                            <span className={`${styles.badgeLiveChip} ${styles.badgeLiveChipLime}`}>
+                                <span className={styles.heroBadgeDotPulse2} style={{ background: '#caff00' }} />
+                                {liveIPOs.length} OPEN
+                            </span>
+                        </div>
+                        <div className={styles.badgeTitle}>IPO Tracker</div>
+                        <div className={styles.badgeValue}>{upcomingIPOs.length} <span className={styles.badgeValueSub}>upcoming</span></div>
+                        <div className={styles.badgeSub}>Mainboard + SME · Updated 5 min</div>
+                    </div>
+
+                    {/* GMP Signal */}
+                    <div className={`${styles.heroBadgeFloat} ${styles.heroBadge3}`}>
+                        <div className={styles.badgeRow}>
+                            <div className={`${styles.badgeIcon} ${styles.badgeIconLime}`}>
+                                <BarChart3 size={14} />
+                            </div>
+                            <span className={`${styles.badgeLiveChip} ${styles.badgeLiveChipLime}`}>BULLISH</span>
+                        </div>
+                        <div className={styles.badgeTitle}>Grey Market Premium</div>
+                        <div className={`${styles.badgeValue} ${styles.badgeValueLime}`}>+24% <span className={styles.badgeValueSub}>avg</span></div>
+                        <div className={styles.badgeSub}>Across live IPOs · GMP sentiment</div>
+                    </div>
+
+                    {/* Insider Activity */}
+                    <div className={`${styles.heroBadgeFloat} ${styles.heroBadge4}`}>
+                        <div className={styles.badgeRow}>
+                            <div className={`${styles.badgeIcon} ${styles.badgeIconViolet}`}>
+                                <Building2 size={14} />
+                            </div>
+                            <span className={`${styles.badgeLiveChip} ${styles.badgeLiveChipViolet}`}>TODAY</span>
+                        </div>
+                        <div className={styles.badgeTitle}>Insider Trades</div>
+                        <div className={`${styles.badgeValue} ${styles.badgeValueViolet}`}>12 <span className={styles.badgeValueSub}>buys filed</span></div>
+                        <div className={styles.badgeSub}>NSE PIT disclosures · SEBI</div>
+                    </div>
+                </div>
+
                 <div className="container">
                     <div className={styles.heroContent}>
+                        <div className={styles.heroPill}>
+                            <span className={styles.heroPillDot} />
+                            India&apos;s first equity and crypto intelligence suite
+                        </div>
                         <h1 className={styles.heroTitle}>
-                            Every <span className="text-brand">Edge.</span> One Dashboard.
+                            <span className={styles.heroTitleLine1}>The Data Behind</span>
+                            <span className={styles.heroTitleLine2}>Every Big Move.</span>
                         </h1>
                         <p className={styles.heroSubtitle}>
-                            From IPO GMP and allotment odds to FII/DII flows, social sentiment, and insider trades. Staqq gives Indian investors the full picture before the market opens.
+                            IPO GMP, FII/DII flows, insider trades, bulk deals, and on-chain crypto intelligence — all in one place, built for investors who want an edge.
                         </p>
                         <div className={styles.heroActions}>
                             <Link href="/ipo" className={styles.primaryBtn}>
-                                Explore the Dashboard
+                                Start for Free
                             </Link>
                             <Link href="/signals" className={styles.outlineBtn}>
-                                View Market Signals
+                                See Live Data <ChevronRight size={16} />
                             </Link>
                         </div>
 
-                        {/* Trending tickers - server rendered */}
                         {trending.length > 0 && (
                             <div className={styles.trendingContainer}>
                                 <span className={styles.trendingLabel}>
-                                    <Activity size={14} /> Trending Today:
+                                    <Activity size={14} /> Trending:
                                 </span>
                                 <div className={styles.trendingList}>
                                     {trending.map(ticker => (
@@ -141,11 +195,239 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* Live Market Pulse - real data */}
+            {/* ── 2. Stats Bar ── */}
+            <section className={styles.statsSection}>
+                <div className="container">
+                    <div className={styles.statsGrid}>
+                        <div className={styles.stat}>
+                            <span className={styles.statNum}>₹2.4L<span className={styles.statUnit}> Cr</span></span>
+                            <span className={styles.statLabel}>FII + DII Flows Tracked</span>
+                        </div>
+                        <div className={styles.statDivider} />
+                        <div className={styles.stat}>
+                            <span className={styles.statNum}>500<span className={styles.statPlus}>+</span></span>
+                            <span className={styles.statLabel}>NSE Stocks Covered</span>
+                        </div>
+                        <div className={styles.statDivider} />
+                        <div className={styles.stat}>
+                            <span className={styles.statNum}>250<span className={styles.statPlus}>+</span></span>
+                            <span className={styles.statLabel}>IPOs Analyzed</span>
+                        </div>
+                        <div className={styles.statDivider} />
+                        <div className={styles.stat}>
+                            <span className={`${styles.statNum} ${styles.statNumViolet}`}>13<span className={styles.statUnit}> checks</span></span>
+                            <span className={styles.statLabel}>Token Risk Checks</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── 2b. Ticker Banner ── */}
+            <TickerBanner />
+
+            {/* ── 3. Two Products ── */}
+            <section className={styles.productsSection}>
+                <div className="container">
+                    <div className={styles.sectionEyebrow}>What we do</div>
+                    <h2 className={styles.sectionTitle}>Two products. One platform.</h2>
+                    <p className={styles.sectionSubtitle}>
+                        Indian equity intelligence and Solana alpha, built for the investor who wants it all.
+                    </p>
+                    <div className={styles.productsGrid}>
+                        <div className={styles.productCard}>
+                            <div className={styles.productCardGlow} />
+                            <div className={styles.productTag}>Indian Equity</div>
+                            <h3 className={styles.productTitle}>Every signal that moves Indian markets.</h3>
+                            <p className={styles.productDesc}>
+                                From IPO GMP to institutional flows and insider disclosures — all the data serious investors track, in one place.
+                            </p>
+                            <ul className={styles.productFeatures}>
+                                {[
+                                    'Live IPO GMP with sentiment scoring',
+                                    'Allotment probability calculator',
+                                    'FII/DII institutional flow tracker',
+                                    'NSE insider trade & bulk deal scanner',
+                                    'NIFTY 500 stock screener',
+                                    'Social buzz & Reddit sentiment feed',
+                                ].map(f => (
+                                    <li key={f}>
+                                        <CheckCircle2 size={15} className={styles.checkLime} />
+                                        {f}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Link href="/ipo" className={styles.productCta}>
+                                Explore Dashboard <ArrowRight size={15} />
+                            </Link>
+                        </div>
+
+                        <div className={`${styles.productCard} ${styles.productCardViolet}`}>
+                            <div className={`${styles.productCardGlow} ${styles.productCardGlowViolet}`} />
+                            <div className={`${styles.productTag} ${styles.productTagViolet}`}>Crypto Suite</div>
+                            <h3 className={styles.productTitle}>On-chain intelligence, built for early movers.</h3>
+                            <p className={styles.productDesc}>
+                                Scan tokens for rug risk, track smart wallets, and catch new launches before the crowd — across 6 chains.
+                            </p>
+                            <ul className={styles.productFeatures}>
+                                {[
+                                    'Token rugpull scanner across 6 chains',
+                                    'Honeypot, LP lock & tax analysis',
+                                    'Smart wallet tracker (ETH + Solana)',
+                                    'New token launches, pre-filtered for safety',
+                                    'Social signal feed for trending tokens',
+                                    'Solana Telegram alerts — coming soon',
+                                ].map(f => (
+                                    <li key={f}>
+                                        <CheckCircle2 size={15} className={styles.checkViolet} />
+                                        {f}
+                                    </li>
+                                ))}
+                            </ul>
+                            <Link href="/crypto" className={`${styles.productCta} ${styles.productCtaViolet}`}>
+                                Explore Crypto Suite <ArrowRight size={15} />
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── 4. Indian Equity Features ── */}
+            <section className={styles.featuresSection}>
+                <div className="container">
+                    <div className={styles.sectionEyebrow}>Indian Equity</div>
+                    <h2 className={styles.sectionTitle}>Everything the market is doing, right now.</h2>
+                    <div className={styles.featuresGrid}>
+                        <Link href="/ipo" className={styles.featureCard}>
+                            <div className={styles.featureIcon}><Layers size={22} /></div>
+                            <h3>IPO Hub</h3>
+                            <p>Live Grey Market Premium with sentiment scoring, mainboard and SME IPO tracking, subscription multiples, and an allotment probability calculator.</p>
+                            <span className={styles.featureArrow}><ArrowRight size={14} /></span>
+                        </Link>
+                        <Link href="/signals/fii-dii" className={styles.featureCard}>
+                            <div className={styles.featureIcon}><BarChart3 size={22} /></div>
+                            <h3>FII / DII Flows</h3>
+                            <p>Daily net buy/sell data from NSE for Foreign and Domestic Institutional Investors. Updated every evening after market close.</p>
+                            <span className={styles.featureArrow}><ArrowRight size={14} /></span>
+                        </Link>
+                        <Link href="/signals/insider-trades" className={styles.featureCard}>
+                            <div className={styles.featureIcon}><Building2 size={22} /></div>
+                            <h3>Insider Trades</h3>
+                            <p>Promoter, director, and KMP disclosures directly from NSE&apos;s PIT filings. Last 14 days of insider activity across all listed companies.</p>
+                            <span className={styles.featureArrow}><ArrowRight size={14} /></span>
+                        </Link>
+                        <Link href="/signals/bulk-deals" className={styles.featureCard}>
+                            <div className={styles.featureIcon}><TrendingUp size={22} /></div>
+                            <h3>Bulk &amp; Block Deals</h3>
+                            <p>Institutional deals above 0.5% of company equity, sourced from NSE intraday data. See client names, prices, and deal size as they happen.</p>
+                            <span className={styles.featureArrow}><ArrowRight size={14} /></span>
+                        </Link>
+                        <Link href="/stocks/screener" className={styles.featureCard}>
+                            <div className={styles.featureIcon}><LineChart size={22} /></div>
+                            <h3>Stock Screener</h3>
+                            <p>Filter the full NIFTY 500 universe by price, market cap, sector, P/E, and 1-year returns. Includes top gainers, losers, volume shockers, and 52-week breakouts.</p>
+                            <span className={styles.featureArrow}><ArrowRight size={14} /></span>
+                        </Link>
+                        <Link href="/signals" className={styles.featureCard}>
+                            <div className={styles.featureIcon}><Activity size={22} /></div>
+                            <h3>Social Buzz</h3>
+                            <p>Live aggregation of Reddit discussions from Indian stock subreddits and financial news from LiveMint and BusinessLine. Detects mention spikes in real time.</p>
+                            <span className={styles.featureArrow}><ArrowRight size={14} /></span>
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── 5. Solana Bot Section ── */}
+            <section className={styles.solanaSection}>
+                <div className={styles.solanaGlow} aria-hidden="true" />
+                <div className="container">
+                    <div className={styles.solanaInner}>
+                        <div className={styles.solanaContent}>
+                            <div className={`${styles.sectionEyebrow} ${styles.sectionEyebrowViolet}`}>Coming Soon — Solana Alerts</div>
+                            <h2 className={styles.sectionTitle}>The bot that never sleeps.</h2>
+                            <p className={styles.sectionSubtitle}>
+                                Hundreds of new Solana tokens launch every hour. Most are traps.
+                                We&apos;re building @StaqqBot to scan every new pair, score it for safety, and send you only the ones worth a second look — straight to Telegram.
+                            </p>
+                            <div className={styles.solanaSteps}>
+                                <div className={styles.solanaStep}>
+                                    <span className={styles.solanaStepNum}>01</span>
+                                    <div>
+                                        <strong>Detect</strong>
+                                        <p>Every new pair on Raydium and Pump.fun picked up within seconds of creation</p>
+                                    </div>
+                                </div>
+                                <div className={styles.solanaStep}>
+                                    <span className={styles.solanaStepNum}>02</span>
+                                    <div>
+                                        <strong>Score</strong>
+                                        <p>Liquidity depth, holder distribution, contract flags, and social presence — all checked before an alert fires</p>
+                                    </div>
+                                </div>
+                                <div className={styles.solanaStep}>
+                                    <span className={styles.solanaStepNum}>03</span>
+                                    <div>
+                                        <strong>Alert</strong>
+                                        <p>Clean, one-tap Telegram alert with everything you need to decide fast</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <Link href="/alerts" className={styles.solanaBtn}>
+                                Join the Waitlist <ArrowRight size={16} />
+                            </Link>
+                        </div>
+
+                        <div className={styles.telegramMock}>
+                            <div className={styles.telegramHeader}>
+                                <div className={styles.telegramAvatar}>S</div>
+                                <div className={styles.telegramHeaderInfo}>
+                                    <strong>StaqqBot</strong>
+                                    <span>just now</span>
+                                </div>
+                                <span className={styles.telegramOnline} />
+                            </div>
+                            <div className={styles.telegramMsg}>
+                                <div className={styles.telegramAlertBadge}>
+                                    <span className={styles.telegramDot} />
+                                    NEW TOKEN ALERT
+                                </div>
+                                <div className={styles.telegramToken}>$EXAMPLE</div>
+                                <div className={styles.telegramGrid}>
+                                    <div className={styles.telegramStat}>
+                                        <span>Price</span>
+                                        <strong>$0.000042</strong>
+                                    </div>
+                                    <div className={styles.telegramStat}>
+                                        <span>Liquidity</span>
+                                        <strong>$48,000</strong>
+                                    </div>
+                                    <div className={styles.telegramStat}>
+                                        <span>Safety Score</span>
+                                        <strong className={styles.telegramGreen}>8.4 / 10</strong>
+                                    </div>
+                                    <div className={styles.telegramStat}>
+                                        <span>24h</span>
+                                        <strong className={styles.telegramGreen}>+340%</strong>
+                                    </div>
+                                </div>
+                                <div className={styles.telegramChecks}>
+                                    <span><Shield size={11} /> Contract verified</span>
+                                    <span><Users size={11} /> 420 holders</span>
+                                    <span><Clock size={11} /> 4 min old</span>
+                                </div>
+                                <div className={styles.telegramCta}>View on Dexscreener →</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── 6. Live Market Data ── */}
             <section className={styles.pulseSection}>
                 <div className="container">
+                    <div className={styles.sectionEyebrow}>Live Data</div>
+                    <h2 className={styles.sectionTitle}>The market, right now.</h2>
                     <div className={styles.pulseGrid}>
-                        {/* IPO Activity */}
                         <div className={styles.pulseCard}>
                             <div className={styles.pulseHeader}>
                                 <Zap size={16} className={styles.pulseIcon} />
@@ -170,7 +452,6 @@ export default async function HomePage() {
                             </Link>
                         </div>
 
-                        {/* FII/DII Quick */}
                         <div className={styles.pulseCard}>
                             <div className={styles.pulseHeader}>
                                 <BarChart3 size={16} className={styles.pulseIcon} />
@@ -201,7 +482,6 @@ export default async function HomePage() {
                             )}
                         </div>
 
-                        {/* Social Sentiment */}
                         <div className={styles.pulseCard}>
                             <div className={styles.pulseHeader}>
                                 <Activity size={16} className={styles.pulseIcon} />
@@ -209,12 +489,12 @@ export default async function HomePage() {
                             </div>
                             <div className={styles.pulseStats}>
                                 <div className={styles.pulseStat}>
-                                    <span className={styles.pulseNum}>{posts.length}</span>
-                                    <span className={styles.pulseLabel}>Posts Today</span>
+                                    <span className={styles.pulseNum}>{trending.length}</span>
+                                    <span className={styles.pulseLabel}>Trending</span>
                                 </div>
                                 <div className={styles.pulseStat}>
-                                    <span className={styles.pulseNum}>{posts.filter(p => p.isHot).length}</span>
-                                    <span className={styles.pulseLabel}>Hot</span>
+                                    <span className={styles.pulseNum}>Daily</span>
+                                    <span className={styles.pulseLabel}>Updated</span>
                                 </div>
                             </div>
                             <Link href="/signals" className={styles.pulseLink}>
@@ -225,7 +505,7 @@ export default async function HomePage() {
                 </div>
             </section>
 
-            {/* Top GMP IPOs - real data for SEO */}
+            {/* ── 7. Top GMP IPOs ── */}
             {topGmp.length > 0 && (
                 <section className={styles.topSection}>
                     <div className="container">
@@ -260,79 +540,14 @@ export default async function HomePage() {
                 </section>
             )}
 
-            {/* Feature Cards */}
-            <section className={styles.features}>
-                <div className="container">
-                    <h2 className={styles.featuresTitle}>Everything Indian Investors Need</h2>
-                    <div className={styles.grid}>
-                        <Link href="/ipo" className={styles.cardLink}>
-                            <div className={styles.featureCard}>
-                                <div className={styles.iconWrapper}>
-                                    <Layers size={32} />
-                                </div>
-                                <h3>IPO Intelligence</h3>
-                                <p>Live GMP with sentiment scoring, performance analytics, and allotment probability calculator for every IPO and SME listing in India.</p>
-                            </div>
-                        </Link>
-                        <Link href="/signals" className={styles.cardLink}>
-                            <div className={styles.featureCard}>
-                                <div className={styles.iconWrapper}>
-                                    <BarChart3 size={32} />
-                                </div>
-                                <h3>Market Signals</h3>
-                                <p>Social media sentiment from Reddit and Twitter, FII/DII institutional flows, insider trading disclosures, and bulk deal tracking.</p>
-                            </div>
-                        </Link>
-                        <Link href="/signals/fii-dii" className={styles.cardLink}>
-                            <div className={styles.featureCard}>
-                                <div className={styles.iconWrapper}>
-                                    <Users size={32} />
-                                </div>
-                                <h3>FII/DII Flows</h3>
-                                <p>Daily Foreign and Domestic Institutional Investor buy/sell data. Track where the smart money is flowing in Indian markets.</p>
-                            </div>
-                        </Link>
-                        <Link href="/signals/insider-trades" className={styles.cardLink}>
-                            <div className={styles.featureCard}>
-                                <div className={styles.iconWrapper}>
-                                    <Building2 size={32} />
-                                </div>
-                                <h3>Insider Trades</h3>
-                                <p>Promoter and insider trading disclosures from NSE. See what company insiders are buying and selling before the market reacts.</p>
-                            </div>
-                        </Link>
-                        <Link href="/stocks/screener" className={styles.cardLink}>
-                            <div className={styles.featureCard}>
-                                <div className={styles.iconWrapper}>
-                                    <TrendingUp size={32} />
-                                </div>
-                                <h3>Stock Screener</h3>
-                                <p>Filter NSE and BSE stocks by market cap, P/E ratio, sector, and more. Find undervalued opportunities with fundamental analysis.</p>
-                            </div>
-                        </Link>
-                        <Link href="/ipo/allotment-calculator" className={styles.cardLink}>
-                            <div className={styles.featureCard}>
-                                <div className={styles.iconWrapper}>
-                                    <Activity size={32} />
-                                </div>
-                                <h3>Allotment Calculator</h3>
-                                <p>Calculate your IPO allotment probability based on subscription multiples. Optimize multi-application strategies to maximize chances.</p>
-                            </div>
-                        </Link>
-                    </div>
-                </div>
-            </section>
-
-            {/* Pro CTA Section */}
+            {/* ── 8. Pro Upgrade ── */}
             <section className={styles.proSection}>
                 <div className="container">
                     <div className={styles.proContent}>
                         <div className={styles.proBadge}>
                             <Crown size={14} /> Staqq Pro
                         </div>
-                        <h2 className={styles.proTitle}>
-                            Get the edge serious investors need
-                        </h2>
+                        <h2 className={styles.proTitle}>Get the edge serious investors use.</h2>
                         <p className={styles.proSubtitle}>
                             Unlock real-time signals, composite IPO scores, custom alert rules, and daily morning briefs. Starting at just ₹499/mo.
                         </p>
@@ -355,7 +570,7 @@ export default async function HomePage() {
                                 <Mail size={20} />
                                 <div>
                                     <strong>Morning Market Brief</strong>
-                                    <span>Daily email with overnight GMP changes, top signals, and FII/DII summary</span>
+                                    <span>Daily email with GMP changes, top signals, and FII/DII summary</span>
                                 </div>
                             </div>
                             <div className={styles.proFeature}>
@@ -367,23 +582,42 @@ export default async function HomePage() {
                             </div>
                         </div>
                         <div className={styles.proActions}>
-                            <Link href="/pricing" className={styles.primaryBtn}>
-                                View Pricing
-                            </Link>
+                            <Link href="/pricing" className={styles.primaryBtn}>View Pricing</Link>
                             <span className={styles.proNote}>Cancel anytime. UPI, cards, netbanking accepted.</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Email Capture */}
+            {/* ── 9. Bottom CTA ── */}
+            <section className={styles.ctaSection}>
+                <div className={styles.ctaGlow} aria-hidden="true" />
+                <div className="container">
+                    <div className={styles.ctaInner}>
+                        <h2 className={styles.ctaTitle}>
+                            Stop piecing together<br />
+                            <span className={styles.ctaTitleAccent}>10 different tabs.</span>
+                        </h2>
+                        <p className={styles.ctaSubtitle}>
+                            GMP, FII flows, insider trades, bulk deals, crypto scanner — it&apos;s all here. Free to start.
+                        </p>
+                        <div className={styles.ctaActions}>
+                            <Link href="/signup" className={styles.primaryBtn}>Create Free Account</Link>
+                            <Link href="/ipo" className={styles.outlineBtn}>Explore the Dashboard</Link>
+                        </div>
+                        <p className={styles.ctaNote}>No credit card required. Free forever on the base plan.</p>
+                    </div>
+                </div>
+            </section>
+
+            {/* ── 11. Email Capture ── */}
             <section className={styles.emailSection}>
                 <div className="container">
                     <EmailCapture />
                 </div>
             </section>
 
-            {/* SEO content section */}
+            {/* ── 11. SEO ── */}
             <section className={styles.seoSection}>
                 <div className="container">
                     <h2>Why Staqq?</h2>
@@ -392,9 +626,8 @@ export default async function HomePage() {
                             <h3>Real-Time IPO GMP Tracking</h3>
                             <p>
                                 Staqq tracks Grey Market Premium for every upcoming, live, and recently listed IPO in India.
-                                Unlike other platforms, we provide GMP sentiment scoring that translates raw numbers into
-                                actionable signals like &quot;Very Bullish&quot; or &quot;Bearish&quot; so you know exactly where market
-                                sentiment stands.
+                                We provide GMP sentiment scoring that translates raw numbers into actionable signals so you
+                                know exactly where market sentiment stands.
                             </p>
                         </div>
                         <div>
@@ -402,15 +635,15 @@ export default async function HomePage() {
                             <p>
                                 Go beyond price charts. Staqq aggregates social media discussions from r/IndianStockMarket,
                                 r/IndianStreetBets, and FinTwit, detects mention spikes, and overlays institutional data
-                                like FII/DII flows and insider trades, giving you signals that most retail investors miss.
+                                like FII/DII flows and insider trades.
                             </p>
                         </div>
                         <div>
                             <h3>Built for Indian Markets</h3>
                             <p>
                                 Every feature is built specifically for NSE and BSE. From IPO subscription data to
-                                SEBI insider disclosures, from bulk deal tracking to SME IPO analysis. This is the
-                                intelligence platform Indian investors have been waiting for.
+                                SEBI insider disclosures, from bulk deal tracking to SME IPO analysis — the intelligence
+                                platform Indian investors have been waiting for.
                             </p>
                         </div>
                     </div>

@@ -1,29 +1,27 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { getUserFromRequest } from '@/utils/supabase/mobile-auth';
 import { angelOne } from '@/lib/angelone';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+    const user = await getUserFromRequest(req);
+    if (!user) {
+        return NextResponse.json({ success: false, error: 'Authentication required' }, { status: 401 });
+    }
+
     try {
         const result = await angelOne.authenticate();
 
         if (result.success) {
-            // We only return what's needed for the frontend to connect to the WebSocket
-            // Avoid returning sensitive data like password or totp secret
             return NextResponse.json({
                 success: true,
                 jwtToken: result.data.jwtToken,
                 feedToken: result.data.feedToken,
-                clientCode: process.env.ANGEL_ONE_CLIENT_CODE
+                clientCode: process.env.ANGEL_ONE_CLIENT_CODE,
             });
         } else {
-            return NextResponse.json({
-                success: false,
-                error: result.error
-            }, { status: 401 });
+            return NextResponse.json({ success: false, error: result.error }, { status: 401 });
         }
     } catch (error: any) {
-        return NextResponse.json({
-            success: false,
-            error: error.message
-        }, { status: 500 });
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

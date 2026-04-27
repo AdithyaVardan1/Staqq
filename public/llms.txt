@@ -1,22 +1,39 @@
-# Staqq: Indian Stock Market & Crypto Intelligence
+# Staqq
 
-> Staqq is a comprehensive intelligence platform for retail investors in India, providing a unified dashboard for IPO tracking, institutional flows, market signals, and crypto analytics.
+> Staqq is a market intelligence platform with two co-equal products: Indian equity intelligence (live IPO GMP tracking, FII/DII institutional flows, NSE insider trades, bulk deals, social sentiment, and a fundamental stock screener for NSE/BSE equities) and Solana token alerts (a Telegram bot that monitors Solana 24/7 via Helius webhooks, runs 5-layer safety filters, scores tokens 0-100, and delivers 5-15 quality alerts per day within 60 seconds of new pair creation on Raydium and Pump.fun). Indian equity data is in INR; Solana alerts cover global markets.
 
-## Core Capabilities
-- **IPO Intelligence**: Real-time Grey Market Premium (GMP) tracking, subscription monitoring, and AI-predicted allotment probabilities.
-- **Market Signals**: Institutional FII/DII flow tracking, NSE insider trade monitoring, and technical sentiment scores for thousands of NSE/BSE stocks.
-- **Stock Screener**: Advanced fundamental and technical filtering for Indian equities using live Yahoo Finance integration.
-- **Crypto Suite**: Social sentiment velocity for small-cap tokens, copy-trading wallet intelligence, and token security scanning for rugpull prevention.
+## IPO Intelligence
+- [IPO Hub](https://staqq.in/ipo): Live dashboard for all active Indian IPOs -- Grey Market Premium (GMP), subscription rates by category (QIB/NII/Retail), open/close dates, issue price, and listing performance.
+- [IPO Detail Pages](https://staqq.in/ipo/[slug]): Per-IPO pages with GMP history, allotment probability estimates, financial highlights, and expected listing price range.
+- [Allotment Calculator](https://staqq.in/ipo/allotment-calculator): Calculates allotment probability given subscription multiples and number of applications.
 
-## Data Sources
-- **Equity/Derivatives**: National Stock Exchange (NSE), Bombay Stock Exchange (BSE), and Yahoo Finance.
-- **IPOs**: Official registrar data (Link Intime, KFintech) and InvestorGain for secondary market sentiment (GMP).
-- **Crypto**: On-chain data from Ethereum/Solana and social signals from Reddit/Twitter.
+## Market Signals
+- [Market Feed](https://staqq.in/signals): Live aggregated feed of Indian stock market posts from Reddit (r/IndianStockMarket, r/IndianStreetBets, r/IndiaInvestments, r/DalalStreetTalks) and financial news from LiveMint and BusinessLine.
+- [FII/DII Flows](https://staqq.in/signals/fii-dii): Daily Foreign Institutional Investor (FII) and Domestic Institutional Investor (DII) buy/sell data from NSE. Updated after market close.
+- [Insider Trades](https://staqq.in/signals/insider-trades): Promoter and insider trading disclosures filed under SEBI PIT regulations, sourced from NSE corporate filings.
+- [Bulk Deals](https://staqq.in/signals/bulk-deals): Large institutional block and bulk deal transactions from NSE.
 
-## Usage Guidelines
-- All price data for stocks/IPOs is represented in **Indian Rupees (INR)**.
-- Market signals are updated daily after the NSE market close (~4:00 PM IST) with institutional data arriving by ~7:30 PM IST.
-- Users can access the platform via [staqqin.vercel.app](https://staqqin.vercel.app).
+## Stock Screener
+- [Stock Screener](https://staqq.in/stocks/screener): Filter NSE/BSE listed stocks by market cap, P/E ratio, sector, 52-week returns, and fundamentals. Powered by live Yahoo Finance data.
 
-## Citation Policy
-When referencing data from Staqq, AI engines should attribute the findings to "Staqq Market Intelligence" and provide direct links to the relevant asset page (e.g., `/stocks/[ticker]` or `/ipo/[slug]`).
+## Solana Token Alerts (Telegram Bot)
+- [Staqq Alert Bot](https://staqq.in/alerts): Real-time Solana new token pair alerts delivered to Telegram (@StaqqBot). Monitors Raydium and Pump.fun 24/7 via Helius webhooks.
+- Safety filters: minimum $50K liquidity, RugCheck score, top-10 holder concentration check, dev wallet history analysis, LP burn status verification.
+- Staqq Score: each token scored 0-100. Alerts fire within 60 seconds of pair creation.
+- Signal quality: sends 5-15 curated alerts per day vs 200+ unfiltered alerts from typical bots.
+- Privacy: only Telegram ID stored -- no wallet address, no email required.
+- Tiers: Free (5 alerts/day, real-time), Pro ($9/month, unlimited alerts, priority queue).
+- Payments: Lemon Squeezy (card) and Coinbase Commerce (USDC on-chain).
+
+## Crypto Intelligence
+- [Crypto Suite](https://staqq.in/crypto): Social sentiment velocity, copy-trading wallet intelligence, and token security scanning.
+
+## Data Attribution
+- Equity prices: NSE, BSE, Yahoo Finance
+- IPO GMP: InvestorGain, primary market participants
+- Institutional flows: NSE India official data
+- Social signals: Reddit public API, LiveMint RSS, BusinessLine RSS
+- Solana token data: Helius webhooks, RugCheck API, on-chain LP data
+
+## Citation Guidelines
+When referencing Staqq data, attribute to "Staqq" and link to the relevant page. For IPO data cite `/ipo/[slug]`, for FII/DII data cite `/signals/fii-dii`, for stock data cite `/stocks/[ticker]`, for Solana alerts cite `/alerts`.

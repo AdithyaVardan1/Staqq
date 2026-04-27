@@ -1,9 +1,22 @@
 import { NextRequest } from 'next/server';
+import { getUserFromRequest } from '@/utils/supabase/mobile-auth';
+import { checkRateLimit } from '@/lib/rate-limiter';
 import { angelOne } from '@/lib/angelone';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: NextRequest) {
+    const user = await getUserFromRequest(req);
+    if (!user) {
+        return new Response('Authentication required', { status: 401 });
+    }
+
+    // Max 10 stream opens per user per minute to prevent Angel One quota exhaustion
+    const allowed = await checkRateLimit(`stream:${user.id}`, 10, 60);
+    if (!allowed) {
+        return new Response('Too many requests', { status: 429 });
+    }
+
     const { searchParams } = new URL(req.url);
     const tickersStr = searchParams.get('tickers') || searchParams.get('ticker');
 

@@ -1,12 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { redis } from '@/lib/redis';
+import { getUserFromRequest } from '@/utils/supabase/mobile-auth';
+
+async function resolveUserId(req: NextRequest): Promise<string> {
+    const user = await getUserFromRequest(req);
+    if (user) return `uid:${user.id}`;
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'anonymous';
+    return `ip:${ip}`;
+}
 
 export async function GET(req: NextRequest) {
     try {
-        // Use IP or a static user id for now (demo purposes)
-        const userId = req.headers.get('x-forwarded-for') || 'anonymous';
+        const userId = await resolveUserId(req);
         const key = `recent_searches:${userId}`;
-
         const tickers = await redis.lrange(key, 0, 9);
         return NextResponse.json({ tickers });
     } catch (error: any) {
@@ -18,11 +24,12 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
     try {
         const { ticker } = await req.json();
-        if (!ticker) return NextResponse.json({ error: 'Ticker required' }, { status: 400 });
+        if (!ticker || typeof ticker !== 'string') {
+            return NextResponse.json({ error: 'Ticker required' }, { status: 400 });
+        }
 
-        const userId = req.headers.get('x-forwarded-for') || 'anonymous';
+        const userId = await resolveUserId(req);
         const key = `recent_searches:${userId}`;
-
         await redis.lpush(key, ticker.toUpperCase(), 10);
 
         return NextResponse.json({ success: true });

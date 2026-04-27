@@ -1,0 +1,4 @@
+twikit
+supabase
+requests
+groq

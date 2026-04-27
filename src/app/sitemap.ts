@@ -1,8 +1,8 @@
 import { MetadataRoute } from 'next';
 import { getAllIPOs } from '@/lib/ipo';
-
-// For blog posts, we'll fetch from Supabase
 import { createClient } from '@supabase/supabase-js';
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://staqq.in';
 
 async function getBlogPosts() {
   const supabase = createClient(
@@ -16,44 +16,45 @@ async function getBlogPosts() {
   return data || [];
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://staqqin.vercel.app';
+// Realistic last-modified dates for static pages.
+// Using new Date() for everything tells Google every page changes on every crawl -- avoid.
+const STATIC_ROUTES: { url: string; lastModified: Date; changeFrequency: MetadataRoute.Sitemap[0]['changeFrequency']; priority: number }[] = [
+  { url: '',                      lastModified: new Date('2025-01-01'), changeFrequency: 'hourly',  priority: 1.0  },
+  { url: '/ipo',                  lastModified: new Date('2025-01-01'), changeFrequency: 'hourly',  priority: 0.95 },
+  { url: '/signals',              lastModified: new Date('2025-01-01'), changeFrequency: 'hourly',  priority: 0.85 },
+  { url: '/signals/fii-dii',      lastModified: new Date('2025-01-01'), changeFrequency: 'daily',   priority: 0.85 },
+  { url: '/signals/insider-trades',lastModified: new Date('2025-01-01'), changeFrequency: 'daily',  priority: 0.80 },
+  { url: '/signals/bulk-deals',   lastModified: new Date('2025-01-01'), changeFrequency: 'daily',   priority: 0.75 },
+  { url: '/stocks/screener',      lastModified: new Date('2025-01-01'), changeFrequency: 'daily',   priority: 0.75 },
+  { url: '/crypto',               lastModified: new Date('2025-01-01'), changeFrequency: 'daily',   priority: 0.65 },
+  { url: '/learn',                lastModified: new Date('2025-01-01'), changeFrequency: 'weekly',  priority: 0.55 },
+  { url: '/blog',                 lastModified: new Date('2025-01-01'), changeFrequency: 'daily',   priority: 0.65 },
+  { url: '/pricing',              lastModified: new Date('2025-01-01'), changeFrequency: 'monthly', priority: 0.45 },
+  { url: '/alerts',               lastModified: new Date('2025-01-01'), changeFrequency: 'weekly',  priority: 0.85 },
+];
 
-  // Static routes
-  const staticRoutes = [
-    { url: '', priority: 1.0, changefreq: 'hourly' },
-    { url: '/ipo', priority: 0.95, changefreq: 'hourly' },
-    { url: '/stocks/screener', priority: 0.7, changefreq: 'daily' },
-    { url: '/crypto', priority: 0.6, changefreq: 'daily' },
-    { url: '/signals', priority: 0.8, changefreq: 'daily' },
-    { url: '/signals/fii-dii', priority: 0.8, changefreq: 'daily' },
-    { url: '/signals/insider-trades', priority: 0.8, changefreq: 'daily' },
-    { url: '/learn', priority: 0.5, changefreq: 'weekly' },
-    { url: '/blog', priority: 0.6, changefreq: 'daily' },
-    { url: '/pricing', priority: 0.4, changefreq: 'monthly' },
-  ].map((route) => ({
-    url: `${baseUrl}${route.url}`,
-    lastModified: new Date(),
-    changeFrequency: route.changefreq as any,
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const staticRoutes = STATIC_ROUTES.map((route) => ({
+    url: `${BASE_URL}${route.url}`,
+    lastModified: route.lastModified,
+    changeFrequency: route.changeFrequency,
     priority: route.priority,
   }));
 
-  // Dynamic IPO routes
   const ipos = await getAllIPOs();
   const ipoRoutes = ipos.map((ipo) => ({
-    url: `${baseUrl}/ipo/${ipo.slug}`,
+    url: `${BASE_URL}/ipo/${ipo.slug}`,
     lastModified: new Date(),
     changeFrequency: 'hourly' as const,
-    priority: 0.9,
+    priority: 0.90,
   }));
 
-  // Dynamic Blog routes
   const posts = await getBlogPosts();
   const blogRoutes = posts.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
+    url: `${BASE_URL}/blog/${post.slug}`,
     lastModified: new Date(post.updated_at),
     changeFrequency: 'weekly' as const,
-    priority: 0.6,
+    priority: 0.65,
   }));
 
   return [...staticRoutes, ...ipoRoutes, ...blogRoutes];

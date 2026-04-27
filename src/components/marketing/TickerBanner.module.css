@@ -1,0 +1,130 @@
+@keyframes scrollLeft {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollRight {
+    0%   { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+}
+
+/* ── Banner shell ── */
+.banner {
+    width: 100%;
+    overflow: hidden;
+    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.015);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Fade edges */
+    mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+}
+
+/* ── Row ── */
+.row {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+}
+
+.row + .row {
+    margin-top: 8px;
+}
+
+/* ── Scrolling track ── */
+.track {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    white-space: nowrap;
+    will-change: transform;
+    animation: scrollLeft 35s linear infinite;
+}
+
+.trackReverse {
+    animation: scrollRight 28s linear infinite;
+}
+
+/* ── Stock chip ── */
+.stockChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px 4px 10px;
+    margin-right: 2px;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.cryptoChip {
+    padding: 4px 16px 4px 10px;
+}
+
+/* ── Dot ── */
+.dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.dotGreen { background: #22c55e; }
+.dotRed   { background: #ef4444; }
+
+/* ── Ticker ── */
+.chipTicker {
+    font-family: var(--font-outfit), sans-serif;
+    font-weight: 700;
+    font-size: 0.76rem;
+    letter-spacing: 0.02em;
+    color: #fff;
+}
+
+/* ── Price (crypto only) ── */
+.chipPrice {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ── Change % ── */
+.chipChange {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.changeUp   { color: #22c55e; }
+.changeDown { color: #ef4444; }
+
+/* ── Feature badge ── */
+.featureBadge {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin: 0 10px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    background: rgba(202, 255, 0, 0.07);
+    border: 1px solid rgba(202, 255, 0, 0.18);
+    color: var(--primary-brand);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.featureBadgeViolet {
+    background: rgba(168, 85, 247, 0.07);
+    border-color: rgba(168, 85, 247, 0.2);
+    color: var(--secondary-brand);
+}
+
+/* Pause on hover */
+.banner:hover .track {
+    animation-play-state: paused;
+}

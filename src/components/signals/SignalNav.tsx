@@ -6,10 +6,10 @@ import { Activity, BarChart3, Users, Building2 } from 'lucide-react';
 import styles from './SignalNav.module.css';
 
 const TABS = [
-    { href: '/signals', label: 'Social', icon: Activity, exact: true },
+    { href: '/signals', label: 'Market Feed', icon: Activity, exact: true },
     { href: '/signals/fii-dii', label: 'FII / DII', icon: BarChart3 },
-    { href: '/signals/bulk-deals', label: 'Bulk Deals', icon: Building2 },
     { href: '/signals/insider-trades', label: 'Insider Trades', icon: Users },
+    { href: '/signals/bulk-deals', label: 'Bulk Deals', icon: Building2 },
 ];
 
 export function SignalNav() {
