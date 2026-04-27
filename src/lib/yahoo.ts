@@ -59,11 +59,6 @@ export class YahooFinanceService {
         return this.yf;
     }
 
-    public async getQuote(symbol: string): Promise<any> {
-        const yf = await this.getClient();
-        return await yf.quote(symbol);
-    }
-
     public async getFundamentals(ticker: string): Promise<FundamentalData | null> {
         try {
             console.log(`[Yahoo] Starting fetch for ticker: ${ticker}`);

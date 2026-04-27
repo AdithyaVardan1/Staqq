@@ -1,6 +1,7 @@
 
 'use client';
 
+import Link from 'next/link';
 import { TrendingUp, TrendingDown, ChevronRight, Plus, Trash2 } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { StockLogo } from './StockLogo';

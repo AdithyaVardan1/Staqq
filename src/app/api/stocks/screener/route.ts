@@ -269,20 +269,21 @@ export async function GET(request: Request) {
                 const marketCap = fundamentals?.marketCap || 0;
                 const peRatio = fundamentals?.peRatio || 0;
                 const stockSector = fundamentals?.sector || 'Unknown';
-                const return1Y = fundamentals?.return1Y || 0;
+                const return1YVal = fundamentals?.return1Y || 0;
 
                 // Apply filters
                 if (price < priceMin || price > priceMax) continue;
-                
+
+
                 if (sector && sector !== 'all' && !stockSector.toLowerCase().includes(sector.toLowerCase())) continue;
 
                 if (mcap === 'large' && marketCap < LARGE_CAP) continue;
                 if (mcap === 'mid'   && (marketCap < MID_CAP || marketCap >= LARGE_CAP)) continue;
                 if (mcap === 'small' && marketCap >= MID_CAP) continue;
 
-                if (return1Y === 'positive' && return1Y <= 0) continue;
-                if (return1Y === 'top10'    && return1Y < 10) continue;
-                if (return1Y === 'top30'    && return1Y < 30) continue;
+                if (return1Y === 'positive' && return1YVal <= 0) continue;
+                if (return1Y === 'top10'    && return1YVal < 10) continue;
+                if (return1Y === 'top30'    && return1YVal < 30) continue;
 
                 if (matchedStocks.length < limit) {
                     matchedStocks.push({
@@ -294,7 +295,7 @@ export async function GET(request: Request) {
                         marketCap,
                         peRatio,
                         sector: stockSector,
-                        return1Y,
+                        return1Y: return1YVal,
                         sparklineData: [],
                     });
                 }
