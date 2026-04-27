@@ -57,7 +57,7 @@ export default async function LearnPathPage({ params }: LearnPathPageProps) {
       <div className={styles.divider} />
 
       {/* Module list */}
-      <ModulesAccordion modules={pathData.modules} pathKey={path} />
+      <ModulesAccordion modules={pathData.modules} pathKey={path} accentColor={pathData.color} />
     </main>
   );
 }

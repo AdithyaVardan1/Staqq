@@ -1,195 +1,170 @@
+/* accent color comes from --accent CSS var set inline on the card */
+
 .card {
   position: relative;
-  background: #0f0f0f;
-  border: 1px solid #1e1e1e;
+  background: #0c0c0c;
+  border: 1px solid #1c1c1c;
   border-radius: 16px;
-  padding: 1.6rem;
+  padding: 1.5rem;
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
   gap: 0;
   overflow: hidden;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
-  cursor: pointer;
-  min-height: 240px;
+  min-height: 220px;
+
+  /* transitions */
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    background 0.25s ease;
 }
 
 .card:hover {
-  border-color: #b6ff00;
-  box-shadow: 0 0 0 1px #b6ff0040, 0 8px 40px #b6ff0018;
-  transform: translateY(-2px);
+  border-color: var(--accent, #b6ff00);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--accent, #b6ff00) 20%, transparent),
+    0 8px 32px color-mix(in srgb, var(--accent, #b6ff00) 8%, transparent);
+  transform: translateY(-3px);
+  background: #0f0f0f;
 }
 
-/* ── Top row: icon + badge ── */
+/* ── Top row ── */
 .topRow {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.25rem;
 }
 
-.iconWrapper {
-  width: 42px;
-  height: 42px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
+.iconWrap {
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #b6ff00;
+  color: var(--accent, #b6ff00);
+  background: color-mix(in srgb, var(--accent, #b6ff00) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #b6ff00) 20%, transparent);
   flex-shrink: 0;
-  transition: background 0.3s ease;
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
-.iconWrapper svg {
-  width: 20px;
-  height: 20px;
+.iconWrap svg { width: 18px; height: 18px; }
+
+.card:hover .iconWrap {
+  background: color-mix(in srgb, var(--accent, #b6ff00) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent, #b6ff00) 35%, transparent);
 }
 
-.card:hover .iconWrapper {
-  background: #1e2800;
-  border-color: #b6ff0060;
-}
-
-.badge {
-  font-size: 0.65rem;
+.diffBadge {
+  font-size: 0.62rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 0.25rem 0.55rem;
-  border-radius: 4px;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
+  padding: 0.22rem 0.55rem;
+  border-radius: 5px;
+  color: var(--accent, #b6ff00);
+  background: color-mix(in srgb, var(--accent, #b6ff00) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, #b6ff00) 22%, transparent);
 }
 
-.badgeBeginner {
-  background: #0f1a00;
-  color: #b6ff00;
-  border: 1px solid #b6ff0040;
-}
-
-.badgeIntermediate {
-  background: #1a1200;
-  color: #ffcc00;
-  border: 1px solid #ffcc0040;
-}
-
-.badgeAdvanced {
-  background: #1a0800;
-  color: #ff6b35;
-  border: 1px solid #ff6b3540;
-}
-
-/* ── Body: title + description ── */
+/* ── Body ── */
 .body {
   flex: 1;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1rem;
 }
 
 .title {
-  font-size: 1.25rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #fff;
-  margin: 0 0 0.5rem;
+  color: var(--text-primary, #fff);
+  margin: 0 0 0.4rem;
   line-height: 1.3;
+  transition: color 0.2s ease;
 }
 
 .desc {
-  font-size: 0.875rem;
-  color: #888;
+  font-size: 0.8rem;
+  color: var(--text-muted, #555);
   line-height: 1.5;
   margin: 0;
 }
 
-/* ── Meta row ── */
+/* ── Meta ── */
 .meta {
   display: flex;
-  gap: 1.2rem;
-  margin-bottom: 1.1rem;
+  gap: 1rem;
+  margin-bottom: 0.875rem;
 }
 
 .metaItem {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.8rem;
-  color: #666;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-muted, #555);
 }
 
-.metaIcon {
-  width: 14px;
-  height: 14px;
-  opacity: 0.7;
+/* ── First lesson teaser ── */
+.teaser {
+  font-size: 0.75rem;
+  color: var(--text-muted, #555);
+  padding-top: 0.75rem;
+  border-top: 1px solid #161616;
+  margin-top: auto;
+}
+
+.teaserLesson {
+  color: var(--accent, #b6ff00);
+  font-weight: 500;
 }
 
 /* ── Progress ── */
 .progressSection {
+  padding-top: 0.75rem;
+  border-top: 1px solid #161616;
   margin-top: auto;
 }
 
 .progressLabel {
   display: flex;
   justify-content: space-between;
-  font-size: 0.75rem;
-  color: #555;
-  margin-bottom: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--text-muted, #555);
+  margin-bottom: 0.35rem;
 }
 
-.progressBar {
+.progressTrack {
   height: 3px;
-  background: #222;
+  background: #1e1e1e;
   border-radius: 999px;
   overflow: hidden;
 }
 
 .progressFill {
   height: 100%;
-  background: #b6ff00;
+  background: var(--accent, #b6ff00);
   border-radius: 999px;
   transition: width 0.6s ease;
 }
 
-/* ── Decorative background icon ── */
+/* ── Decorative bg icon ── */
 .bgIcon {
   position: absolute;
-  bottom: -10px;
-  right: -10px;
-  width: 110px;
-  height: 110px;
-  opacity: 0.03;
+  bottom: -8px;
+  right: -8px;
+  width: 96px;
+  height: 96px;
+  opacity: 0.04;
   pointer-events: none;
-  color: #fff;
-  transition: opacity 0.3s ease;
+  color: var(--accent, #b6ff00);
+  transition: opacity 0.25s ease;
 }
 
-.bgIcon svg {
-  width: 100%;
-  height: 100%;
-}
+.bgIcon svg { width: 100%; height: 100%; }
 
-.card:hover .bgIcon {
-  opacity: 0.06;
-}
-
-/* ── Hover arrow ── */
-.hoverArrow {
-  position: absolute;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  width: 20px;
-  height: 20px;
-  color: #b6ff00;
-  opacity: 0;
-  transform: translateX(-6px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
-}
-
-.hoverArrow svg {
-  width: 100%;
-  height: 100%;
-}
-
-.card:hover .hoverArrow {
-  opacity: 1;
-  transform: translateX(0);
-}
+.card:hover .bgIcon { opacity: 0.09; }

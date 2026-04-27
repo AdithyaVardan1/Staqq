@@ -11,6 +11,8 @@ interface LearningPathCardProps {
   difficulty: Difficulty;
   estimatedTime: string;
   icon: string;
+  color: string;
+  firstLesson?: string;
 }
 
 function PathIcon({ name }: { name: string }) {
@@ -72,83 +74,76 @@ function PathIcon({ name }: { name: string }) {
   }
 }
 
-const difficultyColor: Record<Difficulty, string> = {
-  BEGINNER: styles.badgeBeginner,
-  INTERMEDIATE: styles.badgeIntermediate,
-  ADVANCED: styles.badgeAdvanced,
+const DIFF_LABEL: Record<Difficulty, string> = {
+  BEGINNER: "Beginner",
+  INTERMEDIATE: "Intermediate",
+  ADVANCED: "Advanced",
 };
 
 export default function LearningPathCard({
-  title,
-  description,
-  modules,
-  progress,
-  slug,
-  difficulty,
-  estimatedTime,
-  icon,
+  title, description, modules, progress, slug, difficulty, estimatedTime, icon, color, firstLesson,
 }: LearningPathCardProps) {
   return (
-    <Link href={`/learn/${slug}`} className={styles.card}>
-      {/* Top row: icon + difficulty badge */}
+    <Link
+      href={`/learn/${slug}`}
+      className={styles.card}
+      style={{ "--accent": color } as React.CSSProperties}
+    >
+      {/* Top: icon + badge */}
       <div className={styles.topRow}>
-        <div className={styles.iconWrapper}>
+        <div className={styles.iconWrap}>
           <PathIcon name={icon} />
         </div>
-        <span className={`${styles.badge} ${difficultyColor[difficulty]}`}>
-          {difficulty}
+        <span className={styles.diffBadge}>
+          {DIFF_LABEL[difficulty]}
         </span>
       </div>
 
-      {/* Card body */}
+      {/* Body */}
       <div className={styles.body}>
         <h3 className={styles.title}>{title}</h3>
         <p className={styles.desc}>{description}</p>
       </div>
 
-      {/* Meta: modules count + time */}
+      {/* Meta */}
       <div className={styles.meta}>
         <span className={styles.metaItem}>
-          <svg className={styles.metaIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
           </svg>
           {modules} modules
         </span>
         <span className={styles.metaItem}>
-          <svg className={styles.metaIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
           </svg>
           {estimatedTime}
         </span>
       </div>
 
+      {/* First lesson teaser */}
+      {firstLesson && progress === 0 && (
+        <div className={styles.teaser}>
+          Start with: <span className={styles.teaserLesson}>{firstLesson}</span>
+        </div>
+      )}
+
       {/* Progress */}
-      <div className={styles.progressSection}>
-        <div className={styles.progressLabel}>
-          <span>Progress</span>
-          <span>{progress}%</span>
+      {progress > 0 && (
+        <div className={styles.progressSection}>
+          <div className={styles.progressLabel}>
+            <span>Progress</span>
+            <span>{progress}%</span>
+          </div>
+          <div className={styles.progressTrack}>
+            <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+          </div>
         </div>
-        <div className={styles.progressBar}>
-          <div
-            className={styles.progressFill}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
+      )}
 
-      {/* Decorative background icon */}
-      <div className={styles.bgIcon} aria-hidden="true">
+      {/* Decorative bg icon */}
+      <div className={styles.bgIcon} aria-hidden>
         <PathIcon name={icon} />
-      </div>
-
-      {/* Hover arrow */}
-      <div className={styles.hoverArrow}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12" />
-          <polyline points="12 5 19 12 12 19" />
-        </svg>
       </div>
     </Link>
   );

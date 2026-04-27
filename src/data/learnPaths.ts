@@ -6,6 +6,7 @@ function buildModulesForPath(pathKey: string) {
     title: m.title,
     description: m.description,
     chapterCount: m.chapters.length,
+    firstLesson: m.chapters[0] ? { slug: m.chapters[0].slug, title: m.chapters[0].title } : null,
   }));
 }
 
@@ -17,6 +18,7 @@ export interface LearnPath {
   difficulty: Difficulty;
   estimatedTime: string;
   icon: string;
+  color: string;
   modules: ReturnType<typeof buildModulesForPath>;
 }
 
@@ -27,6 +29,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "BEGINNER",
     estimatedTime: "45m",
     icon: "sprout",
+    color: "#b6ff00",
     modules: buildModulesForPath("beginner"),
   },
 
@@ -36,6 +39,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "INTERMEDIATE",
     estimatedTime: "1h 30m",
     icon: "chart-bar",
+    color: "#38bdf8",
     modules: buildModulesForPath("financials"),
   },
 
@@ -45,6 +49,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "INTERMEDIATE",
     estimatedTime: "2h 00m",
     icon: "chart-candlestick",
+    color: "#f59e0b",
     modules: buildModulesForPath("technical"),
   },
 
@@ -54,6 +59,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "BEGINNER",
     estimatedTime: "1h 15m",
     icon: "rocket",
+    color: "#a855f7",
     modules: buildModulesForPath("ipo"),
   },
 
@@ -63,7 +69,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "ADVANCED",
     estimatedTime: "2h 30m",
     icon: "building",
+    color: "#ff6b35",
     modules: buildModulesForPath("fundamental"),
   },
 };
-
