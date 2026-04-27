@@ -19,6 +19,20 @@ export interface SocialPost {
     image?: string;
 }
 
+export interface MarketPulse {
+    id: string;
+    date: string;
+    ticker: string | null;
+    source: 'reddit' | 'news';
+    headline: string;
+    summary: string;
+    sentiment: 'bullish' | 'bearish' | 'neutral' | 'mixed';
+    sentimentScore: number;
+    postCount: number;
+    topics: string[];
+    createdAt: string;
+}
+
 // ─── RSS News Feeds ───────────────────────────────────────────────────
 
 const NEWS_FEEDS = [
@@ -69,11 +83,6 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
                 ? Math.floor(new Date(item.pubDate).getTime() / 1000)
                 : Math.floor(Date.now() / 1000);
 
-            // News headlines don't use ticker symbols — extracting uppercase words
-            // produces garbage like $PREVIEW, $WEATHER, $SELLERS. Skip tickers for news.
-            const tickers: string[] = [];
-
-            // Extract image from media:content if available
             const mediaItem = item as any;
             const image: string | undefined =
                 mediaItem['media:content']?.['$']?.url ||
@@ -91,7 +100,7 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
                 community: label,
                 author: item.creator || null,
                 createdAt,
-                tickers,
+                tickers: [],
                 isHot: false,
                 image,
             });
@@ -102,50 +111,8 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
     return posts;
 }
 
-// ─── Reddit (Supabase-backed) ─────────────────────────────────────────
-// fetch_reddit.py (GitHub Actions cron) fetches from Reddit and writes
-// to the `tweets` table. We read from there -- Reddit blocks Vercel IPs.
-
-async function loadRedditPostsFromSupabase(): Promise<SocialPost[]> {
-    try {
-        const supabase = createAdminClient();
-        const { data, error } = await supabase
-            .from('tweets')
-            .select('*')
-            .eq('source', 'reddit')
-            .gte('created_at_ts', Math.floor(Date.now() / 1000) - 86400)
-            .order('created_at_ts', { ascending: false })
-            .limit(150);
-
-        if (!error && data && data.length > 0) {
-            console.log(`[Reddit] Loaded ${data.length} posts from Supabase`);
-            return data.map((t: any) => ({
-                id: t.post_id,
-                title: t.title || '',
-                body: t.body || '',
-                url: t.url || '',
-                score: t.score || 0,
-                comments: t.comments || 0,
-                source: 'reddit' as const,
-                community: t.community || '',
-                author: t.author || null,
-                createdAt: t.created_at_ts || 0,
-                tickers: t.tickers || [],
-                isHot: t.is_hot || false,
-                image: t.image || undefined,
-            }));
-        }
-        console.log('[Reddit] No posts in Supabase yet');
-    } catch (err) {
-        console.error('[Reddit] Supabase read error:', err);
-    }
-    return [];
-}
-
-
 // ─── Twitter/X (Supabase-backed) ─────────────────────────────────────
 // fetch_tweets.py writes to the `tweets` Supabase table.
-// This reads from there in production. Falls back to local JSON in dev.
 
 async function loadTwitterPosts(): Promise<SocialPost[]> {
     try {
@@ -207,27 +174,94 @@ async function loadTwitterPosts(): Promise<SocialPost[]> {
     }
 }
 
+// ─── Market Pulse (AI summaries) ─────────────────────────────────────
+// summarize_reddit.py  — Reddit discussions → Groq → source='reddit'
+// summarize_news.py    — RSS articles → Groq      → source='news'
+// Both write to `market_pulse`. Raw source content never hits the frontend.
+
+function rowToPulse(row: any): MarketPulse {
+    return {
+        id:            row.id,
+        date:          row.date,
+        ticker:        row.ticker ?? null,
+        source:        row.source ?? 'reddit',
+        headline:      row.headline,
+        summary:       row.summary,
+        sentiment:     row.sentiment,
+        sentimentScore: row.sentiment_score,
+        postCount:     row.post_count,
+        topics:        row.topics || [],
+        createdAt:     row.created_at,
+    };
+}
+
+export async function getMarketPulse(limit = 20): Promise<MarketPulse[]> {
+    try {
+        const supabase = createAdminClient();
+        const sevenDaysAgo = new Date(Date.now() - 7 * 86400 * 1000).toISOString().split('T')[0];
+
+        const { data, error } = await supabase
+            .from('market_pulse')
+            .select('*')
+            .gte('date', sevenDaysAgo)
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        if (error) throw error;
+        if (!data || data.length === 0) return [];
+
+        console.log(`[MarketPulse] Loaded ${data.length} pulse summaries`);
+        return data.map(rowToPulse);
+    } catch (err) {
+        console.error('[MarketPulse] Failed to load:', err);
+        return [];
+    }
+}
+
+export async function getSocialPulses(limit = 8): Promise<MarketPulse[]> {
+    try {
+        const supabase = createAdminClient();
+        const sevenDaysAgo = new Date(Date.now() - 7 * 86400 * 1000).toISOString().split('T')[0];
+
+        const { data } = await supabase
+            .from('market_pulse')
+            .select('*')
+            .eq('source', 'reddit')
+            .gte('date', sevenDaysAgo)
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        return (data || []).map(rowToPulse);
+    } catch {
+        return [];
+    }
+}
+
+export async function getNewsPulses(limit = 8): Promise<MarketPulse[]> {
+    try {
+        const supabase = createAdminClient();
+
+        const { data } = await supabase
+            .from('market_pulse')
+            .select('*')
+            .eq('source', 'news')
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        return (data || []).map(rowToPulse);
+    } catch {
+        return [];
+    }
+}
+
 // ─── Public API ───────────────────────────────────────────────────────
 
 export async function getAllPosts(limit?: number): Promise<SocialPost[]> {
-    const [newsPosts, redditPosts] = await Promise.all([
-        fetchNewsFeedPosts(),
-        loadRedditPostsFromSupabase(),
-    ]);
-
-    // Sort each source by recency independently, then cap per-source so no
-    // single source monopolises the feed when its content is newer.
-    const newsLimit  = Math.ceil((limit || 60) * 0.4);  // 40% news
-    const redditLimit = Math.ceil((limit || 60) * 0.6); // 60% Reddit (more social/discusssion)
-
-    const news   = [...newsPosts].sort((a, b) => b.createdAt - a.createdAt).slice(0, newsLimit);
-    const reddit = [...redditPosts].sort((a, b) => b.createdAt - a.createdAt).slice(0, redditLimit);
-
-    const all = [...news, ...reddit];
-    console.log(`[Pulse] ${all.length} posts (${news.length} news, ${reddit.length} Reddit)`);
-
-    all.sort((a, b) => b.createdAt - a.createdAt);
-    return all;
+    const posts = await fetchNewsFeedPosts();
+    const sorted = posts.sort((a, b) => b.createdAt - a.createdAt);
+    const result = limit ? sorted.slice(0, limit) : sorted;
+    console.log(`[Pulse] ${result.length} news posts`);
+    return result;
 }
 
 export async function getNewsPosts(): Promise<SocialPost[]> {
@@ -238,16 +272,16 @@ export async function getTwitterPosts(): Promise<SocialPost[]> {
     return loadTwitterPosts();
 }
 
-export async function getTrendingTickers(): Promise<string[]> {
-    const posts = await getAllPosts();
+export async function getTrendingTickers(limit = 20): Promise<string[]> {
+    const pulses = await getMarketPulse(50);
     const tickerCounts: Record<string, number> = {};
-    for (const post of posts) {
-        for (const ticker of post.tickers) {
-            tickerCounts[ticker] = (tickerCounts[ticker] || 0) + 1;
+    for (const pulse of pulses) {
+        if (pulse.ticker) {
+            tickerCounts[pulse.ticker] = (tickerCounts[pulse.ticker] || 0) + pulse.postCount;
         }
     }
     return Object.entries(tickerCounts)
         .sort(([, a], [, b]) => b - a)
         .map(([ticker]) => ticker)
-        .slice(0, 20);
+        .slice(0, limit);
 }

@@ -1,0 +1,200 @@
+.link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+/* ── Card shell ── */
+.card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    height: 100%;
+    /* Parallelogram: slight skew on the whole card */
+    transform: skewX(-1.2deg);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+    transform: skewX(-1.2deg) translateY(-3px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent, #caff00) 22;
+}
+
+/* Dark background layer — sits behind inner content */
+.bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(18, 18, 24, 0.97) 0%, rgba(10, 10, 14, 0.99) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    transition: border-color 0.25s;
+}
+
+.card:hover .bg {
+    border-color: color-mix(in srgb, var(--accent, #caff00) 30%, transparent);
+}
+
+/* Left accent stripe */
+.bg::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 12%;
+    bottom: 12%;
+    width: 3px;
+    background: var(--accent, #caff00);
+    border-radius: 2px;
+    opacity: 0.6;
+    transition: opacity 0.25s;
+}
+
+.card:hover .bg::before {
+    opacity: 1;
+}
+
+/* ── Inner content (counter-skew so text is straight) ── */
+.inner {
+    position: relative;
+    z-index: 1;
+    transform: skewX(1.2deg);
+    padding: 18px 22px 22px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* Hero variant */
+.hero .inner {
+    padding: 24px 26px 28px 30px;
+}
+
+/* ── Source row ── */
+.source {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.sourceIcon {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.sourceName {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #888;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    flex: 1;
+}
+
+.time {
+    font-size: 0.7rem;
+    color: #555;
+    letter-spacing: 0.02em;
+}
+
+/* ── Headline ── */
+.headline {
+    font-family: var(--font-outfit), sans-serif;
+    font-size: 0.97rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.4;
+    color: #fff;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.2s;
+}
+
+.hero .headline {
+    font-size: 1.15rem;
+    -webkit-line-clamp: 3;
+}
+
+.card:hover .headline {
+    color: var(--accent, #caff00);
+}
+
+/* ── Body ── */
+.body {
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.hero .body {
+    font-size: 0.85rem;
+    -webkit-line-clamp: 3;
+    color: #777;
+}
+
+/* ── Tickers ── */
+.tickers {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.ticker {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--accent, #caff00);
+    background: color-mix(in srgb, var(--accent, #caff00) 10%, transparent);
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+}
+
+/* ── Dog-ear cut corner ── */
+.corner {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    /* Triangle that "cuts" the corner */
+    background: linear-gradient(
+        135deg,
+        transparent 50%,
+        color-mix(in srgb, var(--accent, #caff00) 25%, transparent) 50%
+    );
+    z-index: 2;
+    pointer-events: none;
+    transition: opacity 0.25s;
+}
+
+.card:hover .corner {
+    opacity: 1;
+}
+
+@media (max-width: 640px) {
+    .card {
+        transform: none;
+    }
+    .card:hover {
+        transform: none;
+    }
+    .inner {
+        transform: none;
+    }
+}

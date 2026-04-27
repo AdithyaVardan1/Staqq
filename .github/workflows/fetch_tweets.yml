@@ -3,6 +3,7 @@ name: Fetch Tweets
 on:
   schedule:
     - cron: '*/7 3-11 * * 1-5'   # every 7 min on weekdays, market hours (8:30am–5pm IST)
+    - cron: '0 14 * * 1-5'       # 7:30 PM IST post-market (catch FII/DII evening data)
     - cron: '0 */3 * * 0,6'      # every 3 hours on weekends
   workflow_dispatch:               # allow manual trigger from GitHub UI
 
@@ -44,3 +45,43 @@ jobs:
           echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.local
           echo "REDDIT_SESSION=$REDDIT_SESSION" >> .env.local
           python scripts/fetch_reddit.py
+
+      - name: Summarize Reddit discussions (social pulse)
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GROQ_KEY_1: ${{ secrets.GROQ_KEY_1 }}
+          GROQ_KEY_2: ${{ secrets.GROQ_KEY_2 }}
+          GROQ_KEY_3: ${{ secrets.GROQ_KEY_3 }}
+          GROQ_KEY_4: ${{ secrets.GROQ_KEY_4 }}
+          GROQ_KEY_5: ${{ secrets.GROQ_KEY_5 }}
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" > .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.local
+          echo "GROQ_KEY_1=$GROQ_KEY_1" >> .env.local
+          echo "GROQ_KEY_2=$GROQ_KEY_2" >> .env.local
+          echo "GROQ_KEY_3=$GROQ_KEY_3" >> .env.local
+          echo "GROQ_KEY_4=$GROQ_KEY_4" >> .env.local
+          echo "GROQ_KEY_5=$GROQ_KEY_5" >> .env.local
+          python scripts/summarize_reddit.py
+
+      - name: Summarize news articles (media pulse)
+        continue-on-error: true
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GROQ_KEY_1: ${{ secrets.GROQ_KEY_1 }}
+          GROQ_KEY_2: ${{ secrets.GROQ_KEY_2 }}
+          GROQ_KEY_3: ${{ secrets.GROQ_KEY_3 }}
+          GROQ_KEY_4: ${{ secrets.GROQ_KEY_4 }}
+          GROQ_KEY_5: ${{ secrets.GROQ_KEY_5 }}
+        run: |
+          echo "NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL" > .env.local
+          echo "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY" >> .env.local
+          echo "GROQ_KEY_1=$GROQ_KEY_1" >> .env.local
+          echo "GROQ_KEY_2=$GROQ_KEY_2" >> .env.local
+          echo "GROQ_KEY_3=$GROQ_KEY_3" >> .env.local
+          echo "GROQ_KEY_4=$GROQ_KEY_4" >> .env.local
+          echo "GROQ_KEY_5=$GROQ_KEY_5" >> .env.local
+          python scripts/summarize_news.py

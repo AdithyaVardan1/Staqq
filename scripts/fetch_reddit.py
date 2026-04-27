@@ -92,10 +92,10 @@ def extract_tickers(text: str) -> list:
 
 
 SUBREDDITS = [
-    'IndianStockMarket',
-    'IndianStreetBets',
-    'IndiaInvestments',
-    'DalalStreetTalks',
+    'IndiaInvestments',      # most analytical, long-form discussion
+    'IndianStockMarket',     # largest, good signal when filtered
+    'DalalStreetTalks',      # market-focused discussion
+    'IndianStreetBets',      # meme-heavy, lower weight — fetched last
 ]
 
 # Mimic a real browser -- Reddit checks User-Agent alongside session cookies
@@ -111,7 +111,7 @@ def fetch_subreddit(sub: str, session_cookie: str) -> list:
     seen_ids: set = set()
     cookies = {'reddit_session': session_cookie} if session_cookie else {}
 
-    for sort in ('hot', 'new'):
+    for sort in ('hot', 'controversial'):
         url = f'https://www.reddit.com/r/{sub}/{sort}.json?limit=50'
         try:
             resp = requests.get(url, headers=HEADERS, cookies=cookies, timeout=10)
@@ -137,17 +137,42 @@ def fetch_subreddit(sub: str, session_cookie: str) -> list:
                 num_comments = post.get('num_comments', 0) or 0
                 title = (post.get('title') or '').strip()
                 body = (post.get('selftext') or '').strip()
-                if len(body) > 300:
-                    body = body[:300] + '...'
+                if len(body) > 600:
+                    body = body[:600] + '...'
+
+                # Skip deleted / removed posts
+                if body in ('[removed]', '[deleted]'):
+                    body = ''
 
                 tickers = extract_tickers((title + ' ' + body).upper())
 
-                if score < 10 and num_comments < 3 and not tickers:
+                # Skip pure meme / media posts — no body text and no tickers
+                post_hint = post.get('post_hint', '')
+                is_media = post_hint in ('image', 'rich:video', 'hosted:video') or post.get('is_gallery', False)
+                if is_media and not body and not tickers:
                     continue
 
+                # Engagement gate — controversial posts are downvoted, filter by comments only
+                if sort == 'controversial':
+                    if num_comments < 10:
+                        continue
+                else:
+                    if score < 15 and num_comments < 5:
+                        continue
+
+                # Flag analytical posts for the summariser to weight higher
+                analytical_terms = {'ANALYSIS', 'DD', 'RESEARCH', 'RESULTS', 'EARNINGS',
+                                     'QUARTER', 'REVENUE', 'MARGIN', 'VALUATION', 'REPORT',
+                                     'FORECAST', 'GUIDANCE', 'BUYBACK', 'DIVIDEND', 'SEBI'}
+                text_upper = (title + ' ' + body).upper()
+                is_analytical = (
+                    len(body) > 150 and
+                    (bool(tickers) or any(t in text_upper for t in analytical_terms))
+                )
+
                 image = None
-                if post.get('post_hint') == 'image' and post.get('url'):
-                    image = post['url']
+                if not is_media:
+                    pass  # don't store images for meme posts we kept on tickers
                 elif post.get('preview', {}).get('images'):
                     src = post['preview']['images'][0].get('source', {}).get('url', '')
                     if src:

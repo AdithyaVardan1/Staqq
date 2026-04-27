@@ -1,301 +1,235 @@
 /* ── Page shell ── */
 .page {
-  width: 100%;
-  min-height: 100vh;
-  padding-top: 120px;
-  padding-bottom: 80px;
-  overflow-x: hidden;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 80px;
+    padding-bottom: 80px;
+    overflow-x: hidden;
 }
 
-/* ── Signal Tabs ── */
-.signalTabs {
-  display: flex;
-  gap: 8px;
-  max-width: 720px;
-  margin: 0 auto 32px;
-  padding: 0 24px;
-  flex-wrap: wrap;
-}
-
-.signalTab {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #888;
-  background: rgba(255, 255, 255, 0.02);
-  transition: all 0.2s;
-}
-
-.signalTab:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  color: #ccc;
-}
-
-.activeTab {
-  background: rgba(202, 255, 0, 0.08);
-  border-color: rgba(202, 255, 0, 0.25);
-  color: var(--primary-brand);
-}
-
-.comingSoon {
-  cursor: default;
-  opacity: 0.5;
-}
-
-.badge2 {
-  font-size: 0.6rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #666;
+.navWrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
 }
 
 /* ── Spike banner ── */
 .spikeBanner {
-  max-width: 720px;
-  margin: 0 auto 32px;
-  padding: 20px 24px;
-  background: rgba(202, 255, 0, 0.04);
-  border: 1px solid rgba(202, 255, 0, 0.15);
-  border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    max-width: 1400px;
+    margin: 16px auto 0;
+    padding: 10px 24px;
+    background: rgba(202, 255, 0, 0.03);
+    border-top: 1px solid rgba(202, 255, 0, 0.1);
+    border-bottom: 1px solid rgba(202, 255, 0, 0.1);
+    flex-wrap: wrap;
 }
 
-.spikeBannerHeader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
+.spikeLabel {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #caff00;
 }
 
-.spikeIcon {
-  color: var(--primary-brand);
+.spikeChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: border-color 0.2s;
 }
 
-.spikeBannerTitle {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #fff;
-  flex: 1;
-}
-
-.spikeManageLink {
-  font-size: 0.75rem;
-  color: var(--primary-brand);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.spikeManageLink:hover {
-  text-decoration: underline;
-}
-
-.spikeCards {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.spikeCard {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  text-decoration: none;
-  transition: border-color 0.2s;
-}
-
-.spikeCard:hover {
-  border-color: rgba(202, 255, 0, 0.3);
-}
-
-.spikeTicker {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: var(--primary-brand);
+.spikeChip:hover {
+    border-color: rgba(202, 255, 0, 0.3);
 }
 
 .spikeMult {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--primary-brand);
-  background: rgba(202, 255, 0, 0.1);
-  padding: 2px 8px;
-  border-radius: 6px;
+    color: #caff00;
+    font-size: 0.7rem;
 }
 
-.spikeMentions {
-  font-size: 0.75rem;
-  color: #888;
+.spikeSetup {
+    font-size: 0.72rem;
+    color: #555;
+    text-decoration: none;
+    margin-left: auto;
+    transition: color 0.2s;
 }
 
-/* ── Hero / header ── */
-.hero {
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto 48px;
-  padding: 0 24px;
-  text-align: center;
+.spikeSetup:hover {
+    color: #888;
 }
 
-.title {
-  font-size: 2.8rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  margin-bottom: 14px;
-  color: #fff;
+/* ── Main layout: left news + right opinions ── */
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 0;
+    max-width: 1400px;
+    margin: 24px auto 0;
+    padding: 0 24px;
+    align-items: start;
+    min-height: calc(100vh - 180px);
 }
 
-.accent {
-  color: var(--primary-brand);
+/* ── Left column ── */
+.newsCol {
+    padding-right: 28px;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    min-height: 600px;
 }
 
-.subtitle {
-  font-size: 1rem;
-  color: #888;
-  line-height: 1.6;
-  margin-bottom: 28px;
-  max-width: 560px;
-  margin-left: auto;
-  margin-right: auto;
+.colHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
 }
 
-/* Stat pills */
-.stats {
-  display: inline-flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 18px;
+.colDot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 
-.pill {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 22px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 12px;
-  min-width: 72px;
+.colLabel {
+    font-family: var(--font-outfit), sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.01em;
 }
 
-.pillNum {
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: #fff;
-  font-family: var(--font-outfit), sans-serif;
+.colCount {
+    font-size: 0.72rem;
+    color: #444;
+    margin-left: auto;
 }
 
-.pillLabel {
-  font-size: 0.68rem;
-  color: #777;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+/* Hero card slot — full width, bigger card */
+.heroSlot {
+    margin-bottom: 16px;
+    height: 200px;
 }
 
-/* Source badges */
-.badges {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 8px;
+/* News grid — 2 col */
+.newsGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    grid-auto-rows: 180px;
 }
 
-.subredditBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.76rem;
-  color: #999;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 4px 12px;
-  border-radius: 20px;
+/* ── Right column — opinion panels ── */
+.opinionCol {
+    position: sticky;
+    top: 90px;
+    height: calc(100vh - 130px);
+    display: flex;
+    flex-direction: column;
+    padding-left: 24px;
+    overflow: hidden;
 }
 
-.subredditBadge strong {
-  color: #fff;
-  font-weight: 600;
+/* Each opinion pane takes equal height */
+.opinionPane {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-/* ── Feed grid ── */
-.feed {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 24px;
-  box-sizing: border-box;
+.paneDivider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.05);
+    flex-shrink: 0;
+    margin: 0 12px;
+    position: relative;
 }
 
-/* ── Empty state ── */
-.empty {
-  text-align: center;
-  padding: 80px 24px;
-  max-width: 480px;
-  margin: 0 auto;
-  color: #888;
-}
-
-.emptyIcon {
-  width: 40px;
-  height: 40px;
-  color: #555;
-  margin: 0 auto 16px;
-}
-
-.empty h3 {
-  font-size: 1.5rem;
-  color: #fff;
-  margin-bottom: 8px;
-}
-
-.empty p {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #777;
+.paneDivider::before {
+    content: 'vs';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #333;
+    background: #0a0a0a;
+    padding: 0 8px;
 }
 
 /* ── Responsive ── */
-@media (max-width: 640px) {
-  .pillNum {
-    font-size: 1.1rem;
-  }
-
-  .signalTabs {
-    gap: 6px;
-  }
-
-  .signalTab {
-    padding: 8px 12px;
-    font-size: 0.75rem;
-  }
+@media (max-width: 1100px) {
+    .layout {
+        grid-template-columns: 1fr 320px;
+    }
 }
 
-@media (max-width: 1024px) {
-  .feed {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: 800px;
-  }
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .newsCol {
+        padding-right: 0;
+        border-right: none;
+    }
+
+    .opinionCol {
+        position: static;
+        height: auto;
+        padding-left: 0;
+        flex-direction: row;
+        gap: 16px;
+        min-height: 400px;
+    }
+
+    .opinionPane {
+        flex: 1;
+        min-height: 300px;
+    }
+
+    .paneDivider {
+        width: 1px;
+        height: auto;
+        margin: 12px 0;
+    }
+
+    .paneDivider::before {
+        content: '';
+    }
 }
 
 @media (max-width: 640px) {
-  .feed {
-    grid-template-columns: 1fr;
-  }
+    .newsGrid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: auto;
+    }
+
+    .heroSlot {
+        height: auto;
+    }
+
+    .opinionCol {
+        flex-direction: column;
+        min-height: auto;
+    }
 }
