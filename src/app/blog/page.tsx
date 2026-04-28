@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 import { ArrowRight, Calendar, TrendingUp } from 'lucide-react';
+import { BlogHeroAnimator, BlogSectionAnimator, BlogGridAnimator } from '@/components/blog/BlogAnimators';
 import styles from './page.module.css';
 
 export const revalidate = 300; // 5 min ISR
@@ -35,63 +36,110 @@ async function getBlogPosts() {
 export default async function BlogPage() {
     const posts = await getBlogPosts();
 
-    const ipoAnalysis = posts.filter(p => p.category === 'ipo-analysis');
-    const roundups = posts.filter(p => p.category === 'weekly-roundup');
+    const featuredPost = posts[0];
+    const remainingPosts = posts.slice(1);
+
+    const ipoAnalysis = remainingPosts.filter(p => p.category === 'ipo-analysis');
+    const roundups = remainingPosts.filter(p => p.category === 'weekly-roundup');
 
     return (
         <main className={styles.main}>
+            <div className={styles.bgGlow1} />
+            <div className={styles.bgGlow2} />
             <div className="container">
-                <section className={styles.hero}>
-                    <h1 className={styles.title}>IPO Analysis & Market Insights</h1>
-                    <p className={styles.subtitle}>
-                        Data-driven IPO analysis with GMP tracking, composite scores, and subscription breakdowns. Updated daily.
-                    </p>
-                </section>
-
-                {roundups.length > 0 && (
-                    <section className={styles.section}>
-                        <h2 className={styles.sectionTitle}>
-                            <TrendingUp size={18} /> Weekly Roundups
-                        </h2>
-                        <div className={styles.postGrid}>
-                            {roundups.map(post => (
-                                <Link key={post.slug} href={`/blog/${post.slug}`} className={styles.postCard}>
-                                    <span className={styles.badge}>Weekly</span>
-                                    <h3 className={styles.postTitle}>{post.title}</h3>
-                                    <p className={styles.postDesc}>{post.description}</p>
-                                    <div className={styles.postMeta}>
-                                        <Calendar size={12} />
-                                        <span>{new Date(post.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
+                <BlogHeroAnimator>
+                    <section className={styles.hero}>
+                        <div className={styles.eyebrow}>The Staqq Journal</div>
+                        <h1 className={styles.title}>IPO Analysis & Market Insights</h1>
+                        <p className={styles.subtitle}>
+                            Data-driven IPO analysis with GMP tracking, composite scores, and subscription breakdowns. Updated daily.
+                        </p>
                     </section>
+                </BlogHeroAnimator>
+
+                {featuredPost && (
+                    <BlogSectionAnimator delay={0.1}>
+                        <section className={styles.featuredSection}>
+                            <h2 className={styles.sectionTitle}>
+                                <TrendingUp size={18} /> Latest Insight
+                            </h2>
+                            <Link href={`/blog/${featuredPost.slug}`} className={styles.featuredCard}>
+                                <div className={styles.featuredContent}>
+                                    <div className={styles.featuredBadges}>
+                                        <span className={styles.badge}>{featuredPost.category === 'weekly-roundup' ? 'Weekly' : 'Analysis'}</span>
+                                        <span className={styles.badgeHighlight}>Featured</span>
+                                    </div>
+                                    <h3 className={styles.featuredTitle}>{featuredPost.title}</h3>
+                                    <p className={styles.featuredDesc}>{featuredPost.description}</p>
+                                    <div className={styles.postMeta}>
+                                        <Calendar size={13} />
+                                        <span>{new Date(featuredPost.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                        <div className={styles.metaDivider} />
+                                        <span>{featuredPost.views || 0} views</span>
+                                    </div>
+                                </div>
+                                <div className={styles.featuredDeco}>
+                                    <div className={styles.decoCircle1} />
+                                    <div className={styles.decoCircle2} />
+                                    <ArrowRight className={styles.featuredArrow} size={32} />
+                                </div>
+                            </Link>
+                        </section>
+                    </BlogSectionAnimator>
                 )}
 
-                <section className={styles.section}>
-                    <h2 className={styles.sectionTitle}>
-                        <TrendingUp size={18} /> IPO Analysis
-                    </h2>
-                    {ipoAnalysis.length > 0 ? (
-                        <div className={styles.postGrid}>
-                            {ipoAnalysis.map(post => (
-                                <Link key={post.slug} href={`/blog/${post.slug}`} className={styles.postCard}>
-                                    <span className={styles.badge}>Analysis</span>
-                                    <h3 className={styles.postTitle}>{post.title}</h3>
-                                    <p className={styles.postDesc}>{post.description}</p>
-                                    <div className={styles.postMeta}>
-                                        <Calendar size={12} />
-                                        <span>{new Date(post.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                        <ArrowRight size={12} />
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    ) : (
-                        <p className={styles.empty}>No analysis posts yet. Check back soon.</p>
-                    )}
-                </section>
+                {roundups.length > 0 && (
+                    <BlogSectionAnimator delay={0.2}>
+                        <section className={styles.section}>
+                            <h2 className={styles.sectionTitle}>
+                                <TrendingUp size={18} /> Weekly Roundups
+                            </h2>
+                            <BlogGridAnimator className={styles.postGrid}>
+                                {roundups.map(post => (
+                                    <Link key={post.slug} href={`/blog/${post.slug}`} className={styles.postCard}>
+                                        <span className={styles.badge}>Weekly</span>
+                                        <h3 className={styles.postTitle}>{post.title}</h3>
+                                        <p className={styles.postDesc}>{post.description}</p>
+                                        <div className={styles.postMeta}>
+                                            <Calendar size={12} />
+                                            <span>{new Date(post.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                            <div className={styles.metaDivider} />
+                                            <span>{post.views || 0} views</span>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </BlogGridAnimator>
+                        </section>
+                    </BlogSectionAnimator>
+                )}
+
+                <BlogSectionAnimator delay={0.3}>
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
+                            <TrendingUp size={18} /> IPO Analysis
+                        </h2>
+                        {ipoAnalysis.length > 0 ? (
+                            <BlogGridAnimator className={styles.postGrid}>
+                                {ipoAnalysis.map(post => (
+                                    <Link key={post.slug} href={`/blog/${post.slug}`} className={styles.postCard}>
+                                        <span className={styles.badge}>Analysis</span>
+                                        <h3 className={styles.postTitle}>{post.title}</h3>
+                                        <p className={styles.postDesc}>{post.description}</p>
+                                        <div className={styles.postMeta}>
+                                            <Calendar size={12} />
+                                            <span>{new Date(post.updated_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                            <div className={styles.metaDivider} />
+                                            <span>{post.views || 0} views</span>
+                                            <ArrowRight size={12} className="ml-auto" />
+                                        </div>
+                                    </Link>
+                                ))}
+                            </BlogGridAnimator>
+                        ) : (
+                            <p className={styles.empty}>No analysis posts yet. Check back soon.</p>
+                        )}
+                    </section>
+                </BlogSectionAnimator>
             </div>
         </main>
     );
