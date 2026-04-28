@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Zap, Wallet, Shield, Rocket, ArrowRight, Crown, TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
+import { Zap, Wallet, Shield, Rocket, ArrowRight, Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import styles from './page.module.css';
 
@@ -61,35 +60,6 @@ const PRO_FEATURES = [
     'Priority safety scans',
 ];
 
-/* ── Fallback ticker data (shown while fetching) ── */
-const FALLBACK_TICKERS = [
-    { symbol: 'BTC', name: 'Bitcoin',  price: 72300,  change: 2.4,  up: true  },
-    { symbol: 'ETH', name: 'Ethereum', price: 247000, change: 1.8,  up: true  },
-    { symbol: 'SOL', name: 'Solana',   price: 14820,  change: -0.6, up: false },
-    { symbol: 'BNB', name: 'BNB',      price: 51200,  change: 0.9,  up: true  },
-    { symbol: 'XRP', name: 'XRP',      price: 512,    change: -0.3, up: false },
-    { symbol: 'DOGE', name: 'Dogecoin',price: 14.2,   change: 5.7,  up: true  },
-    { symbol: 'AVAX', name: 'Avalanche',price: 3340,  change: 3.1,  up: true  },
-    { symbol: 'MATIC',name: 'Polygon', price: 71.4,   change: -1.2, up: false },
-];
-
-/* Format INR price compactly */
-function fmtINR(usd: number): string {
-    const inr = usd * 84; // rough peg
-    if (inr >= 10_00_000) return `₹${(inr / 1_00_000).toFixed(1)}L`;
-    if (inr >= 1_000)     return `₹${Math.round(inr).toLocaleString('en-IN')}`;
-    return `₹${inr.toFixed(2)}`;
-}
-
-type Ticker = { symbol: string; name: string; price: number; change: number; up: boolean };
-
-/* ── Coin Gecko IDs → our symbols ── */
-const CG_IDS = 'bitcoin,ethereum,solana,binancecoin,ripple,dogecoin,avalanche-2,matic-network';
-const CG_SYMBOL_MAP: Record<string, string> = {
-    bitcoin: 'BTC', ethereum: 'ETH', solana: 'SOL', binancecoin: 'BNB',
-    ripple: 'XRP', dogecoin: 'DOGE', 'avalanche-2': 'AVAX', 'matic-network': 'MATIC',
-};
-
 const containerVariants = {
     hidden: { opacity: 0 },
     show: { opacity: 1, transition: { staggerChildren: 0.09 } },
@@ -100,76 +70,12 @@ const cardVariants: any = {
 };
 
 export default function CryptoHubPage() {
-    const [tickers, setTickers] = useState<Ticker[]>(FALLBACK_TICKERS);
-    const [tickerLive, setTickerLive] = useState(false);
-    const [lastUpdated, setLastUpdated] = useState<string>('');
-
-    const fetchPrices = async () => {
-        try {
-            const res = await fetch(
-                `https://api.coingecko.com/api/v3/simple/price?ids=${CG_IDS}&vs_currencies=usd&include_24hr_change=true`,
-                { next: { revalidate: 60 } }
-            );
-            if (!res.ok) return;
-            const data = await res.json();
-            const next: Ticker[] = Object.entries(data).map(([id, val]: any) => ({
-                symbol: CG_SYMBOL_MAP[id] ?? id.toUpperCase(),
-                name:   FALLBACK_TICKERS.find(t => t.symbol === CG_SYMBOL_MAP[id])?.name ?? id,
-                price:  val.usd,
-                change: +(val.usd_24h_change ?? 0).toFixed(2),
-                up:     (val.usd_24h_change ?? 0) >= 0,
-            }));
-            setTickers(next);
-            setTickerLive(true);
-            setLastUpdated(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }));
-        } catch {
-            // silently keep fallback
-        }
-    };
-
-    useEffect(() => {
-        fetchPrices();
-        const id = setInterval(fetchPrices, 60_000); // refresh every minute
-        return () => clearInterval(id);
-    }, []);
-
-    const doubled = [...tickers, ...tickers]; // seamless loop
-
     return (
         <main className={styles.main}>
             {/* ── Ambient orbs ── */}
             <div className={styles.orb1} aria-hidden />
             <div className={styles.orb2} aria-hidden />
             <div className={styles.orb3} aria-hidden />
-
-            {/* ── Live Crypto Ticker Bar ── */}
-            <div className={styles.tickerBar}>
-                <div className={styles.tickerLiveTag}>
-                    <span className={tickerLive ? styles.tickerLiveDot : styles.tickerLiveDotFallback} />
-                    {tickerLive ? 'LIVE' : 'LOADING'}
-                </div>
-                <div className={styles.tickerScroll}>
-                    <div className={styles.tickerInner}>
-                        {doubled.map((t, i) => (
-                            <div key={i} className={styles.tickerItem}>
-                                <span className={styles.tickerSymbol}>{t.symbol}</span>
-                                <span className={styles.tickerPrice}>{fmtINR(t.price)}</span>
-                                <span className={t.up ? styles.tickerUp : styles.tickerDown}>
-                                    {t.up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                                    {Math.abs(t.change).toFixed(2)}%
-                                </span>
-                                <span className={styles.tickerSep}>·</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                {lastUpdated && (
-                    <div className={styles.tickerTime}>
-                        <RefreshCw size={10} />
-                        {lastUpdated}
-                    </div>
-                )}
-            </div>
 
             <div className="container" style={{ position: 'relative', zIndex: 1 }}>
 

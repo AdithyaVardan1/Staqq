@@ -12,10 +12,6 @@
     33%       { transform: translate(20px, -22px) scale(1.04); }
     66%       { transform: translate(-14px, -8px) scale(0.97); }
 }
-@keyframes tickerSlide {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-}
 @keyframes shimmerViolet {
     0%   { background-position: -200% center; }
     100% { background-position: 200% center; }
@@ -74,105 +70,6 @@
     animation: floatOrb 16s ease-in-out 3s infinite;
 }
 
-/* ── Live Ticker Bar ── */
-.tickerBar {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    overflow: hidden;
-    border-top: 1px solid rgba(139,92,246,0.12);
-    border-bottom: 1px solid rgba(139,92,246,0.12);
-    background: rgba(10,8,24,0.8);
-    backdrop-filter: blur(12px);
-    padding: 0;
-    position: relative;
-    z-index: 2;
-    height: 38px;
-    gap: 0;
-}
-
-.tickerLiveTag {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.6rem;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #4ade80;
-    padding: 0 14px;
-    white-space: nowrap;
-    border-right: 1px solid rgba(139,92,246,0.12);
-    height: 100%;
-    flex-shrink: 0;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-}
-.tickerLiveDot {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: #4ade80;
-    flex-shrink: 0;
-    animation: liveDot 2s ease-in-out infinite;
-}
-.tickerLiveDotFallback {
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: #6b7280;
-    flex-shrink: 0;
-}
-
-.tickerScroll {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-}
-
-.tickerInner {
-    display: flex;
-    gap: 0;
-    width: max-content;
-    animation: tickerSlide 32s linear infinite;
-}
-
-.tickerItem {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 0 18px;
-    white-space: nowrap;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #71717a;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    border-right: 1px solid rgba(139,92,246,0.08);
-}
-.tickerSymbol {
-    color: #c4b5fd;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    font-size: 0.72rem;
-}
-.tickerPrice {
-    color: #e4e4e7;
-    font-weight: 600;
-}
-.tickerUp   { color: #4ade80; display: flex; align-items: center; gap: 3px; }
-.tickerDown { color: #f87171; display: flex; align-items: center; gap: 3px; }
-.tickerSep  { color: rgba(139,92,246,0.2); font-size: 0.6rem; margin-left: 4px; }
-
-.tickerTime {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.58rem;
-    color: #3f3f46;
-    padding: 0 12px;
-    white-space: nowrap;
-    border-left: 1px solid rgba(139,92,246,0.12);
-    height: 100%;
-    flex-shrink: 0;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-}
 
 /* ── Compact Page Header (feature-page style) ── */
 .pageHeader {
@@ -539,5 +436,4 @@
     .statStrip    { gap: 16px; }
     .statDivider  { display: none; }
     .orb1, .orb2, .orb3 { display: none; }
-    .tickerTime   { display: none; }
 }
