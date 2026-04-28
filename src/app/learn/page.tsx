@@ -12,10 +12,12 @@ export default function LearnPage() {
 
   return (
     <main className={styles.container}>
-      <h1 className={styles.title}>Investment Learning Hub</h1>
-      <p className={styles.subtitle}>
-        Master the stock market, step by step.
-      </p>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Investment Learning Hub</h1>
+        <p className={styles.subtitle}>
+          Master the stock market, step by step.
+        </p>
+      </div>
 
       <section className={styles.grid}>
         {Object.entries(learnPaths).map(([key, path]) => {
@@ -37,6 +39,9 @@ export default function LearnPage() {
               modules={path.modules.length}
               progress={progress}
               slug={key}
+              difficulty={path.difficulty}
+              estimatedTime={path.estimatedTime}
+              icon={path.icon}
             />
           );
         })}
