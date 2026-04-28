@@ -50,6 +50,26 @@ function stripHtml(html: string): string {
     return html.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
 }
 
+function parsePubDate(dateStr: string | undefined): number {
+    if (!dateStr) return NaN;
+    const parts = dateStr.split(',');
+    let cleanStr = parts.length > 1 ? parts.slice(1).join(',').trim() : dateStr.trim();
+    cleanStr = cleanStr
+        .replace(/Oca/i, 'Jan')
+        .replace(/Şub/i, 'Feb')
+        .replace(/Mar/i, 'Mar')
+        .replace(/Nis/i, 'Apr')
+        .replace(/May/i, 'May')
+        .replace(/Haz/i, 'Jun')
+        .replace(/Tem/i, 'Jul')
+        .replace(/Ağu/i, 'Aug')
+        .replace(/Eyl/i, 'Sep')
+        .replace(/Eki/i, 'Oct')
+        .replace(/Kas/i, 'Nov')
+        .replace(/Ara/i, 'Dec');
+    return new Date(cleanStr).getTime();
+}
+
 // ─── News Feed Fetching ───────────────────────────────────────────────
 
 async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
@@ -79,8 +99,9 @@ async function fetchNewsFeedPosts(): Promise<SocialPost[]> {
             const body = truncateBody(stripHtml(item.contentSnippet || item.content || item.summary || ''));
             if (!title) continue;
 
-            const createdAt = item.pubDate
-                ? Math.floor(new Date(item.pubDate).getTime() / 1000)
+            const parsedTime = parsePubDate(item.pubDate);
+            const createdAt = !isNaN(parsedTime)
+                ? Math.floor(parsedTime / 1000)
                 : Math.floor(Date.now() / 1000);
 
             const mediaItem = item as any;
@@ -258,9 +279,12 @@ export async function getNewsPulses(limit = 8): Promise<MarketPulse[]> {
 
 export async function getAllPosts(limit?: number): Promise<SocialPost[]> {
     const posts = await fetchNewsFeedPosts();
-    const sorted = posts.sort((a, b) => b.createdAt - a.createdAt);
+    const cutoff = Math.floor(Date.now() / 1000) - 23 * 60 * 60; // 23 hours ago
+    const sorted = posts
+        .filter(p => p.createdAt >= cutoff)
+        .sort((a, b) => b.createdAt - a.createdAt);
     const result = limit ? sorted.slice(0, limit) : sorted;
-    console.log(`[Pulse] ${result.length} news posts`);
+    console.log(`[Pulse] ${result.length} news posts (within 23h)`);
     return result;
 }
 

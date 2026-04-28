@@ -51,14 +51,7 @@ export default async function SignalsPage() {
     return (
         <main className={styles.page}>
 
-            <div style={{ textAlign: 'center', marginBottom: 32 }}>
-                <h1 className={styles.shimmerTitle} style={{ fontSize: 'clamp(2.4rem, 4vw, 3.8rem)', fontWeight: 800, letterSpacing: '-0.03em', marginBottom: 12 }}>
-                    Market Intelligence
-                </h1>
-                <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: 500, margin: '0 auto', lineHeight: 1.6 }}>
-                    Real-time signals, social buzz, and alternative data for the smart investor.
-                </p>
-            </div>
+
 
             {/* Spike banner */}
             {recentSpikes.length > 0 && (
@@ -88,7 +81,7 @@ export default async function SignalsPage() {
                     <div className={styles.colHeader}>
                         <span className={styles.colDot} style={{ background: '#f59e0b' }} />
                         <span className={styles.colLabel}>Market Feed</span>
-                        <span className={styles.colCount}>{newsPosts.length} articles</span>
+                        <span className={styles.colCount}>{newsPosts.length} articles · last 23h</span>
                     </div>
 
                     <MarketFeedAnimator 

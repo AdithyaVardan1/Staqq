@@ -10,6 +10,7 @@ interface NewsCardProps {
 }
 
 function timeAgo(ts: number): string {
+    if (!ts || isNaN(ts)) return 'just now';
     const diff = Date.now() - ts * 1000;
     const m = Math.floor(diff / 60000);
     if (m < 1)  return 'just now';

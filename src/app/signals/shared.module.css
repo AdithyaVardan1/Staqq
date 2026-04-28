@@ -74,11 +74,59 @@
 }
 
 .statCard {
-    padding: 18px 20px;
-    background: rgba(255, 255, 255, 0.02);
+    padding: 20px 22px;
+    background: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 12px;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    min-height: 100px;
+    transition:
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.4s ease,
+        border-color 0.35s ease,
+        background 0.35s ease;
 }
+
+/* Sweep top-edge lime glow */
+.statCard::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent 0%, rgba(202,255,0,0.65) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Inner radial glow bloom from top-left */
+.statCard::after {
+    content: '';
+    position: absolute;
+    top: -30px; left: -30px;
+    width: 130px; height: 130px;
+    background: radial-gradient(circle, rgba(202,255,0,0.07) 0%, transparent 70%);
+    opacity: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.statCard:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 18px 44px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(202,255,0,0.1);
+    border-color: rgba(202, 255, 0, 0.14);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.statCard:hover::before { opacity: 1; }
+.statCard:hover::after  { opacity: 1; transform: scale(1.5); }
 
 .statLabel {
     font-size: 0.7rem;
@@ -87,22 +135,32 @@
     letter-spacing: 0.06em;
     color: var(--text-muted);
     margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+    transition: color 0.25s;
 }
+.statCard:hover .statLabel { color: #71717a; }
 
 .statVal {
-    font-size: 1.6rem;
-    font-weight: 800;
+    font-size: 1.75rem;
+    font-weight: 900;
     font-family: var(--font-outfit);
     color: var(--text-primary);
     line-height: 1;
     margin-bottom: 4px;
+    position: relative;
+    z-index: 1;
 }
 
 .statSub {
     font-size: 0.72rem;
     color: var(--text-muted);
     line-height: 1.4;
+    position: relative;
+    z-index: 1;
+    transition: color 0.25s;
 }
+.statCard:hover .statSub { color: #52525b; }
 
 /* Sentiment banner */
 .sentimentBar {
@@ -126,10 +184,33 @@
 .trendSection {
     margin-bottom: 28px;
     padding: 20px 24px;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.025);
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    transition:
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        background 0.35s ease;
 }
+
+.trendSection::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent 0%, rgba(202,255,0,0.5) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.35s;
+    pointer-events: none;
+}
+.trendSection:hover {
+    border-color: rgba(202, 255, 0, 0.1);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.035);
+}
+.trendSection:hover::before { opacity: 1; }
 .trendHeader {
     display: flex;
     align-items: center;

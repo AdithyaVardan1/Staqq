@@ -1,35 +1,53 @@
+/* ══════════════════════════════════
+   Signals / Intel Layout
+══════════════════════════════════ */
+
+/* ── Keyframes ── */
+@keyframes glowBreath {
+    0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+    50%       { opacity: 0.9; transform: translateX(-50%) scale(1.12); }
+}
+@keyframes glowBreathViolet {
+    0%, 100% { opacity: 0.3; transform: translateX(-30%) scale(1); }
+    50%       { opacity: 0.6; transform: translateX(-30%) scale(1.08); }
+}
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px currentColor; }
+    50%       { opacity: 0.4; box-shadow: 0 0 2px currentColor; }
+}
+@keyframes shimmerAccent {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+}
+@keyframes accentUnderline {
+    from { transform: scaleX(0); opacity: 0; }
+    to   { transform: scaleX(1); opacity: 1; }
+}
+
+/* ── Page shell ── */
 .layout {
     width: 100%;
     min-height: 100vh;
-    padding-top: 120px;
+    padding-top: 100px;
     padding-bottom: 80px;
     position: relative;
     overflow-x: hidden;
 }
 
-@keyframes glowBreath {
-    0%, 100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
-    50%       { opacity: 1;   transform: translateX(-50%) scale(1.12); }
-}
-@keyframes glowBreathViolet {
-    0%, 100% { opacity: 0.4; transform: translateX(-30%) scale(1); }
-    50%       { opacity: 0.7; transform: translateX(-30%) scale(1.08); }
-}
-
+/* ── Ambient glows ── */
 .heroGlowLime {
-    position: absolute;
+    position: fixed;
     top: -20%;
     left: 40%;
-    width: 800px;
-    height: 600px;
-    background: radial-gradient(ellipse at center, rgba(202,255,0,0.06) 0%, transparent 65%);
+    width: 700px;
+    height: 500px;
+    background: radial-gradient(ellipse at center, rgba(202,255,0,0.05) 0%, transparent 65%);
     pointer-events: none;
     z-index: 0;
-    animation: glowBreath 7s ease-in-out infinite;
+    animation: glowBreath 8s ease-in-out infinite;
 }
-
 .heroGlowViolet {
-    position: absolute;
+    position: fixed;
     top: -10%;
     right: -10%;
     width: 600px;
@@ -37,53 +55,154 @@
     background: radial-gradient(ellipse at center, rgba(168,85,247,0.06) 0%, transparent 65%);
     pointer-events: none;
     z-index: 0;
-    animation: glowBreathViolet 9s ease-in-out 1s infinite;
+    animation: glowBreathViolet 10s ease-in-out 1s infinite;
 }
 
+/* ── Container — matches global .container (1280px / 1rem) ── */
 .container {
-    max-width: 1400px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 24px;
+    padding: 0 1rem;
     position: relative;
     z-index: 1;
 }
 
-.header {
-    text-align: center;
-    margin-bottom: 32px;
+/* ── Page Header — two-column feature layout ── */
+.pageHeader {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 28px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* Left: badge + title + subtitle */
+.headerLeft {
+    flex: 1;
+    min-width: 0;
+}
+
+.headerBadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.67rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #a1a1aa;
+    margin-bottom: 12px;
+}
+.badgeDot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--primary-brand);
+    box-shadow: 0 0 8px var(--primary-brand);
+    flex-shrink: 0;
+    animation: dotPulse 2.5s ease-in-out infinite;
 }
 
 .title {
-    font-size: clamp(2.4rem, 4vw, 3.8rem);
-    font-weight: 800;
-    letter-spacing: -0.03em;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: -0.035em;
+    line-height: 1.1;
     color: #fff;
-    margin-bottom: 12px;
+    margin: 0 0 10px;
+    font-family: var(--font-outfit), sans-serif;
 }
 
 .accent {
-    color: var(--primary-brand);
+    background: linear-gradient(90deg, #caff00 0%, #a3e635 50%, #caff00 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmerAccent 4s linear infinite;
 }
 
 .subtitle {
-    font-size: 1.05rem;
-    color: var(--text-secondary);
-    max-width: 500px;
-    margin: 0 auto;
-    line-height: 1.6;
+    font-size: 0.88rem;
+    color: #52525b;
+    line-height: 1.65;
+    margin: 0;
+    max-width: 420px;
 }
 
+/* Right: stat chips */
+.headerRight {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.statChip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    padding: 8px 14px;
+    transition: all 0.25s ease;
+    cursor: default;
+}
+.statChip:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.statDot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: dotPulse 3s ease-in-out infinite;
+}
+
+.statNum {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #e4e4e7;
+    font-family: var(--font-outfit), sans-serif;
+    letter-spacing: -0.01em;
+}
+
+.statLabel {
+    font-size: 0.68rem;
+    color: #3f3f46;
+    font-weight: 500;
+}
+
+/* ── Nav wrapper — left-aligned under header ── */
 .navWrapper {
     display: flex;
-    justify-content: center;
-    margin-bottom: 40px;
+    justify-content: flex-start;
+    margin-bottom: 24px;
 }
 
-.content {
-    animation: fadeIn 0.4s ease-out;
+/* ── Content area ── */
+.content {}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+    .pageHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+    .headerRight {
+        flex-wrap: wrap;
+    }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+@media (max-width: 640px) {
+    .title { font-size: 1.7rem; }
+    .headerRight { display: none; }
+    .navWrapper { overflow-x: auto; }
 }

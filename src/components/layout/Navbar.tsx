@@ -110,11 +110,14 @@ export const Navbar = () => {
         router.refresh();
     };
 
+    const isVioletTheme = pathname.startsWith('/crypto') || pathname.startsWith('/alerts');
+
     return (
         <>
             <header
                 className={clsx(styles.navbar, {
                     [styles.scrolled]: isScrolled,
+                    [styles.themeViolet]: isVioletTheme,
                 })}
             >
                 <div className="container">
@@ -175,7 +178,6 @@ export const Navbar = () => {
                                         href={link.href}
                                         className={clsx(styles.navLink, {
                                             [styles.active]: isActive,
-                                            [styles.navLinkAlert]: link.href === '/alerts',
                                         })}
                                     >
                                         {link.name}
@@ -219,7 +221,7 @@ export const Navbar = () => {
                                             <Button variant="ghost" size="sm">Log In</Button>
                                         </Link>
                                         <Link href="/signup">
-                                            <Button variant="primary" size="sm">Get Started</Button>
+                                            <Button variant="primary" size="sm" className={styles.getStartedBtn}>Get Started</Button>
                                         </Link>
                                     </div>
                                 )}
@@ -247,7 +249,6 @@ export const Navbar = () => {
                             href={link.href}
                             className={clsx(styles.mobileNavLink, {
                                 [styles.active]: pathname === link.href,
-                                [styles.mobileNavLinkAlert]: link.href === '/alerts',
                             })}
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
@@ -274,7 +275,7 @@ export const Navbar = () => {
                         ) : (
                             <>
                                 <Link href="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                                    <Button variant="primary" fullWidth>Get Started</Button>
+                                    <Button variant="primary" fullWidth className={styles.getStartedBtn}>Get Started</Button>
                                 </Link>
                                 <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
                                     <Button variant="ghost" fullWidth>Log In</Button>
