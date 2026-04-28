@@ -126,10 +126,10 @@
     color: #fff;
 }
 
-/* ── Main layout: left news + right opinions ── */
+/* ── Main layout: opinions primary left, news secondary right ── */
 .layout {
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 340px;
     gap: 0;
     max-width: 1400px;
     margin: 24px auto 0;
@@ -138,12 +138,46 @@
     min-height: calc(100vh - 180px);
 }
 
-/* ── Left column ── */
-.newsCol {
+/* ── Left column — opinion panels (primary) ── */
+.opinionCol {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
     padding-right: 28px;
     border-right: 1px solid rgba(255, 255, 255, 0.05);
-    min-height: 600px;
 }
+
+.opinionPane {
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.opinionPane:first-child {
+    padding-right: 20px;
+}
+
+.opinionPane:last-child {
+    padding-left: 20px;
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.paneDivider {
+    display: none;
+}
+
+/* ── Right column — news feed (secondary sidebar) ── */
+.newsCol {
+    position: sticky;
+    top: 90px;
+    max-height: calc(100vh - 130px);
+    overflow-y: auto;
+    padding-left: 24px;
+    scrollbar-width: none;
+}
+
+.newsCol::-webkit-scrollbar { display: none; }
 
 .colHeader {
     display: flex;
@@ -173,67 +207,24 @@
     margin-left: auto;
 }
 
-/* Hero card slot — full width, bigger card */
+/* Hero card slot */
 .heroSlot {
-    margin-bottom: 16px;
-    height: 200px;
+    margin-bottom: 12px;
+    height: 160px;
 }
 
-/* News grid — 2 col */
+/* News grid — single column in sidebar */
 .newsGrid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    grid-auto-rows: 180px;
-}
-
-/* ── Right column — opinion panels ── */
-.opinionCol {
-    position: sticky;
-    top: 90px;
-    height: calc(100vh - 130px);
-    display: flex;
-    flex-direction: column;
-    padding-left: 24px;
-    overflow: hidden;
-}
-
-/* Each opinion pane takes equal height */
-.opinionPane {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-.paneDivider {
-    height: 1px;
-    background: rgba(255, 255, 255, 0.05);
-    flex-shrink: 0;
-    margin: 0 12px;
-    position: relative;
-}
-
-.paneDivider::before {
-    content: 'vs';
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 0.6rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #333;
-    background: #0a0a0a;
-    padding: 0 8px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    grid-auto-rows: auto;
 }
 
 /* ── Responsive ── */
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
     .layout {
-        grid-template-columns: 1fr 320px;
+        grid-template-columns: 1fr 300px;
     }
 }
 
@@ -243,48 +234,39 @@
         gap: 32px;
     }
 
-    .newsCol {
+    .opinionCol {
         padding-right: 0;
         border-right: none;
+        gap: 12px;
+        background: transparent;
     }
 
-    .opinionCol {
-        position: static;
-        height: auto;
+    .opinionPane:first-child { padding-right: 0; }
+    .opinionPane:last-child {
         padding-left: 0;
-        flex-direction: row;
-        gap: 16px;
-        min-height: 400px;
+        border-left: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        padding-top: 20px;
     }
 
-    .opinionPane {
-        flex: 1;
-        min-height: 300px;
-    }
-
-    .paneDivider {
-        width: 1px;
-        height: auto;
-        margin: 12px 0;
-    }
-
-    .paneDivider::before {
-        content: '';
+    .newsCol {
+        position: static;
+        max-height: none;
+        overflow-y: visible;
+        padding-left: 0;
     }
 }
 
 @media (max-width: 640px) {
-    .newsGrid {
+    .opinionCol {
         grid-template-columns: 1fr;
-        grid-auto-rows: auto;
+    }
+
+    .opinionPane {
+        min-height: 320px;
     }
 
     .heroSlot {
         height: auto;
-    }
-
-    .opinionCol {
-        flex-direction: column;
-        min-height: auto;
     }
 }

@@ -83,25 +83,8 @@ export default async function SignalsPage() {
             {/* ── Main split layout ── */}
             <div className={styles.layout}>
 
-                {/* LEFT — news cards */}
-                <div className={styles.newsCol}>
-                    <div className={styles.colHeader}>
-                        <span className={styles.colDot} style={{ background: '#f59e0b' }} />
-                        <span className={styles.colLabel}>Market Feed</span>
-                        <span className={styles.colCount}>{newsPosts.length} articles</span>
-                    </div>
-
-                    <MarketFeedAnimator 
-                        heroPost={heroPost} 
-                        gridPosts={gridPosts} 
-                        styles={styles} 
-                    />
-                </div>
-
-                {/* RIGHT — opinion panels stacked */}
-                <div className={styles.opinionCol} style={{ animation: 'heroFadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both', animationDelay: '0.3s' }}>
-
-                    {/* Social opinion — top half */}
+                {/* LEFT (primary) — opinion panels side by side */}
+                <div className={styles.opinionCol}>
                     <div className={styles.opinionPane}>
                         <OpinionFeed
                             label="Social Opinion"
@@ -110,11 +93,6 @@ export default async function SignalsPage() {
                             variant="social"
                         />
                     </div>
-
-                    {/* Divider */}
-                    <div className={styles.paneDivider} />
-
-                    {/* Media opinion — bottom half */}
                     <div className={styles.opinionPane}>
                         <OpinionFeed
                             label="Media Opinion"
@@ -123,6 +101,21 @@ export default async function SignalsPage() {
                             variant="media"
                         />
                     </div>
+                </div>
+
+                {/* RIGHT (secondary) — news sidebar */}
+                <div className={styles.newsCol}>
+                    <div className={styles.colHeader}>
+                        <span className={styles.colDot} style={{ background: '#f59e0b' }} />
+                        <span className={styles.colLabel}>Market Feed</span>
+                        <span className={styles.colCount}>{newsPosts.length}</span>
+                    </div>
+
+                    <MarketFeedAnimator
+                        heroPost={heroPost}
+                        gridPosts={gridPosts}
+                        styles={styles}
+                    />
                 </div>
 
             </div>
