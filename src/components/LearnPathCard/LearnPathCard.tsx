@@ -13,6 +13,7 @@ interface LearningPathCardProps {
   icon: string;
   color: string;
   firstLesson?: string;
+  featured?: boolean;
 }
 
 function PathIcon({ name }: { name: string }) {
@@ -80,32 +81,104 @@ const DIFF_LABEL: Record<Difficulty, string> = {
   ADVANCED: "Advanced",
 };
 
+const DIFF_STYLE: Record<Difficulty, { color: string; bg: string }> = {
+  BEGINNER:     { color: "#22c55e", bg: "rgba(34,197,94,0.12)" },
+  INTERMEDIATE: { color: "#f59e0b", bg: "rgba(245,158,11,0.12)" },
+  ADVANCED:     { color: "#ef4444", bg: "rgba(239,68,68,0.12)" },
+};
+
 export default function LearningPathCard({
-  title, description, modules, progress, slug, difficulty, estimatedTime, icon, color, firstLesson,
+  title, description, modules, progress, slug, difficulty,
+  estimatedTime, icon, color, firstLesson, featured = false,
 }: LearningPathCardProps) {
+  const ds = DIFF_STYLE[difficulty];
+
+  if (featured) {
+    return (
+      <Link
+        href={`/learn/${slug}`}
+        className={styles.featuredCard}
+        style={{ "--accent": color } as React.CSSProperties}
+      >
+        {/* Top row: START HERE + diff badge */}
+        <div className={styles.featuredTopRow}>
+          <span className={styles.startHereBadge}>⭐ Start Here</span>
+          <span className={styles.diffBadge} style={{ color: ds.color, background: ds.bg }}>
+            {DIFF_LABEL[difficulty]}
+          </span>
+        </div>
+
+        {/* Content row */}
+        <div className={styles.featuredBody}>
+          <div className={styles.featuredLeft}>
+            <div className={styles.iconWrapLg}>
+              <PathIcon name={icon} />
+            </div>
+            <div>
+              <h3 className={styles.featuredTitle}>{title}</h3>
+              <p className={styles.featuredDesc}>{description}</p>
+              <div className={styles.meta}>
+                <span className={styles.metaItem}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+                  </svg>
+                  {modules} modules
+                </span>
+                <span className={styles.metaItem}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                  </svg>
+                  {estimatedTime}
+                </span>
+              </div>
+              {firstLesson && progress === 0 && (
+                <p className={styles.teaser}>
+                  Start with: <span className={styles.teaserLesson}>{firstLesson}</span>
+                </p>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.featuredRight}>
+            {progress > 0 ? (
+              <div className={styles.featuredProgress}>
+                <div className={styles.progressLabel}>
+                  <span>Progress</span><span>{progress}%</span>
+                </div>
+                <div className={styles.progressTrack}>
+                  <div className={styles.progressFill} style={{ width: `${progress}%` }} />
+                </div>
+                <span className={styles.featuredCta}>Continue →</span>
+              </div>
+            ) : (
+              <span className={styles.featuredCta}>Start Learning →</span>
+            )}
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={`/learn/${slug}`}
       className={styles.card}
       style={{ "--accent": color } as React.CSSProperties}
     >
-      {/* Top: icon + badge */}
       <div className={styles.topRow}>
         <div className={styles.iconWrap}>
           <PathIcon name={icon} />
         </div>
-        <span className={styles.diffBadge}>
+        <span className={styles.diffBadge} style={{ color: ds.color, background: ds.bg }}>
           {DIFF_LABEL[difficulty]}
         </span>
       </div>
 
-      {/* Body */}
       <div className={styles.body}>
         <h3 className={styles.title}>{title}</h3>
         <p className={styles.desc}>{description}</p>
       </div>
 
-      {/* Meta */}
       <div className={styles.meta}>
         <span className={styles.metaItem}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
@@ -121,30 +194,22 @@ export default function LearningPathCard({
         </span>
       </div>
 
-      {/* First lesson teaser */}
       {firstLesson && progress === 0 && (
         <div className={styles.teaser}>
           Start with: <span className={styles.teaserLesson}>{firstLesson}</span>
         </div>
       )}
 
-      {/* Progress */}
       {progress > 0 && (
         <div className={styles.progressSection}>
           <div className={styles.progressLabel}>
-            <span>Progress</span>
-            <span>{progress}%</span>
+            <span>Progress</span><span>{progress}%</span>
           </div>
           <div className={styles.progressTrack}>
             <div className={styles.progressFill} style={{ width: `${progress}%` }} />
           </div>
         </div>
       )}
-
-      {/* Decorative bg icon */}
-      <div className={styles.bgIcon} aria-hidden>
-        <PathIcon name={icon} />
-      </div>
     </Link>
   );
 }
