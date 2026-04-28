@@ -180,27 +180,35 @@
     background: #d4ff1a;
 }
 
-/* Alerts = violet */
-.navLinkAlert {
-    color: var(--secondary-brand);
-}
-
-.navLinkAlert::before {
-    background: rgba(168, 85, 247, 0.1);
-}
-
-.navLinkAlert:hover {
-    color: #c084fc;
-}
-
-.navLinkAlert.active {
+/* ── Violet Theme overrides ── */
+.themeViolet .navLink.active {
     color: #fff;
     background: var(--secondary-brand);
     animation: activePulseViolet 3s ease-in-out infinite;
 }
 
-.navLinkAlert.active:hover {
+.themeViolet .navLink.active:hover {
     background: #b76ef8;
+}
+
+.themeViolet .navDropdownIcon {
+    background: rgba(168, 85, 247, 0.1);
+    color: var(--secondary-brand);
+}
+
+.themeViolet .navDropdownItem:hover .navDropdownIcon {
+    background: rgba(168, 85, 247, 0.18);
+}
+
+.themeViolet .getStartedBtn {
+    background-color: var(--secondary-brand) !important;
+    color: #fff !important;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4) !important;
+}
+
+.themeViolet .getStartedBtn:hover:not(:disabled) {
+    background-color: #b76ef8 !important;
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.6) !important;
 }
 
 /* ── Dropdown Panel ── */
@@ -393,17 +401,9 @@
     background: var(--primary-brand);
 }
 
-.mobileNavLinkAlert {
-    color: var(--secondary-brand) !important;
-}
-
-.mobileNavLinkAlert:hover {
-    background: rgba(168, 85, 247, 0.08) !important;
-}
-
-.mobileNavLinkAlert.active {
-    color: #fff !important;
-    background: var(--secondary-brand) !important;
+.themeViolet .mobileNavLink.active {
+    color: #fff;
+    background: var(--secondary-brand);
 }
 
 .mobileAuth {

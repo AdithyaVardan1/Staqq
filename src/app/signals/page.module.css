@@ -38,15 +38,14 @@
     align-items: center;
     gap: 12px;
     width: fit-content;
-    margin: 0 auto 32px;
-    padding: 12px 24px;
+    margin: 0 0 24px;
+    padding: 10px 20px;
     background: rgba(10, 10, 10, 0.8);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(202, 255, 0, 0.2);
+    border: 1px solid rgba(202, 255, 0, 0.18);
     border-radius: 9999px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
-                0 0 20px rgba(202, 255, 0, 0.05);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), 0 0 16px rgba(202, 255, 0, 0.04);
     flex-wrap: wrap;
     animation: heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
 }
@@ -131,9 +130,9 @@
     display: grid;
     grid-template-columns: 1fr 340px;
     gap: 0;
-    max-width: 1400px;
+    max-width: 1280px;
     margin: 24px auto 0;
-    padding: 0 24px;
+    padding: 0 1rem;
     align-items: start;
     min-height: calc(100vh - 180px);
 }

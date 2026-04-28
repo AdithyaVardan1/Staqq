@@ -1,0 +1,184 @@
+/* IPO Performance Stats Cards — Upgraded */
+
+@keyframes shimmerBorder {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Stat card ── */
+.card {
+    position: relative;
+    padding: 22px 22px 20px;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    cursor: default;
+    overflow: hidden;
+    transition:
+        background 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.4s ease,
+        transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    min-height: 110px;
+}
+
+/* Subtle noise texture overlay */
+.card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 2px,
+            rgba(255,255,255,0.004) 2px,
+            rgba(255,255,255,0.004) 4px
+        );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.card:hover {
+    background: rgba(255, 255, 255, 0.045);
+    border-color: rgba(202, 255, 0, 0.14);
+    box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(202, 255, 0, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    transform: translateY(-4px);
+}
+
+/* Sweep line that animates in from left on hover */
+.topLine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent 0%, rgba(202, 255, 0, 0.6) 50%, transparent 100%);
+    transform-origin: left center;
+    pointer-events: none;
+    z-index: 2;
+}
+
+/* Inner glow that blooms on hover */
+.card::after {
+    content: '';
+    position: absolute;
+    top: -40px; left: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(202,255,0,0.06) 0%, transparent 70%);
+    opacity: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.card:hover::after {
+    opacity: 1;
+    transform: scale(1.4);
+}
+
+/* ── Label row ── */
+.cardLabel {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #3f3f46;
+    margin-bottom: 12px;
+    transition: color 0.3s;
+    position: relative;
+    z-index: 1;
+}
+.card:hover .cardLabel {
+    color: #71717a;
+}
+
+.cardIcon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* ── Primary value ── */
+.cardValue {
+    font-size: 2.1rem;
+    font-weight: 900;
+    font-family: var(--font-outfit), sans-serif;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Sub-label ── */
+.cardSub {
+    font-size: 0.75rem;
+    color: #3f3f46;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.3s;
+    position: relative;
+    z-index: 1;
+}
+.card:hover .cardSub {
+    color: #52525b;
+}
+
+/* ── Split card layout ── */
+.splitRow {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.splitDivider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+    transition: background 0.3s;
+}
+.card:hover .splitDivider {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.splitVal {
+    font-size: 1.6rem;
+    font-weight: 900;
+    font-family: var(--font-outfit), sans-serif;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 4px;
+    color: #e4e4e7;
+}
+
+.splitSub {
+    font-size: 0.68rem;
+    color: #3f3f46;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+}
+.card:hover .splitSub {
+    color: #52525b;
+}
