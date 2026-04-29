@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import { getAllPosts, getSocialPulses, getNewsPulses } from '@/lib/social';
 import { createAdminClient } from '@/utils/supabase/admin';
-import { NewsCard } from '@/components/signals/NewsCard';
 import { MarketFeedAnimator } from '@/components/signals/MarketFeedAnimator';
 import { OpinionFeed } from '@/components/signals/OpinionFeed';
 import { SignalDelayBanner } from '@/components/premium/SignalDelayBanner';
@@ -45,37 +44,32 @@ export default async function SignalsPage() {
         recentSpikes = data || [];
     } catch {}
 
-    // Hero card = most recent post, rest fill the grid
     const [heroPost, ...gridPosts] = newsPosts;
 
     return (
         <main className={styles.page}>
-
-            {/* Spike banner */}
-            {recentSpikes.length > 0 && (
-                <div className={styles.spikeBanner}>
-                    <Zap size={14} style={{ color: '#caff00', flexShrink: 0 }} />
-                    <span className={styles.spikeLabel}>
-                        <span className={styles.spikeDot} />
-                        Live Spikes
-                    </span>
-                    {recentSpikes.map((s, i) => (
-                        <Link key={i} href={`/stocks/${s.ticker}`} className={styles.spikeChip}>
-                            <span>${s.ticker}</span>
-                            <span className={styles.spikeMult}>{s.spike_mult}x</span>
-                        </Link>
-                    ))}
-                    <Link href="/alerts" className={styles.spikeSetup}>Set up alerts</Link>
-                </div>
-            )}
-
             <SignalDelayBanner />
 
-            {/* ── Main split layout ── */}
-            <div className={styles.layout}>
+            <div className={styles.pageWrap}>
+                {recentSpikes.length > 0 && (
+                    <div className={styles.spikeBanner}>
+                        <Zap size={14} style={{ color: '#caff00', flexShrink: 0 }} />
+                        <span className={styles.spikeLabel}>
+                            <span className={styles.spikeDot} />
+                            Live Spikes
+                        </span>
+                        {recentSpikes.map((s, i) => (
+                            <Link key={i} href={`/stocks/${s.ticker}`} className={styles.spikeChip}>
+                                <span>${s.ticker}</span>
+                                <span className={styles.spikeMult}>{s.spike_mult}x</span>
+                            </Link>
+                        ))}
+                        <Link href="/alerts" className={styles.spikeSetup}>Set up alerts</Link>
+                    </div>
+                )}
 
-                {/* LEFT (primary) — opinion panels side by side */}
-                <div className={styles.opinionCol}>
+                {/* ── Opinions: 50/50 ── */}
+                <div className={styles.opinionsSection}>
                     <div className={styles.opinionPane}>
                         <OpinionFeed
                             label="Social Opinion"
@@ -94,8 +88,8 @@ export default async function SignalsPage() {
                     </div>
                 </div>
 
-                {/* RIGHT (secondary) — news sidebar */}
-                <div className={styles.newsCol}>
+                {/* ── Articles below ── */}
+                <div className={styles.articlesSection}>
                     <div className={styles.colHeader}>
                         <span className={styles.colDot} style={{ background: '#f59e0b' }} />
                         <span className={styles.colLabel}>Market Feed</span>
@@ -108,7 +102,6 @@ export default async function SignalsPage() {
                         styles={styles}
                     />
                 </div>
-
             </div>
         </main>
     );

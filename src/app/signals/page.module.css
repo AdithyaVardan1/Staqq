@@ -3,12 +3,6 @@
     width: 100%;
 }
 
-.navWrap {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 24px;
-}
-
 /* ── Title Shimmer ── */
 .shimmerTitle {
     background: linear-gradient(
@@ -27,9 +21,7 @@
 }
 
 @keyframes textShine {
-    to {
-        background-position: 200% center;
-    }
+    to { background-position: 200% center; }
 }
 
 /* ── Spike banner ── */
@@ -52,7 +44,7 @@
 
 @keyframes heroFadeUp {
     from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .spikeLabel {
@@ -76,7 +68,7 @@
 
 @keyframes dotPulse {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.7); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
 }
 
 .spikeChip {
@@ -106,9 +98,7 @@
     font-size: 0.75rem;
     font-weight: 600;
 }
-.spikeChip:hover .spikeMult {
-    color: var(--primary-brand);
-}
+.spikeChip:hover .spikeMult { color: var(--primary-brand); }
 
 .spikeSetup {
     font-size: 0.75rem;
@@ -120,63 +110,33 @@
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     transition: color 0.2s;
 }
+.spikeSetup:hover { color: #fff; }
 
-.spikeSetup:hover {
-    color: #fff;
-}
-
-/* ── Main layout: opinions primary left, news secondary right ── */
-.layout {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 0;
+/* ── Page content wrapper ── */
+.pageWrap {
     max-width: 1280px;
-    margin: 24px auto 0;
+    margin: 0 auto;
     padding: 0 1rem;
-    align-items: start;
-    min-height: calc(100vh - 180px);
 }
 
-/* ── Left column — opinion panels (primary) ── */
-.opinionCol {
+/* ── Opinions: full-width 50/50 ── */
+.opinionsSection {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0;
-    padding-right: 28px;
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.opinionPane {
-    min-height: 560px;
-    display: flex;
-    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 14px;
     overflow: hidden;
+    margin-bottom: 48px;
 }
 
-.opinionPane:first-child {
-    padding-right: 20px;
+.opinionPane + .opinionPane {
+    border-left: 1px solid rgba(255, 255, 255, 0.07);
 }
 
-.opinionPane:last-child {
-    padding-left: 20px;
-    border-left: 1px solid rgba(255, 255, 255, 0.05);
+/* ── Articles section ── */
+.articlesSection {
+    padding-bottom: 60px;
 }
-
-.paneDivider {
-    display: none;
-}
-
-/* ── Right column — news feed (secondary sidebar) ── */
-.newsCol {
-    position: sticky;
-    top: 90px;
-    max-height: calc(100vh - 130px);
-    overflow-y: auto;
-    padding-left: 24px;
-    scrollbar-width: none;
-}
-
-.newsCol::-webkit-scrollbar { display: none; }
 
 .colHeader {
     display: flex;
@@ -206,66 +166,38 @@
     margin-left: auto;
 }
 
-/* Hero card slot */
+/* Hero card slot — full width */
 .heroSlot {
-    margin-bottom: 12px;
-    height: 160px;
+    height: 260px;
+    margin-bottom: 14px;
 }
 
-/* News grid — single column in sidebar */
+/* News grid — 4 columns */
 .newsGrid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    grid-auto-rows: auto;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    grid-auto-rows: 200px;
 }
 
 /* ── Responsive ── */
-@media (max-width: 1200px) {
-    .layout {
-        grid-template-columns: 1fr 300px;
-    }
+@media (max-width: 1100px) {
+    .newsGrid { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 900px) {
-    .layout {
-        grid-template-columns: 1fr;
-        gap: 32px;
-    }
-
-    .opinionCol {
-        padding-right: 0;
-        border-right: none;
-        gap: 12px;
-        background: transparent;
-    }
-
-    .opinionPane:first-child { padding-right: 0; }
-    .opinionPane:last-child {
-        padding-left: 0;
+    .opinionsSection { grid-template-columns: 1fr; }
+    .opinionPane + .opinionPane {
         border-left: none;
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
     }
-
-    .newsCol {
-        position: static;
-        max-height: none;
-        overflow-y: visible;
-        padding-left: 0;
-    }
+    .newsGrid { grid-template-columns: repeat(2, 1fr); }
 }
 
-@media (max-width: 640px) {
-    .opinionCol {
+@media (max-width: 600px) {
+    .newsGrid {
         grid-template-columns: 1fr;
+        grid-auto-rows: auto;
     }
-
-    .opinionPane {
-        min-height: 320px;
-    }
-
-    .heroSlot {
-        height: auto;
-    }
+    .heroSlot { height: auto; }
 }

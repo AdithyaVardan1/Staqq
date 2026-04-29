@@ -108,10 +108,7 @@ export function OpinionFeed({ label, sublabel, pulses, variant }: OpinionFeedPro
                                                 <span className={styles.date}>{pulse.date}</span>
                                             </div>
                                             <p className={styles.headline}>{pulse.headline}</p>
-                                            <p className={styles.summary}>
-                                                {pulse.summary.slice(0, 130)}
-                                                {pulse.summary.length > 130 ? '…' : ''}
-                                            </p>
+                                            <p className={styles.summary}>{pulse.summary}</p>
                                             {pulse.topics.length > 0 && (
                                                 <div className={styles.topics}>
                                                     {pulse.topics.slice(0, 3).map(t => (
@@ -127,8 +124,6 @@ export function OpinionFeed({ label, sublabel, pulses, variant }: OpinionFeedPro
                     </motion.div>
                 )}
 
-                {/* Fade-out veil at the bottom */}
-                <div className={styles.veil} />
             </div>
         </div>
     );
