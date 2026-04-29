@@ -281,16 +281,32 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
     const stats = getRealStats();
     const companyInfo = getCompanyInfo();
 
-    // Helper functions for chart data
+    // Yahoo Finance returns raw rupee values — convert to Crores for display
+    const toCr = (v: number) => Math.round((v || 0) / 1e7);
+
+    const fmtCrLabel = (v: number) => {
+        if (v >= 100000) return `₹${(v / 100000).toFixed(1)}L Cr`;
+        if (v >= 1000)   return `₹${(v / 1000).toFixed(1)}K Cr`;
+        return `₹${v.toFixed(0)} Cr`;
+    };
+
+    const fmtCrTick = (v: number) => {
+        if (v >= 100000) return `${(v / 100000).toFixed(0)}L Cr`;
+        if (v >= 1000)   return `${(v / 1000).toFixed(0)}K Cr`;
+        return `${v} Cr`;
+    };
+
     const getChartData = () => {
         const sourceData = activePeriod === 'quarterly'
             ? fundamentals?.financials?.quarterly
             : fundamentals?.financials?.annual;
 
         if (sourceData && sourceData.length > 0) {
-            return [...sourceData].reverse().map(item => ({
+            return [...sourceData].reverse().map((item: any) => ({
                 ...item,
-                period: 'period' in item ? item.period : (item as any).year,
+                period: 'period' in item ? item.period : item.year,
+                revenue: toCr(item.revenue),
+                profit: toCr(item.profit),
             }));
         }
 
@@ -303,15 +319,11 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                 dataKey: 'revenue',
                 name: 'Revenue',
                 color: '#22C55E',
-                unit: 'Cr',
-                formatter: (value: number) => `₹${value.toLocaleString('en-IN')} Cr`
             },
             profit: {
                 dataKey: 'profit',
                 name: 'Net Profit',
                 color: '#3B82F6',
-                unit: 'Cr',
-                formatter: (value: number) => `₹${value.toLocaleString('en-IN')} Cr`
             }
         };
         return configs[activeMetric];
@@ -543,9 +555,9 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                                                     <YAxis
                                                         axisLine={false}
                                                         tickLine={false}
-                                                        tick={{ fill: '#888', fontSize: 12, fontWeight: 400 }}
-                                                        tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
-                                                        width={60}
+                                                        tick={{ fill: '#888', fontSize: 11, fontWeight: 400 }}
+                                                        tickFormatter={fmtCrTick}
+                                                        width={80}
                                                     />
                                                     <Tooltip
                                                         contentStyle={{
@@ -554,8 +566,8 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                                                             borderRadius: '12px',
                                                             color: '#fff'
                                                         }}
-                                                        formatter={(value: any) => [metricConfig.formatter(value), metricConfig.name]}
-                                                        labelFormatter={(label) => `Quarter: ${label}`}
+                                                        formatter={(value: any) => [fmtCrLabel(value), metricConfig.name]}
+                                                        labelFormatter={(label) => `Period: ${label}`}
                                                     />
                                                     <Bar
                                                         dataKey={metricConfig.dataKey}
@@ -567,11 +579,11 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                                                         <LabelList
                                                             dataKey={metricConfig.dataKey}
                                                             position="top"
-                                                            offset={15}
+                                                            offset={10}
                                                             fill="#ccc"
-                                                            fontSize={12}
+                                                            fontSize={11}
                                                             fontWeight={600}
-                                                            formatter={(val: any) => val?.toLocaleString?.('en-IN') || val}
+                                                            formatter={(val: any) => fmtCrLabel(val)}
                                                         />
                                                     </Bar>
                                                 </BarChart>
