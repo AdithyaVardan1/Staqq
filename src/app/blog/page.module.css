@@ -113,8 +113,9 @@
     gap: 32px;
     padding: 40px;
     border-radius: 20px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.035);
+    border: 1px solid rgba(202, 255, 0, 0.2);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(202,255,0,0.15);
     text-decoration: none;
     color: inherit;
     position: relative;
@@ -128,8 +129,7 @@
     top: 0; left: 0; right: 0;
     height: 2px;
     background: linear-gradient(90deg, transparent 0%, rgba(202,255,0,0.8) 50%, transparent 100%);
-    opacity: 0;
-    transition: opacity 0.4s ease;
+    opacity: 1;
     pointer-events: none;
     z-index: 2;
 }
@@ -140,26 +140,15 @@
     top: -100px; left: -100px;
     width: 300px; height: 300px;
     background: radial-gradient(circle, rgba(202,255,0,0.06) 0%, transparent 70%);
-    opacity: 0;
+    opacity: 1;
+    transform: scale(1.3);
     border-radius: 50%;
     pointer-events: none;
     z-index: 0;
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .featuredCard:hover {
     transform: translateY(-4px);
-    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(202,255,0,0.15);
-    border-color: rgba(202, 255, 0, 0.2);
-    background: rgba(255, 255, 255, 0.035);
-}
-
-.featuredCard:hover::before, .featuredCard:hover::after {
-    opacity: 1;
-}
-
-.featuredCard:hover::after {
-    transform: scale(1.3);
 }
 
 .featuredContent {
@@ -194,12 +183,8 @@
     font-weight: 800;
     line-height: 1.2;
     font-family: var(--font-outfit);
-    color: #fff;
-    transition: color 0.3s;
-}
-
-.featuredCard:hover .featuredTitle {
     color: var(--primary-brand);
+    transition: color 0.3s;
 }
 
 .featuredDesc {
@@ -234,13 +219,8 @@
 }
 .featuredArrow {
     color: var(--primary-brand);
-    opacity: 0.5;
-    transition: all 0.3s;
-    transform: translateX(0);
-}
-
-.featuredCard:hover .featuredArrow {
     opacity: 1;
+    transition: all 0.3s;
     transform: translateX(10px);
 }
 
