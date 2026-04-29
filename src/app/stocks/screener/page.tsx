@@ -61,6 +61,28 @@ const TRENDING_CATEGORIES = [
     'breakouts_52w', 'breakdowns_52w', 'outperformers',
 ];
 
+const SECTOR_MAP: Record<string, string[]> = {
+    'Software': ['technology', 'software', 'it', 'digital', 'data', 'services'],
+    'Bank': ['bank', 'banking'],
+    'Finance': ['finance', 'financial', 'investment', 'insurance', 'capital', 'nbfc', 'broker'],
+    'Pharma': ['pharma', 'health', 'drugs', 'bio', 'medical', 'hospital', 'pathology'],
+    'Auto': ['auto', 'automotive', 'vehicle', 'tire', 'tyre', 'ancillary', 'parts'],
+    'Energy': ['energy', 'oil', 'gas', 'power', 'utilities', 'petro', 'coal', 'electricity'],
+    'FMCG': ['consumer', 'fmcg', 'beverage', 'food', 'retail', 'staple', 'personal care', 'household'],
+    'Metals': ['metal', 'mining', 'steel', 'iron', 'aluminum', 'copper', 'zinc', 'lead'],
+    'Infrastructure': ['infra', 'construction', 'cement', 'engineering', 'real estate', 'realty', 'building', 'materials'],
+    'Telecom': ['telecom', 'communication', 'mobile', 'network'],
+};
+
+function matchesSector(filterValue: string, stockSector: string): boolean {
+    if (!filterValue || filterValue === 'all') return true;
+    const keywords = SECTOR_MAP[filterValue];
+    if (!keywords) return (stockSector || '').toLowerCase().includes(filterValue.toLowerCase());
+    
+    const stockSectorLower = (stockSector || '').toLowerCase();
+    return keywords.some(k => stockSectorLower.includes(k));
+}
+
 const RecentlyViewedSection = () => {
     const [recent, setRecent] = useState<string[]>([]);
     useEffect(() => {
@@ -101,7 +123,7 @@ export default function StockScreener() {
             const data = await res.json();
             let categoryStocks = (data.categories?.[sortBy] || []).filter((s: any) => {
                 if (s.ltp > debouncedFilters.priceRange) return false;
-                if (debouncedFilters.sector !== 'all' && !s.sector?.includes(debouncedFilters.sector)) return false;
+                if (!matchesSector(debouncedFilters.sector, s.sector)) return false;
                 if (debouncedFilters.mcap === 'large' && s.market_cap < 200_000_000_000) return false;
                 if (debouncedFilters.mcap === 'mid' && (s.market_cap < 50_000_000_000 || s.market_cap >= 200_000_000_000)) return false;
                 if (debouncedFilters.mcap === 'small' && s.market_cap >= 50_000_000_000) return false;

@@ -18,6 +18,28 @@ const FUNDAMENTALS_TTL = 86400; // 24h
 const PRICE_TTL = 300;          // 5 minutes for real-time prices
 const FETCH_LOCK_TTL = 15;      // seconds — lock held while fetching a batch
 
+const SECTOR_MAP: Record<string, string[]> = {
+    'Software': ['technology', 'software', 'it', 'digital', 'data', 'services'],
+    'Bank': ['bank', 'banking'],
+    'Finance': ['finance', 'financial', 'investment', 'insurance', 'capital', 'nbfc', 'broker'],
+    'Pharma': ['pharma', 'health', 'drugs', 'bio', 'medical', 'hospital', 'pathology'],
+    'Auto': ['auto', 'automotive', 'vehicle', 'tire', 'tyre', 'ancillary', 'parts'],
+    'Energy': ['energy', 'oil', 'gas', 'power', 'utilities', 'petro', 'coal', 'electricity'],
+    'FMCG': ['consumer', 'fmcg', 'beverage', 'food', 'retail', 'staple', 'personal care', 'household'],
+    'Metals': ['metal', 'mining', 'steel', 'iron', 'aluminum', 'copper', 'zinc', 'lead'],
+    'Infrastructure': ['infra', 'construction', 'cement', 'engineering', 'real estate', 'realty', 'building', 'materials'],
+    'Telecom': ['telecom', 'communication', 'mobile', 'network'],
+};
+
+function matchesSector(filterValue: string, stockSector: string): boolean {
+    if (!filterValue || filterValue === 'all') return true;
+    const keywords = SECTOR_MAP[filterValue];
+    if (!keywords) return stockSector.toLowerCase().includes(filterValue.toLowerCase());
+    
+    const stockSectorLower = stockSector.toLowerCase();
+    return keywords.some(k => stockSectorLower.includes(k));
+}
+
 // ── Redis lock helper ─────────────────────────────────────────────────
 // Prevents multiple concurrent cold-cache fetches for the same batch.
 // Returns true if lock was acquired, false if someone else already holds it.
@@ -268,14 +290,13 @@ export async function GET(request: Request) {
                 const price = priceData.price;
                 const marketCap = fundamentals?.marketCap || 0;
                 const peRatio = fundamentals?.peRatio || 0;
-                const stockSector = fundamentals?.sector || 'Unknown';
+                const stockSector = stock.sector || fundamentals?.sector || 'Unknown';
                 const return1YVal = fundamentals?.return1Y || 0;
 
                 // Apply filters
                 if (price < priceMin || price > priceMax) continue;
-
-
-                if (sector && sector !== 'all' && !stockSector.toLowerCase().includes(sector.toLowerCase())) continue;
+                
+                if (!matchesSector(sector, stockSector)) continue;
 
                 if (mcap === 'large' && marketCap < LARGE_CAP) continue;
                 if (mcap === 'mid'   && (marketCap < MID_CAP || marketCap >= LARGE_CAP)) continue;
