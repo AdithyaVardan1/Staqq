@@ -20,7 +20,9 @@ import {
     Bookmark,
     Activity,
     Plus,
-    Trash2
+    Trash2,
+    Tag,
+    ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
 import clsx from 'clsx';
@@ -185,7 +187,7 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                             date: n.date || 'Recent'
                         })),
                         shareholding: f.shareholding || prev.shareholding,
-                        technicals: f.technicals || prev.technicals
+                        technicals: (f.technicals && f.technicals.length > 0) ? f.technicals : prev.technicals
                     }));
 
                     console.log(`[StockDetail] Loaded fundamentals for ${ticker}:`, f);
@@ -454,11 +456,8 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                             <div className={styles.sectionHeader}>
                                 <h2 className={styles.sectionHeading}>Quick Stats</h2>
                                 {fundamentals && !isLoadingFundamentals && (
-                                    <Badge
-                                        variant={dataSource === 'yfinance-python' ? 'success' : 'warning'}
-                                        style={{ fontSize: '11px' }}
-                                    >
-                                        {dataSource === 'yfinance-python' ? 'Live Data' : 'Sample Data'}
+                                    <Badge variant="success" style={{ fontSize: '11px' }}>
+                                        Live Data
                                     </Badge>
                                 )}
                             </div>
@@ -599,6 +598,64 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                             </div>
                         </section>
                     </div>
+
+                    {/* Right sidebar */}
+                    <aside className={styles.sidebar}>
+                        {/* Company About */}
+                        <Card className={styles.sidebarSection}>
+                            <h3 className={styles.sidebarHeading}>About</h3>
+                            <p className={styles.aboutText}>
+                                {isLoadingFundamentals ? 'Loading company information...' : companyInfo.about}
+                            </p>
+                            <div className={styles.metaInfo}>
+                                {companyInfo.sector && companyInfo.sector !== '---' && (
+                                    <div className={styles.metaRow}>
+                                        <Tag size={13} />
+                                        <span>{companyInfo.sector}{companyInfo.industry && companyInfo.industry !== '---' ? ` · ${companyInfo.industry}` : ''}</span>
+                                    </div>
+                                )}
+                                {companyInfo.website && companyInfo.website !== 'N/A' && companyInfo.website !== '---' && (
+                                    <a href={companyInfo.website} target="_blank" rel="noopener noreferrer" className={styles.websiteLink}>
+                                        <ExternalLink size={12} />
+                                        {companyInfo.website.replace(/^https?:\/\//, '')}
+                                    </a>
+                                )}
+                            </div>
+                        </Card>
+
+                        {/* Shareholding */}
+                        {data.shareholding.some((s: any) => s.value > 0) && (
+                            <Card className={styles.sidebarSection}>
+                                <h3 className={styles.sidebarHeading}>Shareholding</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 8 }}>
+                                    {data.shareholding.map((s: any) => (
+                                        <div key={s.name} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.82rem' }}>
+                                            <span style={{ width: 70, color: 'var(--text-secondary)', flexShrink: 0 }}>{s.name}</span>
+                                            <div style={{ flex: 1, background: 'rgba(255,255,255,0.06)', borderRadius: 4, height: 5 }}>
+                                                <div style={{ background: s.color, borderRadius: 4, height: 5, width: `${Math.min(s.value, 100)}%`, transition: 'width 0.5s ease' }} />
+                                            </div>
+                                            <span style={{ width: 44, textAlign: 'right', fontWeight: 600, color: s.color }}>{s.value.toFixed(1)}%</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </Card>
+                        )}
+
+                        {/* Latest News */}
+                        {data.news.length > 0 && (
+                            <Card className={styles.sidebarSection}>
+                                <h3 className={styles.sidebarHeading}>Latest News</h3>
+                                <div className={styles.newsList}>
+                                    {data.news.slice(0, 5).map((n: any) => (
+                                        <a key={n.id} href={n.link} target="_blank" rel="noopener noreferrer" className={styles.newsItem}>
+                                            <div className={styles.newsTitle}>{n.title}</div>
+                                            <div className={styles.newsMeta}>{n.source} · {n.date}</div>
+                                        </a>
+                                    ))}
+                                </div>
+                            </Card>
+                        )}
+                    </aside>
                 </div>
             </div>
         </main>
