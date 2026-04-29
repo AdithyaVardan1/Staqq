@@ -408,6 +408,11 @@ export default function StockDetailContent({ params }: { params: Promise<{ ticke
                                             <Activity size={12} /> LIVE
                                         </span>
                                     )}
+                                    {status === 'closed' && (
+                                        <span className={styles.liveIndicator} style={{ color: '#888', borderColor: 'rgba(255,255,255,0.1)' }}>
+                                            Market Closed
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </div>
