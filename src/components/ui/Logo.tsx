@@ -14,17 +14,19 @@ interface LogoProps {
     width?: number;
     height?: number;
     priority?: boolean;
+    src?: string;
 }
 
 export default function Logo({
     className,
     width = 120,
     height = 120,
-    priority = false
+    priority = false,
+    src,
 }: LogoProps) {
     return (
         <Image
-            src={LOGO_SRC}
+            src={src ?? LOGO_SRC}
             alt="Staqq Logo"
             width={width}
             height={height}

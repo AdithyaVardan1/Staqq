@@ -130,6 +130,7 @@ export const Navbar = () => {
                                     height={120}
                                     className={styles.logoImage}
                                     priority
+                                    src={isVioletTheme ? '/ostack_purple.png' : undefined}
                                 />
                             </div>
                         </Link>
