@@ -18,10 +18,7 @@ export interface LearnPath {
   difficulty: Difficulty;
   estimatedTime: string;
   icon: string;
-<<<<<<< HEAD
   color: string;
-=======
->>>>>>> f48a43d (Pull learning hub UI fixes from fix/learning-hub-ui)
   modules: ReturnType<typeof buildModulesForPath>;
 }
 
@@ -32,10 +29,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "BEGINNER",
     estimatedTime: "45m",
     icon: "sprout",
-<<<<<<< HEAD
     color: "#b6ff00",
-=======
->>>>>>> f48a43d (Pull learning hub UI fixes from fix/learning-hub-ui)
     modules: buildModulesForPath("beginner"),
   },
 
@@ -45,10 +39,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "INTERMEDIATE",
     estimatedTime: "1h 30m",
     icon: "chart-bar",
-<<<<<<< HEAD
     color: "#38bdf8",
-=======
->>>>>>> f48a43d (Pull learning hub UI fixes from fix/learning-hub-ui)
     modules: buildModulesForPath("financials"),
   },
 
@@ -58,10 +49,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "INTERMEDIATE",
     estimatedTime: "2h 00m",
     icon: "chart-candlestick",
-<<<<<<< HEAD
     color: "#f59e0b",
-=======
->>>>>>> f48a43d (Pull learning hub UI fixes from fix/learning-hub-ui)
     modules: buildModulesForPath("technical"),
   },
 
@@ -71,10 +59,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "BEGINNER",
     estimatedTime: "1h 15m",
     icon: "rocket",
-<<<<<<< HEAD
     color: "#a855f7",
-=======
->>>>>>> f48a43d (Pull learning hub UI fixes from fix/learning-hub-ui)
     modules: buildModulesForPath("ipo"),
   },
 
@@ -84,10 +69,7 @@ export const learnPaths: Record<string, LearnPath> = {
     difficulty: "ADVANCED",
     estimatedTime: "2h 30m",
     icon: "building",
-<<<<<<< HEAD
     color: "#ff6b35",
-=======
->>>>>>> f48a43d (Pull learning hub UI fixes from fix/learning-hub-ui)
     modules: buildModulesForPath("fundamental"),
   },
 };
