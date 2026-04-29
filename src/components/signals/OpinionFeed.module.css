@@ -1,4 +1,4 @@
-/* ── Panel container ── */
+/* ── Panel ── */
 .panel {
     display: flex;
     flex-direction: column;
@@ -9,12 +9,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px 14px;
-    flex-shrink: 0;
+    padding: 14px 18px 12px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     position: sticky;
     top: 0;
-    background: rgba(10, 10, 10, 0.9);
+    background: rgba(8, 8, 8, 0.92);
     backdrop-filter: blur(12px);
     z-index: 2;
 }
@@ -26,16 +25,15 @@
 }
 
 .dot {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
     border-radius: 50%;
     flex-shrink: 0;
-    box-shadow: 0 0 6px currentColor;
 }
 
 .label {
     font-family: var(--font-outfit), sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #fff;
     letter-spacing: -0.01em;
@@ -44,113 +42,75 @@
 .badge {
     font-size: 0.6rem;
     font-weight: 700;
-    letter-spacing: 0.07em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 4px;
 }
-
 .badge.social {
     color: #caff00;
     background: rgba(202, 255, 0, 0.08);
-    border: 1px solid rgba(202, 255, 0, 0.15);
 }
-
 .badge.media {
     color: #818cf8;
-    background: rgba(99, 102, 241, 0.1);
-    border: 1px solid rgba(99, 102, 241, 0.18);
+    background: rgba(129, 140, 248, 0.1);
 }
 
 .sublabel {
     font-size: 0.7rem;
-    color: #444;
-    letter-spacing: 0.02em;
+    color: #3a3a3a;
 }
 
-/* ── Feed — full height, no scroll ── */
+/* ── Feed ── */
 .feed {
-    padding: 16px 16px 24px;
+    padding: 12px 14px 24px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
-/* ── Opinion entry ── */
-.entry {
-    transition: opacity 0.2s ease;
-}
-.entry:hover { opacity: 1 !important; }
-
-/* Skewed parallelogram shell */
-.entryShell {
-    transform: skewX(-2deg);
-    background: var(--sbg, rgba(255, 255, 255, 0.025));
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-left: 3px solid var(--sc, rgba(255, 255, 255, 0.15));
+/* ── Card ── */
+.card {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-left: 2px solid var(--sc, rgba(255, 255, 255, 0.15));
     border-radius: 10px;
-    overflow: hidden;
-    transition: all 0.28s cubic-bezier(0.16,1,0.3,1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
-.entry:hover .entryShell {
-    transform: skewX(-2deg) translateX(5px);
-    border-color: color-mix(in srgb, var(--sc) 35%, transparent);
-    border-left-color: var(--sc, rgba(255, 255, 255, 0.3));
-    background: linear-gradient(135deg,
-        color-mix(in srgb, var(--sc) 5%, transparent) 0%,
-        rgba(0,0,0,0.25) 100%
-    );
-    box-shadow: 0 8px 28px rgba(0,0,0,0.35),
-                0 0 18px color-mix(in srgb, var(--sc) 12%, transparent);
-}
-
-/* Counter-skew so text reads straight */
-.entryContent {
-    transform: skewX(2deg);
-    padding: 16px 20px;
+    padding: 14px 16px;
     display: flex;
     flex-direction: column;
-    gap: 9px;
+    gap: 8px;
+    transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+    cursor: default;
 }
 
-/* ── Entry content ── */
-.entryTop {
+.card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+    border-left-color: var(--sc, rgba(255, 255, 255, 0.3));
+    transform: translateY(-1px);
+}
+
+/* ── Card content ── */
+.cardTop {
     display: flex;
     align-items: center;
     gap: 7px;
 }
 
-.sentimentDot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    box-shadow: 0 0 7px var(--sc);
-    animation: sentimentPulse 2.5s infinite ease-in-out;
-}
-
-@keyframes sentimentPulse {
-    0%, 100% { transform: scale(1);   opacity: 0.75; }
-    50%       { transform: scale(1.4); opacity: 1;    }
-}
-
-.sentimentLabel {
-    font-size: 0.68rem;
-    font-weight: 800;
+.sentimentTag {
+    font-size: 0.65rem;
+    font-weight: 700;
     letter-spacing: 0.07em;
     text-transform: uppercase;
 }
 
 .ticker {
-    font-size: 0.67rem;
+    font-size: 0.65rem;
     font-weight: 700;
     color: #caff00;
-    background: rgba(202, 255, 0, 0.09);
-    border: 1px solid rgba(202, 255, 0, 0.18);
-    padding: 1px 7px;
-    border-radius: 4px;
+    background: rgba(202, 255, 0, 0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
     letter-spacing: 0.04em;
 }
 
@@ -163,17 +123,17 @@
 
 .headline {
     font-family: var(--font-outfit), sans-serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #e8e8e8;
-    line-height: 1.35;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #e0e0e0;
+    line-height: 1.4;
     margin: 0;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.01em;
 }
 
 .summary {
-    font-size: 0.8rem;
-    color: #8a8a8a;
+    font-size: 0.78rem;
+    color: #777;
     line-height: 1.6;
     margin: 0;
 }
@@ -182,16 +142,15 @@
     display: flex;
     gap: 5px;
     flex-wrap: wrap;
-    margin-top: 2px;
 }
 
 .topic {
-    font-size: 0.62rem;
-    color: #555;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 0.6rem;
+    color: #4a4a4a;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 2px 7px;
-    border-radius: 4px;
+    border-radius: 3px;
     letter-spacing: 0.02em;
 }
 
@@ -200,23 +159,15 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 32px 20px;
+    padding: 32px 16px;
     color: #444;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
 }
 
-.emptyPulse {
-    width: 8px;
-    height: 8px;
+.emptyDot {
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: var(--accent, #caff00);
-    opacity: 0.3;
-    animation: pulse 2s ease-in-out infinite;
+    opacity: 0.4;
+    flex-shrink: 0;
 }
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1);   opacity: 0.3; }
-    50%       { transform: scale(1.6); opacity: 0.6; }
-}
-
-/* feedInner is just the motion wrapper */
