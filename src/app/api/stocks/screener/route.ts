@@ -91,7 +91,7 @@ async function getFundamentals(ticker: string): Promise<{
             marketCap: q.marketCap || 0,
             peRatio: q.trailingPE || q.forwardPE || 0,
             sector: q.sector || 'Unknown',
-            return1Y: q.fiftyTwoWeekChangePercent ? q.fiftyTwoWeekChangePercent * 100 : 0,
+            return1Y: q.fiftyTwoWeekChangePercent ?? 0,
         };
         await redis.set(key, JSON.stringify(data), FUNDAMENTALS_TTL);
         return data;
