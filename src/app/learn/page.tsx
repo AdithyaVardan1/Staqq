@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { GraduationCap, Library, BookOpen } from "lucide-react";
 import styles from "./page.module.css";
 import LearningPathCard from "@/components/LearnPathCard/LearnPathCard";
 import { learnPaths } from "@/data/learnPaths";
@@ -10,7 +11,7 @@ import { useProgress } from "@/hooks/useProgress";
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 const cardVariant: any = {
   hidden: { opacity: 0, y: 18, filter: "blur(4px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 };
 
 export default function LearnPage() {
@@ -69,31 +70,54 @@ export default function LearnPage() {
 
   return (
     <main className={styles.page}>
+      {/* ── Ambient background glow ── */}
+      <div className={styles.bgGlow1} aria-hidden />
+      <div className={styles.bgGlow2} aria-hidden />
+
       {/* ── Page header ── */}
       <motion.div
         className={styles.pageHeader}
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+        initial={{ opacity: 0, y: 28, filter: 'blur(10px)' }}
+        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+        transition={{ duration: 0.8, delay: 0, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
       >
-        <div>
-          <div className={styles.titleRow}>
-            <h1 className={styles.pageTitle}>Learning Hub</h1>
-            {isLoaded && currentStreak > 0 && (
-              <span className={styles.streakChip}>🔥 {currentStreak}-day streak</span>
-            )}
-          </div>
-          {/* Change 6: social proof subtitle */}
-          <p className={styles.socialProof}>
+        <div className={styles.headerLeft}>
+          {isLoaded && currentStreak > 0 ? (
+            <div className={`${styles.headerBadge} ${styles.streakBadge}`}>
+              🔥 {currentStreak}-DAY STREAK
+            </div>
+          ) : (
+            <div className={styles.headerBadge}>
+              <span className={styles.badgeDot} />
+              LEARNING HUB · FREE
+            </div>
+          )}
+          <h1 className={styles.title}>
+            Learning<br />
+            <span className={styles.accent}>Hub.</span>
+          </h1>
+          <p className={styles.subtitle}>
             Built for Indian investors who want to actually understand markets — not just follow tips.
           </p>
         </div>
 
-        {/* Change 2: stat pill badges */}
-        <div className={styles.statPills}>
-          <span className={`${styles.pill} ${styles.pillLime}`}>🎓 Free Forever</span>
-          <span className={styles.pill}>5 Tracks</span>
-          <span className={styles.pill}>83 Lessons</span>
+        {/* Right: stat chips grid */}
+        <div className={styles.headerRight}>
+          <div className={styles.statChip} style={{ gridColumn: '1 / -1' }}>
+            <GraduationCap size={13} className={styles.chipIcon} style={{ color: '#22c55e' }} />
+            <span className={styles.chipNum}>Free</span>
+            <span className={styles.chipLabel}>Forever</span>
+          </div>
+          <div className={styles.statChip}>
+            <Library size={13} className={styles.chipIcon} style={{ color: '#f59e0b' }} />
+            <span className={styles.chipNum}>5</span>
+            <span className={styles.chipLabel}>Tracks</span>
+          </div>
+          <div className={styles.statChip}>
+            <BookOpen size={13} className={styles.chipIcon} style={{ color: '#a78bfa' }} />
+            <span className={styles.chipNum}>83</span>
+            <span className={styles.chipLabel}>Lessons</span>
+          </div>
         </div>
       </motion.div>
 
@@ -102,7 +126,7 @@ export default function LearnPage() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
         >
           {(() => {
             const [key, path] = inProgressEntry;
@@ -143,7 +167,7 @@ export default function LearnPage() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
         >
           <Link href="/learn/beginner" className={styles.nudge}>
             <span className={styles.nudgeIcon}>👋</span>
