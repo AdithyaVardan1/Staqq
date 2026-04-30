@@ -11,7 +11,7 @@ import { useProgress } from "@/hooks/useProgress";
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 const cardVariant: any = {
   hidden: { opacity: 0, y: 18, filter: "blur(4px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 };
 
 export default function LearnPage() {
@@ -79,7 +79,7 @@ export default function LearnPage() {
         className={styles.pageHeader}
         initial={{ opacity: 0, y: 28, filter: 'blur(10px)' }}
         animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-        transition={{ duration: 0.8, delay: 0, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.8, delay: 0, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
       >
         <div className={styles.headerLeft}>
           {isLoaded && currentStreak > 0 ? (
@@ -126,7 +126,7 @@ export default function LearnPage() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
         >
           {(() => {
             const [key, path] = inProgressEntry;
@@ -167,7 +167,7 @@ export default function LearnPage() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.35, delay: 0.08, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
         >
           <Link href="/learn/beginner" className={styles.nudge}>
             <span className={styles.nudgeIcon}>👋</span>
