@@ -310,6 +310,53 @@
 
 .nudge:hover svg { transform: translateX(3px); }
 
+/* ── Tab toggle ── */
+.toggleWrap {
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.toggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 1rem;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #555;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease;
+  white-space: nowrap;
+}
+
+.toggleBtn:hover {
+  color: #aaa;
+}
+
+.toggleActive {
+  background: rgba(255,255,255,0.06);
+  color: var(--tab-color, #b6ff00);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+}
+
+.toggleActive svg {
+  color: var(--tab-color, #b6ff00);
+}
+
 /* ── Grid: featured spans 2 cols, rest fill 2×2 ── */
 .grid {
   display: grid;
